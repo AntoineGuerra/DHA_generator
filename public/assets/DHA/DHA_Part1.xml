@@ -1088,236 +1088,103 @@
                 <Cell ss:StyleID="s22"/>
                 <Cell ss:StyleID="s22"/>
             </Row>
-
-
-
             <Row ss:AutoFitHeight="0" ss:Height="45.75">
-                <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l'intitulé exact de la tâche tel que défini dans le CIP !)</Data></Cell>
-                <Cell ss:StyleID="s30"/>
-                <Cell ss:StyleID="s30"/>
-                <Cell ss:StyleID="s31"/>
-                <Cell ss:StyleID="s31"/>
-                <Cell ss:StyleID="s31"/>
-                <Cell ss:StyleID="s31"/>
-                <Cell ss:StyleID="s31"/>
-            </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="15.75"/>
-            <Row ss:AutoFitHeight="0" ss:Height="18">
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501864"><Data ss:Type="String">QUI ?</Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501884"><Data ss:Type="String">N° SEM</Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501904"><Data ss:Type="String">CLIENT</Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501924"><Data ss:Type="String">PROJET</Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501944"><Data ss:Type="String">FAMILLE ACTIVITÉ</Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501844"><Data ss:Type="String">DETAIL DE LA TÂCHE </Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501804"><Data ss:Type="String">Heures réellement réalisées</Data></Cell>
-                <Cell ss:MergeDown="1" ss:StyleID="m140462093501824"><Data ss:Type="String">Commentaire sur l'écart</Data></Cell>
-                <Cell ss:StyleID="s18"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-            </Row><Row ss:AutoFitHeight="0" ss:Height="15.75">
-            <Cell ss:StyleID="s37"><Data ss:Type="String">defe</Data></Cell>
-            <Cell ss:StyleID="s37"><Data ss:Type="String">S8</Data></Cell>
-            <Cell ss:StyleID="s37"><Data ss:Type="String">TUBESCA</Data></Cell>
-            <Cell ss:StyleID="s37"><Data ss:Type="String">APP</Data></Cell>
-            <Cell ss:StyleID="s128"><Data ss:Type="String">Mise en production</Data></Cell>
-            <Cell ss:StyleID="s132"><Data ss:Type="String">detail</Data></Cell>
-            <Cell ss:StyleID="s130"><Data ss:Type="Number">7</Data></Cell>
-            <Cell ss:StyleID="s132"><Data ss:Type="String">commentaire</Data></Cell>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-            <Cell ss:StyleID="s35"/>
-        </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="15.75">
-                <Cell ss:StyleID="s37"><Data ss:Type="String">defe</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">S8</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">TUBESCA</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">ECOMMERCE</Data></Cell>
-                <Cell ss:StyleID="s128"><Data ss:Type="String">Pilotage de projet</Data></Cell>
-                <Cell ss:StyleID="s132"><Data ss:Type="String">detail</Data></Cell>
-                <Cell ss:StyleID="s130"><Data ss:Type="Number">3,75</Data></Cell>
-                <Cell ss:StyleID="s132"><Data ss:Type="String">commentaire</Data></Cell>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
+                <Cell ss:StyleID="s24"><Data ss:Type="String">Nombre d'heures de congés de la semaine</Data></Cell>
+                <Cell ss:StyleID="s25"/>
+                <Cell ss:StyleID="s25"/>
+                <Cell ss:StyleID="s27"/>
+                <Cell ss:StyleID="s27"/>
+                <Cell ss:StyleID="s27"/>
+                <Cell ss:StyleID="s27"/>
+                <Cell ss:StyleID="s27"/>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="15.75">
-                <Cell ss:StyleID="s37"><Data ss:Type="String">defe</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">S8</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">VERNET</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">APP</Data></Cell>
-                <Cell ss:StyleID="s128"><Data ss:Type="String">Graphisme</Data></Cell>
-                <Cell ss:StyleID="s132"><Data ss:Type="String">detail</Data></Cell>
-                <Cell ss:StyleID="s130"><Data ss:Type="Number">3</Data></Cell>
-                <Cell ss:StyleID="s132"><Data ss:Type="String">commentaire</Data></Cell>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
+                <Cell ss:StyleID="s20"/>
+                <Cell ss:StyleID="s20"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s23"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
             </Row>
             <Row ss:AutoFitHeight="0" ss:Height="15.75">
-                <Cell ss:StyleID="s37"><Data ss:Type="String">defe</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">S8</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">LVDF</Data></Cell>
-                <Cell ss:StyleID="s37"><Data ss:Type="String">SITE</Data></Cell>
-                <Cell ss:StyleID="s128"><Data ss:Type="String">Mise en production</Data></Cell>
-                <Cell ss:StyleID="s132"><Data ss:Type="String">detail</Data></Cell>
-                <Cell ss:StyleID="s130"><Data ss:Type="Number">4,5</Data></Cell>
-                <Cell ss:StyleID="s132"><Data ss:Type="String">commentaire</Data></Cell>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
+                <Cell ss:StyleID="s20"/>
+                <Cell ss:StyleID="s20"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s23"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
             </Row>
-            <Row ss:AutoFitHeight="0" ss:Height="27">
-                <Cell ss:StyleID="s44"/>
-                <Cell ss:StyleID="s44"/>
-                <Cell ss:StyleID="s44"/>
-                <Cell ss:StyleID="s44"/>
-                <Cell ss:StyleID="s45"/>
-                <Cell ss:StyleID="s45"><Data ss:Type="String">Total (heures)</Data></Cell>
-                <Cell ss:StyleID="s46" ss:Formula="=SUM(R[-4]C:R[-1]C)"><Data ss:Type="Number">1</Data></Cell>
-                <Cell ss:StyleID="s46"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
-                <Cell ss:StyleID="s35"/>
+            <Row ss:AutoFitHeight="0" ss:Height="15.75">
+                <Cell ss:StyleID="s20"/>
+                <Cell ss:StyleID="s20"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s23"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
+                <Cell ss:StyleID="s22"/>
             </Row>
-
-        </Table>
-        <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-            <PageSetup>
-                <Layout x:Orientation="Landscape"/>
-                <Header x:Margin="0"/>
-                <Footer x:Margin="0"/>
-            </PageSetup>
-            <Unsynced/>
-            <Print>
-                <ValidPrinterInfo/>
-                <HorizontalResolution>600</HorizontalResolution>
-                <VerticalResolution>600</VerticalResolution>
-            </Print>
-            <Panes>
-                <Pane>
-                    <Number>3</Number>
-                    <ActiveRow>5</ActiveRow>
-                </Pane>
-            </Panes>
-            <ProtectObjects>False</ProtectObjects>
-            <ProtectScenarios>False</ProtectScenarios>
-        </WorksheetOptions>
-    </Worksheet>
-</Workbook>
