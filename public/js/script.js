@@ -18,14 +18,33 @@ var signoutButton = document.getElementById('signout_button');
 function handleClientLoad() {
     gapi.load('client:auth2', initClient);
     let weekInput = document.getElementById('week');
-    weekInput.addEventListener('input', function () {
-        let val = this.value;
+    let generateBtn = document.getElementById('generate');
+    let current_week = getWeekNumber((new Date()))[1];
+    weekInput.value = current_week;
+    let div_full = document.getElementById('full');
+    let div_V = document.getElementById('V');
+    let div_AV = document.getElementById('AV');
+    let div_M = document.getElementById('M');
+    let div_I = document.getElementById('I');
+    let text_err = document.getElementById('err');
+    div_full.parentElement.style.display = 'none';
+    div_V.parentElement.style.display = 'none';
+    div_AV.parentElement.style.display = 'none';
+    div_M.parentElement.style.display = 'none';
+    div_I.parentElement.style.display = 'none';
+    text_err.parentElement.style.display = 'none';
+    generateBtn.addEventListener('click', function () {
+        let acronyme = document.getElementById('acronyme').value;
+        if (acronyme === '') {
+            return alert('l\'acronyme est requis');
+        }
+        let val = weekInput.value;
         console.log('val', val);
         let isoDate;
         if (val !== '' && parseInt(val) > 0) {
             isoDate = getDateOfISOWeek(val, (new Date()).getFullYear());
-            console.log('iso date', isoDate);
-            console.log('iso date', isoDate.toISOString());
+            // console.log('iso date', isoDate);
+            // console.log('iso date', isoDate.toISOString());
             // listUpcomingEvents(val);
 
         } else {
@@ -69,7 +88,7 @@ function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
-        listUpcomingEvents();
+        // listUpcomingEvents();
     } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
@@ -96,11 +115,11 @@ function handleSignoutClick(event) {
  *
  * @param {string} message Text to be placed in pre element.
  */
-function appendPre(message) {
-    var pre = document.getElementById('content');
-    var textContent = document.createTextNode(message + '\n');
-    pre.appendChild(textContent);
-}
+// function appendPre(message) {
+//     var pre = document.getElementById('content');
+//     var textContent = document.createTextNode(message + '\n');
+//     pre.appendChild(textContent);
+// }
 
 /**
  * Print the summary and start datetime/date of the next ten events in
@@ -120,6 +139,7 @@ function listUpcomingEvents(week = false) {
     }
     week = getWeekNumber((new Date(week)))[1];
     let projects = {};
+    let projectDontProccess = [];
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
         'timeMin': first,
@@ -130,23 +150,122 @@ function listUpcomingEvents(week = false) {
         'orderBy': 'startTime'
     }).then(function(response) {
         var events = response.result.items;
-        appendPre('Upcoming events:');
+        // appendPre('Upcoming events:');
 
         if (events.length > 0) {
-            let text = 'Déclaration Hebdomadaire d\'Activité (DHA);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                'Nombre d\'heures de congés de la semaine;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                'Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-                'QUI ?;N° SEM;CLIENT;PROJET;FAMILLE ACTIVITÉ;DETAIL DE LA TÂCHE ;Heures réellement réalisées;Commentaire sur l\'écart;;;;;;;;;;;;;;;;;;;;;;;';
-            let text_AV = '';
-            let text_V = '';
-            let text_M = '';
-            let text_I = '';
+            // let text = 'Déclaration Hebdomadaire d\'Activité (DHA);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     'Nombre d\'heures de congés de la semaine;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     'Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
+            //     'QUI ?;N° SEM;CLIENT;PROJET;FAMILLE ACTIVITÉ;DETAIL DE LA TÂCHE ;Heures réellement réalisées;Commentaire sur l\'écart;;;;;;;;;;;;;;;;;;;;;;;';
+            let acronyme = document.getElementById('acronyme').value;
+            let part_AV = {
+                text: '',
+                count: 0,
+            };
+            let part_V = {
+                text: '<Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
+                    '<Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !)</Data></Cell>\n' +
+                    '<Cell ss:StyleID="s30"/>\n' +
+                    '<Cell ss:StyleID="s30"/>\n' +
+                    '<Cell ss:StyleID="s31"/>\n' +
+                    '<Cell ss:StyleID="s31"/>\n' +
+                    '<Cell ss:StyleID="s31"/>\n' +
+                    '<Cell ss:StyleID="s31"/>\n' +
+                    '<Cell ss:StyleID="s31"/>\n' +
+                    '</Row>\n' +
+                    '<Row ss:AutoFitHeight="0" ss:Height="15.75"/>\n' +
+                    '<Row ss:AutoFitHeight="0" ss:Height="18">\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501864"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501884"><Data ss:Type="String">N° SEM</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501904"><Data ss:Type="String">CLIENT</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501924"><Data ss:Type="String">PROJET</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501944"><Data ss:Type="String">FAMILLE ACTIVITÉ</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501844"><Data ss:Type="String">DETAIL DE LA TÂCHE </Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501804"><Data ss:Type="String">Heures réellement réalisées</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462093501824"><Data ss:Type="String">Commentaire sur l\'écart</Data></Cell>\n' +
+                    '<Cell ss:StyleID="s18"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '<Cell ss:StyleID="s35"/>\n' +
+                    '</Row>',
+                count: 0,
+            };
+            let part_M = {
+                text: '<Row ss:AutoFitHeight="0" ss:Height="24"/>\n' +
+                    '<Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
+                    '<Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé en maintenance (temps passé = temps déduit des contrats de maintenance)</Data></Cell>\n' +
+                    '<Cell ss:StyleID="s29"/>\n' +
+                    '<Cell ss:StyleID="s29"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '</Row>\n' +
+                    '<Row ss:AutoFitHeight="0" ss:Height="15.75" ss:Span="1"/>\n' +
+                    '<Row ss:Index="27" ss:AutoFitHeight="0" ss:Height="18">\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055548"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055568"><Data ss:Type="String">N° SEM</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055428"><Data ss:Type="String">CLIENT</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055408"><Data ss:Type="String">PROJET</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055588"><Data ss:Type="String">FAMILLE ACTIVITÉ</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055608"><Data ss:Type="String">DETAIL DE LA TÂCHE (facultatif)</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106024352"><Data ss:Type="String">Temps passés en maintenance</Data></Cell>\n' +
+                    '<Cell ss:MergeDown="1" ss:StyleID="m140462106055628"><Data ss:Type="String">Tâche programmée ? (non = urgence)</Data></Cell>\n' +
+                    '<Cell ss:StyleID="s18"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '<Cell ss:StyleID="s33"/>\n' +
+                    '</Row>',
+                count: 0,
+            };
+            let part_I = {
+                text: '',
+                count: 0,
+            };
+            let text_err = '';
             let text_content = '';
+            let text_full = '';
             for (i = 0; i < events.length; i++) {
                 var event = events[i];
                 var when = event.start.dateTime;
@@ -157,7 +276,7 @@ function listUpcomingEvents(week = false) {
                 if (!to) {
                     to = event.end.date
                 }
-                appendPre(event.summary + ' By (' + when + ')');
+                // appendPre(event.summary + ' By (' + when + ')');
                 let explodedText = event.summary.split('-');
                 let category;
                 let client;
@@ -174,9 +293,17 @@ function listUpcomingEvents(week = false) {
                         client = client_arr[0].trim();
                         project = client_arr[1].trim();
                     } else {
+                        projectDontProccess.push({
+                            name: event.summary,
+                            duration: duration
+                        });
                         continue;
                     }
                 } else {
+                    projectDontProccess.push({
+                        name: event.summary,
+                        duration: duration
+                    });
                     continue;
                 }
                 objName = category + '-' + client + '_' + project + '-' + family;
@@ -200,60 +327,219 @@ function listUpcomingEvents(week = false) {
                 // eval('text_' + category + ' += ' + text_content);
 
                 // console.log('explodedText', explodedText[1].trim());
-                console.log('duration', new Date(to).getTime());
-                appendPre(event.summary + ' To (' + to + ')' + ' duration (' + duration + ')')
+                // console.log('duration', new Date(to).getTime());
+                // appendPre(event.summary + ' To (' + to + ')' + ' duration (' + duration + ')')
             }
-            console.log('project', projects);
+            // console.log('project', projects);
             for (var key in projects) {
                 // skip loop if the property is from prototype
                 if (!projects.hasOwnProperty(key)) continue;
 
                 var obj = projects[key];
                 // eval('text_' + obj.category + ' += "' + text_content + '"');
-                text_content = 'AGU;S' + week + ';' + obj.client + ';' + obj.project + ';' + obj.family + ';detail;' + obj.duration.toString().replace('.', ',') + ';commentaire;;;;;;;;;;;;;;;;;;;;;;;\n';
-                console.log('obj ', key, obj.category);
+
+                // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
+                //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
+                //     ';detail;' + obj.duration.toString().replace('.', ',') +
+                //     ';commentaire\n';
+                // console.log('obj ', key, obj.category);
                 switch (obj.category) {
                     case 'V':
                     case 'v':
-                        text_V += text_content;
                         console.log('add v');
+
+                        text_content = '<Row ss:AutoFitHeight="0" ss:Height="15.75">\n';
+                        text_content += '<Cell ss:StyleID="s37"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s37"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.client.toUpperCase() + '</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.project.toUpperCase() + '</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s128"><Data ss:Type="String">' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) + '</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s132"><Data ss:Type="String">detail</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s130"><Data ss:Type="Number">' + obj.duration.toString().replace('.', ',') + '</Data></Cell>\n' +
+                            '<Cell ss:StyleID="s132"><Data ss:Type="String">commentaire</Data></Cell>\n';
+                        for (let i = 0; i <= 22; i++) {
+                            text_content += '<Cell ss:StyleID="s35"/>\n';
+                        }
+                        text_content += '</Row>\n';
+                        // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
+                        //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
+                        //     ';detail;' + obj.duration.toString().replace('.', ',') +
+                        //     ';commentaire\n';
+                        part_V.text += text_content;
+                        part_V.count++;
+                        break;
+                    case 'M':
+                    case 'm':
+                        console.log('add m');
+                        text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
+                            obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
+                            ';detail;' + obj.duration.toString().replace('.', ',') +
+                            ';commentaire\n';
+                        part_M.text += text_content;
+                        part_M.count++;
                         break;
                     case 'AV':
                     case 'Av':
                     case 'av':
                     case 'aV':
-                        text_AV += text_content;
+                        text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
+                            ';' + obj.project.toUpperCase() + ';detail;' +
+                            obj.duration.toString().replace('.', ',') + ';commentaire\n';
+                        part_AV.text += text_content;
+                        part_AV.count++;
                         console.log('add av');
                         break;
                     case 'I':
                     case 'i':
-                        text_I += text_content;
+                        text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
+                            ';' + obj.project.toUpperCase() + ';detail;' +
+                            obj.duration.toString().replace('.', ',') + ';commentaire\n';
+                        part_I.text += text_content;
+                        part_I.count++;
                         console.log('add i');
                         break;
-                    case 'M':
-                    case 'm':
-                        text_M += text_content;
-                        console.log('add m');
-                        break;
-
                 }
-                // for (var prop in obj) {
-                //     // skip loop if the property is from prototype
-                //     if(!obj.hasOwnProperty(prop)) continue;
-                //     // your code
-                //     alert(prop + " = " + obj[prop]);
-                // }
             }
-            console.log('text_v', text_V);
-            console.log('text_AV', text_AV);
-            console.log('text_I', text_I);
-            console.log('text_M', text_M);
-            appendPre('\n\n\n');
+            text_err = document.getElementById('err');
+
+            if (projectDontProccess.length > 0) {
+                text_err.parentElement.style.display = 'block';
+                text_content = '';
+                for (let i = 0; i < projectDontProccess.length; i++) {
+                    let obj = projectDontProccess[i];
+                    text_content += 'Nom : ' + obj.name + ' Durée : ' + obj.duration + '\n';
+                }
+                // text_err = text_content;
+                console.log('text content', text_content);
+                text_err.innerHTML = '<span style="color: red">' + text_content + '</span>';
+            } else {
+                text_err.parentElement.style.display = 'none';
+            }
+            console.log('text_v', part_V);
+            console.log('part_AV', part_AV);
+            console.log('part_I', part_I);
+            console.log('part_M', part_M);
+            let div_full = document.getElementById('full');
+            empty(div_full);
+
+            let div_V = document.getElementById('V');
+            empty(div_V);
+            // div_V.innerText = part_V;
+            if (part_V.text !== '') {
+                // text_full += 'VENDU\n' + 'QUI ?;N SEM;CLIENT;PROJET;FAMILLE ACTIVITE;DETAIL;Temps;Commentaire\n' +
+                //     part_V + '\n';
+                let txt = '';
+                div_V.parentElement.style.display = 'block';
+                txt += '<Row ss:AutoFitHeight="0" ss:Height="27">\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s44"/>\n' +
+                    '<Cell ss:StyleID="s45"/>\n' +
+                    '<Cell ss:StyleID="s45"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
+                    '<Cell ss:StyleID="s46" ss:Formula="=SUM(R[-' + part_V.count + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
+                    '<Cell ss:StyleID="s46"/>\n';
+                for (let i = 0; i <= 22; i++) {
+                    txt += '<Cell ss:StyleID="s35"/>\n';
+                }
+                    txt += '</Row>\n' + '';
+                part_V.text += txt;
+                createDownloader('DHA-VENTES-S' + week + '.xml', part_V.text, div_V);
+            } else {
+                div_V.parentElement.style.display = 'none';
+
+            }
+
+            let div_AV = document.getElementById('AV');
+            empty(div_AV);
+            // div_AV.innerText = part_AV;
+            if (part_AV.text !== '') {
+                div_AV.parentElement.style.display = 'block';
+                // text_full += 'AVANT VENTE\n' +
+                //     'QUI ?;N SEM;CLIENT;PROJET;DETAIL;Temps;Commentaire\n' +
+                //     part_AV;
+                createDownloader('DHA-AVANT_VENTES-S' + week + '.csv', part_AV, div_AV);
+            } else {
+                div_AV.parentElement.style.display = 'none';
+
+            }
+            let div_M = document.getElementById('M');
+            empty(div_M);
+            // div_M.innerText = part_M;
+            let txt = '';
+            if (part_M.text !== '') {
+                // text_full += 'MAINTENANCE\n' +
+                //     'QUI ?;N SEM;CLIENT;PROJET;FAMILLE ACTIVITE;DETAIL;Temps;Tache programmee ? (non = urgence)\n' +
+                //     part_M.text;
+
+                div_M.parentElement.style.display = 'block';
+                part_M.text += txt;
+                createDownloader('DHA-MAINTENANCES-S' + week + '.csv', part_M.text, div_M);
+            } else {
+                div_M.parentElement.style.display = 'none';
+            }
+            let div_I = document.getElementById('I');
+            empty(div_I);
+            // div_I.innerText = part_I;
+            if (part_I.text !== '') {
+                div_I.parentElement.style.display = 'block';
+                createDownloader('DHA-INTERNES-S' + week + '.csv', part_I, div_I);
+                text_full += 'INTERNE\n' +
+                    'QUI ?;N SEM;CLIENT;PROJET;DETAIL;Temps;Commentaire\n' +
+                    part_I;
+            } else {
+                div_I.parentElement.style.display = 'none';
+
+            }
+            if (part_V !== '' || part_M !== '' || part_I !== '' || part_AV !== '') {
+                div_full.parentElement.style.display = 'block';
+                createDownloader('DHA-FULL-S' + week + '.csv', text_full, div_full);
+            } else {
+                div_full.parentElement.style.display = 'none';
+
+            }
+            // let div_err = document.getElementById('err');
+            // div_err.innerText = text_err;
+            // appendPre('\n\n\n');
         } else {
-            appendPre('No upcoming events found.');
+            // appendPre('No upcoming events found.');
+            return alert('Vous n\'avez rien pour cette semaine dans votre agenda !')
         }
     });
 }
+
+function empty(div) {
+    for (let i = 0; i < div.children.length; i++) {
+        div.removeChild(div.children[i]);
+    }
+}
+
+function parse_family(family) {
+    if (family.match(/MEP|Mise\s?en\s?Production/i)) {
+        return 'Mise en production';
+    } else if (family.match(/Conception/i)) {
+        return 'Conception';
+    } else if (family.match(/Graphisme/i)) {
+        return 'Graphisme';
+    } else if (family.match(/Pilotage\s?de\s?projet|PDP/i)) {
+        return 'Pilotage de projet';
+    } else if (family.match(/Direction|Conseil|[ée]dito/i)) {
+        return 'Direction conseil, technique et éditoriale';
+    } else if (family.match(/Formation/i)) {
+        return 'Formation';
+    } else if (family.match(/Contenus|CM/i)) {
+        return 'Contenus et CM';
+    } else if (family.match(/Maintenance|interventions|PP/i)) {
+        return 'Maintenance et interventions post-projet';
+    }
+}
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+// function parseValue(value) {
+//
+// }
+
 
 /* For a given date, get the ISO week number
  *
@@ -296,17 +582,17 @@ function getDateOfISOWeek(w, y) {
     return ISOweekStart;
 }
 
-function download(filename, text) {
+function createDownloader(filename, text, div) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
+    element.innerText = filename;
+    // element.style.display = 'none';
+    div.appendChild(element);
 
-    element.style.display = 'none';
-    document.body.appendChild(element);
+    // element.click();
 
-    element.click();
-
-    document.body.removeChild(element);
+    // document.body.removeChild(element);
 }
 // var result = getWeekNumber(new Date());
 // document.write('It\'s currently week ' + result[1] + ' of ' + result[0]);
