@@ -2071,7 +2071,7 @@ function listUpcomingEvents(week = false) {
                     '    <Cell ss:StyleID="s55"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
                     '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106056532"><Data ss:Type="String">Commentaire</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s23"/>\n' +
-
+                    emptyCell(33, 21) +
                     // '    <Cell ss:StyleID="s33"/>\n' +
                     // '    <Cell ss:StyleID="s33"/>\n' +
                     // '    <Cell ss:StyleID="s33"/>\n' +
