@@ -32,12 +32,12 @@ function handleClientLoad() {
     let div_M = document.getElementById('M');
     let div_I = document.getElementById('I');
     let text_err = document.getElementById('err');
-    div_full.parentElement.style.display = 'none';
-    div_V.parentElement.style.display = 'none';
-    div_AV.parentElement.style.display = 'none';
-    div_M.parentElement.style.display = 'none';
-    div_I.parentElement.style.display = 'none';
-    text_err.parentElement.style.display = 'none';
+    // div_full.parentElement.style.display = 'none';
+    // div_V.parentElement.style.display = 'none';
+    // div_AV.parentElement.style.display = 'none';
+    // div_M.parentElement.style.display = 'none';
+    // div_I.parentElement.style.display = 'none';
+    // text_err.parentElement.style.display = 'none';
     let acronyme = document.getElementById('acronyme').value;
     // document.getElementById('acronyme').value = 'test';
     // console.log('gapi clien1', gapi);
@@ -51,20 +51,22 @@ function handleClientLoad() {
                 // 'orderBy': 'startTime'
             }).then(function(response) {
                 var events = response.result.items;
-                let email = events[0].creator.email;
-                let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i)
-                if (matchs) {
-                    console.log('match', matchs);
-                }
-                // console.log('ever', events[0].creator.email);
-                if (matchs.length >= 3) {
+                if (events[0] !== undefined && events[0].creator !== undefined && events[0].creator.email !== undefined) {
+                    let email = events[0].creator.email;
+                    let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i)
+                    if (matchs) {
+                        console.log('match', matchs);
+                    }
+                    // console.log('ever', events[0].creator.email);
+                    if (matchs.length >= 3) {
 
-                    document.getElementById('acronyme').value = matchs[1].toUpperCase() + matchs[2].toUpperCase();
+                        document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
+                    }
                 }
             });
             clearInterval(checkClient);
         }
-    }, 3000);
+    }, 500);
     // gapi.client.calendar.events.list({
     //     'calendarId': 'primary',
     //     'showDeleted': false,
@@ -78,8 +80,8 @@ function handleClientLoad() {
     // });
     //
     
-    generateBtn.addEventListener('click', function () {
-
+    generateBtn.addEventListener('click', function (event) {
+        event.preventDefault();
         // if (acronyme === '') {
         //     return alert('l\'acronyme est requis');
         // }
@@ -166,6 +168,12 @@ function handleSignoutClick(event) {
 //     pre.appendChild(textContent);
 // }
 
+
+function replaceForObjectName(name) {
+    name = name.replace(/[^\w]/gm, 'x');
+    return name;
+}
+
 /**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
@@ -220,10 +228,14 @@ function listUpcomingEvents(week = false) {
             }
 
             let part_V = [];
+            let part_V_duration = 0;
             let part_AV = [];
+            let part_AV_duration = 0;
             let part_M = [];
+            let part_M_duration = 0;
             let part_I = [];
-            let text_err = '';
+            let part_I_duration = 0;
+            let div_err = '';
             let text_content = '';
             let text_full = '';
             for (i = 0; i < events.length; i++) {
@@ -256,12 +268,13 @@ function listUpcomingEvents(week = false) {
                     } else {
                         projectDontProccess.push({
                             name: event.summary,
-                            duration: duration
+                            duration: duration,
                         });
+                        console.log('non trier ', explodedText, client_arr);
                         continue;
                     }
                 } else if (explodedText[0] !== undefined && explodedText[1] !== undefined &&
-                    (explodedText[0].trim() === 'AV' || explodedText[0].trim() === 'I')) {
+                    (explodedText[0].trim().toUpperCase() === 'AV' || explodedText[0].trim().toUpperCase() === 'I')) {
                     category = explodedText[0].trim().toUpperCase();
                     let client_arr = explodedText[1].split('_');
                     // objName = explodedText[1].trim().toUpperCase();
@@ -275,9 +288,11 @@ function listUpcomingEvents(week = false) {
                             name: event.summary,
                             duration: duration
                         });
+                        console.log('non trier 2', explodedText, client_arr);
                         continue;
                     }
                 } else {
+                    console.log('non trier 3', explodedText);
                     projectDontProccess.push({
                         name: event.summary,
                         duration: duration
@@ -287,13 +302,14 @@ function listUpcomingEvents(week = false) {
                 // if (family === '' || category === 'AV' || category === 'I') {
                 //     objName = category.toUpperCase() + '-' + client.toUpperCase() + '_' + project.toUpperCase();
                 // } else {
-                objName = category.toUpperCase().replace(' ', '') + '-' + client.toUpperCase().replace(' ', '') + '_' + project.toUpperCase().replace(' ', '') + '-' + family.toUpperCase().replace(' ', '');
+                objName = replaceForObjectName(category) + '-' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '-' + replaceForObjectName(family);
                 // }
                 let description = event.description;
                 let detail = 'SANS';
                 let comment = 'Sans Commentaire';
                 if (description !== undefined) {
-                    let tacheMatches = description.match(/(.*)tache\s?\:\s?\<b\>([^<]*)\<\/b\>(.*)/i);
+                    description = description.replace(new RegExp("&nbsp;", 'g'), ' ');
+                    let tacheMatches = description.match(/(.*)tache\s?\:\s?<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     if (tacheMatches) {
                         console.log('tache match', tacheMatches);
                         description = tacheMatches[1] + tacheMatches[3];
@@ -301,7 +317,7 @@ function listUpcomingEvents(week = false) {
                     } else {
                         detail = 'SANS';
                     }
-                    let commentMatches = description.match(/(.*)Commentaire\s*:\s*\<b\>([^<]*)\<\/b\>(.*)/i);
+                    let commentMatches = description.match(/(.*)Commentaire\s*:\s*<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     console.log('objname', objName);
                     if (category === 'M') {
                         // description = 'detail';
@@ -327,13 +343,40 @@ function listUpcomingEvents(week = false) {
                 console.log('description', description, events);
                 console.log('projobjname', projects[objName]);
                 if (projects[objName] !== undefined) {
-                    projects[objName].duration += duration;
+                    if (projects[objName].detail !== detail && projects[objName].detail !== 'SANS' && detail !== 'SANS' && projects[objName + replaceForObjectName(detail)] === undefined) {
+                        let message = 'Votre intervention : "' + projects[objName].detail + '" est en conflit avec : "' + detail + '" sur le projet ' + parse_category(category) + ' : ' + toTitleCase(project.toLowerCase()) + ' de ' + toTitleCase(client.toLowerCase()) + ' \n';
+                        message += 'Créer deux Tâches Séparé ?';
+                        if (confirm(message)) {
+                            let randStr = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 3);
+                            projects[objName + replaceForObjectName(detail)] = {
+                                category: category.toUpperCase(),
+                                client: capitalizeFirstLetter(client),
+                                project: capitalizeFirstLetter(project),
+                                family: family.toUpperCase(),
+                                detail: detail,
+                                commentaire: comment,
+                                duration: duration
+                            };
+                        } else {
+                            if (confirm('Remplacer : "' + projects[objName].detail + '" Par : "' + detail + '"')) {
+                                projects[objName].detail = detail;
+                            }
+                            projects[objName].duration += duration;
+                        }
+                    } else if (projects[objName + replaceForObjectName(detail)] !== undefined) {
+                        projects[objName + replaceForObjectName(detail)].duration += duration;
+                    } else if (projects[objName].detail === 'SANS') {
+                        projects[objName].detail = detail;
+                        projects[objName].duration += duration;
+                    } else {
+                        projects[objName].duration += duration;
+                    }
                     console.log('add duration');
                 } else {
                     projects[objName] = {
                             category: category.toUpperCase(),
-                            client: capitalizeFirstLetter(client.toLowerCase()),
-                            project: capitalizeFirstLetter(project.toLowerCase()),
+                            client: capitalizeFirstLetter(client),
+                            project: capitalizeFirstLetter(project),
                             family: family.toUpperCase(),
                             detail: detail,
                             commentaire: comment,
@@ -365,32 +408,33 @@ function listUpcomingEvents(week = false) {
                 // console.log('obj ', key, obj.category);
                 switch (obj.category) {
                     case 'V':
-                    case 'v':
+                    // case 'v':
                         console.log('add v');
 
-                        text_content = '<Row ss:AutoFitHeight="0" ss:Height="15.75">\n';
-                        text_content += '<Cell ss:StyleID="s37"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s37"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.client.toUpperCase() + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.project.toUpperCase() + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s128"><Data ss:Type="String">' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s132"><Data ss:Type="String">' + removeBalise(obj.detail) + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s130"><Data ss:Type="Number">' + obj.duration.toString().replace('.', ',') + '</Data></Cell>\n' +
-                            '<Cell ss:StyleID="s132"><Data ss:Type="String">' + removeBalise(obj.commentaire) + '</Data></Cell>\n';
-                        for (let i = 0; i <= 22; i++) {
-                            text_content += '<Cell ss:StyleID="s35"/>\n';
-                        }
-                        text_content += '</Row>\n';
+                        // text_content = '<Row ss:AutoFitHeight="0" ss:Height="15.75">\n';
+                        // text_content += '<Cell ss:StyleID="s37"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s37"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.client.toUpperCase() + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.project.toUpperCase() + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s128"><Data ss:Type="String">' + capitalizeFirstLetter(parse_family(obj.family)) + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s132"><Data ss:Type="String">' + removeBalise(obj.detail) + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s130"><Data ss:Type="Number">' + obj.duration.toString().replace('.', ',') + '</Data></Cell>\n' +
+                        //     '<Cell ss:StyleID="s132"><Data ss:Type="String">' + removeBalise(obj.commentaire) + '</Data></Cell>\n';
+                        // for (let i = 0; i <= 22; i++) {
+                        //     text_content += '<Cell ss:StyleID="s35"/>\n';
+                        // }
+                        // text_content += '</Row>\n';
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
                         //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
                         //     ';detail;' + obj.duration.toString().replace('.', ',') +
                         //     ';commentaire\n';
                         part_V.push(obj);
+                        part_V_duration += obj.duration;
                         // part_V.text += text_content;
                         // part_V.count++;
                         break;
                     case 'M':
-                    case 'm':
+                    // case 'm':
                         console.log('add m');
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
                         //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
@@ -399,45 +443,51 @@ function listUpcomingEvents(week = false) {
                         // part_M.text += text_content;
                         // part_M.count++;
                         part_M.push(obj);
+                        part_M_duration += obj.duration;
                         break;
                     case 'AV':
-                    case 'Av':
-                    case 'av':
-                    case 'aV':
+                    // case 'Av':
+                    // case 'av':
+                    // case 'aV':
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
                         //     ';' + obj.project.toUpperCase() + ';detail;' +
                         //     obj.duration.toString().replace('.', ',') + ';commentaire\n';
                         // part_AV.text += text_content;
                         // part_AV.count++;
                         part_AV.push(obj);
+                        part_AV_duration += obj.duration;
                         console.log('add av');
                         break;
                     case 'I':
-                    case 'i':
+                    // case 'i':
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
                         //     ';' + obj.project.toUpperCase() + ';detail;' +
                         //     obj.duration.toString().replace('.', ',') + ';commentaire\n';
                         // part_I.text += text_content;
                         // part_I.count++;
                         part_I.push(obj);
+                        part_I_duration += obj.duration;
                         console.log('add i');
                         break;
                 }
             }
-            text_err = document.getElementById('err');
+            div_err = document.getElementById('err');
 
             if (projectDontProccess.length > 0) {
-                text_err.parentElement.style.display = 'block';
+                // div_err.parentElement.style.display = 'block';
+                document.getElementById('div_err').classList.remove('d-none');
                 text_content = '';
                 for (let i = 0; i < projectDontProccess.length; i++) {
                     let obj = projectDontProccess[i];
-                    text_content += 'Nom : ' + obj.name + ' Durée : ' + obj.duration + '\n';
+                    text_content += '<div class="col-6 text-danger text-center">Nom : ' + obj.name + ' Durée : ' + obj.duration + 'H</div>';
                 }
                 // text_err = text_content;
                 console.log('text content', text_content);
-                text_err.innerHTML = '<span style="color: red">' + text_content + '</span>';
+                let errMsg = '<span class="text-warning">Votre Projet doit être sous cette forme :</span><br><span class="text-success">V - Client_Projet - MEP (optionnel Pour AV et I)</span>';
+                div_err.innerHTML = '<div class="col-6 text-center">' + errMsg + '</div><br>' + text_content + '';
             } else {
-                text_err.parentElement.style.display = 'none';
+                document.getElementById('div_err').classList.add('d-none');
+                // div_err.parentElement.style.display = 'none';
             }
             console.log('text_v', part_V);
             console.log('part_AV', part_AV);
@@ -516,7 +566,7 @@ function listUpcomingEvents(week = false) {
             //
             // }
             // if (part_V !== '' || part_M !== '' || part_I !== '' || part_AV !== '') {
-                div_full.parentElement.style.display = 'block';
+            //     div_full.parentElement.style.display = 'block';
                 // createDownloader('DHA-FULL-S' + week + '.csv', text_full, div_full);
             // } else {
             //     div_full.parentElement.style.display = 'none';
@@ -1683,7 +1733,7 @@ function listUpcomingEvents(week = false) {
                     '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s19"><Data ss:Type="String">' + parse_family(object.family) + '</Data></Cell>\n' +
+                    '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(object.family) + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="m140462106055528"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
@@ -1749,7 +1799,7 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s41"/>\n' +
                 '    <Cell ss:StyleID="s41"/>\n' +
                 '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_AV.length + ']C:R[-1]C)"><Data ss:Type="Number">0</Data></Cell>\n' +
+                '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_AV.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
                 '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106055448"/>\n' +
                 '   </Row>\n';
 
@@ -1830,7 +1880,7 @@ function listUpcomingEvents(week = false) {
                     '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s45"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s39"><Data ss:Type="String">Détail</Data></Cell>\n' +
+                    '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + object.detail + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s55"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
                     '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106056532"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s23"/>\n' +
@@ -1840,7 +1890,7 @@ function listUpcomingEvents(week = false) {
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24.75">\n' +
                 emptyCell(41, 4) +
                 '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_I.length + ']C:R[-1]C)"><Data ss:Type="Number">3.5</Data></Cell>\n' +
+                '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_I.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
                 '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106055348"/>\n' +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
@@ -1848,7 +1898,7 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s56"><Data ss:Type="String">TOTAL HEURES VENDUES</Data></Cell>\n' +
                      emptyCell(56, 2) +
                 '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (11 + part_V.length) + 'C7+R' + (16 + part_V.length + part_M.length) + 'C7)"><Data\n' +
-                '      ss:Type="Number">33.5</Data></Cell>\n' +
+                '      ss:Type="Number">' + (part_V_duration + part_M_duration) + '</Data></Cell>\n' +
                      emptyCell(58, 4) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="30.75">\n' +
@@ -1858,7 +1908,7 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (11 + part_V.length) + 'C7+R' +
                     (16 + part_V.length + part_M.length) + 'C7+R' + (21 + part_V.length + part_M.length + part_AV.length) +
                     'C6+R' + (26 + part_V.length + part_M.length + part_AV.length + part_I.length) + 'C6)"><Data\n' +
-                '      ss:Type="Number">37</Data></Cell>\n' +
+                '      ss:Type="Number">' + (part_V_duration + part_M_duration + part_I_duration + part_AV_duration) + '</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
@@ -2158,10 +2208,10 @@ function listUpcomingEvents(week = false) {
                 '   <ProtectScenarios>False</ProtectScenarios>\n' +
                 '  </WorksheetOptions>\n' +
                 ' </Worksheet>\n' +
-                '</Workbook>\n'
+                '</Workbook>\n';
 
             createDownloader('DHA-' + acronyme + '-S' + week + '.xml', text_test, div_full);
-
+            document.getElementById('div_DHA').classList.remove('d-none');
 
 
             //END TEST
@@ -2197,6 +2247,20 @@ function empty(div) {
     }
 }
 
+function parse_category(category) {
+    switch (category) {
+        case 'V':
+            return 'vendu';
+        case 'AV':
+            return 'd\'avant vente';
+        case 'M':
+            return 'de maintenance';
+        case 'I':
+            return 'interne';
+    }
+}
+
+
 function parse_family(family) {
     if (family.match(/MEP|Mise\s?en\s?Production/i)) {
         return 'Mise en production';
@@ -2217,7 +2281,15 @@ function parse_family(family) {
     }
 }
 function capitalizeFirstLetter(string) {
+    string = string.toLowerCase();
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function toTitleCase(str) {
+    str = str.toLowerCase();
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }
 // function parseValue(value) {
 //
@@ -2266,12 +2338,15 @@ function getDateOfISOWeek(w, y) {
 }
 
 function createDownloader(filename, text, div) {
-    var element = document.createElement('a');
+    // var element = document.createElement('a');
+    let element = document.getElementById('DHA');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    // element.style.display = 'block';
     element.setAttribute('download', filename);
-    element.innerText = filename;
+    // element.innerText = filename;
+    element.querySelector('#full').innerHTML = filename;
     // element.style.display = 'none';
-    div.appendChild(element);
+    // div.appendChild(element);
 
     // element.click();
 
