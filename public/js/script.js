@@ -1,6 +1,6 @@
 // Client ID and API key from the Developer Console
-var CLIENT_ID = '889910005804-dsb08b9as3lg1ca8vvn726t8cc6946hs.apps.googleusercontent.com';
-var API_KEY = 'AIzaSyBVXv2KFsPEzRtUCHrKOJdaN1avCsvppnk';
+var CLIENT_ID = '889910005804-93lmvk75fa0un1dpd7ju8usqqp1orf2g.apps.googleusercontent.com';
+var API_KEY = 'AIzaSyB46fEogWzK2xwYpV4EPN44B1OmuixoWJ4';
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
@@ -42,43 +42,42 @@ function handleClientLoad() {
     // document.getElementById('acronyme').value = 'test';
     // console.log('gapi clien1', gapi);
     checkClient = window.setInterval(function () {
-        if (gapi.client !== undefined && gapi.client.calendar !== undefined && gapi.client.calendar.events !== undefined) {
-            gapi.client.calendar.events.list({
-                'calendarId': 'primary',
-                'showDeleted': false,
-                'singleEvents': true,
-                'maxResults': 1,
-                // 'orderBy': 'startTime'
-            }).then(function(response) {
-                var events = response.result.items;
-                if (events[0] !== undefined && events[0].creator !== undefined && events[0].creator.email !== undefined) {
-                    let email = events[0].creator.email;
-                    let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i)
-                    if (matchs) {
-                        console.log('match', matchs);
-                    }
-                    // console.log('ever', events[0].creator.email);
-                    if (matchs.length >= 3) {
-
-                        document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
-                    }
+        if (gapi !== undefined && gapi.auth2 !== undefined) {
+            // gapi.client.calendar.events.list({
+            //     'calendarId': 'primary',
+            //     'showDeleted': false,
+            //     'singleEvents': true,
+            //     'maxResults': 1,
+            //     // 'orderBy': 'startTime'
+            // }).then(function(response) {
+            //     var events = response.result.items;
+            //     if (events[0] !== undefined && events[0].creator !== undefined && events[0].creator.email !== undefined) {
+            //
+            //     }
+            // });
+            auth2 = gapi.auth2.getAuthInstance();
+            if (auth2.isSignedIn.get()) {
+                var profile = auth2.currentUser.get().getBasicProfile();
+                // console.log('ID: ' + profile.getId());
+                // console.log('Full Name: ' + profile.getName());
+                // console.log('Given Name: ' + profile.getGivenName());
+                // console.log('Family Name: ' + profile.getFamilyName());
+                // console.log('Image URL: ' + profile.getImageUrl());
+                // console.log('Email: ' + profile.getEmail());
+                let email = profile.getEmail();
+                let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i);
+                if (matchs) {
+//                     console.log('match', matchs);
                 }
-            });
+//                 console.log('ever', email);
+                if (matchs.length >= 3) {
+
+                    document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
+                }
+            }
             clearInterval(checkClient);
         }
     }, 500);
-    // gapi.client.calendar.events.list({
-    //     'calendarId': 'primary',
-    //     'showDeleted': false,
-    //     'singleEvents': true,
-    //     'maxResults': 20,
-    //     'orderBy': 'startTime'
-    // }).then(function(response) {
-    //     var events = response.result.items;
-    //
-    //     console.log('ever', events.creator.email);
-    // });
-    //
     
     generateBtn.addEventListener('click', function (event) {
         event.preventDefault();
@@ -86,7 +85,7 @@ function handleClientLoad() {
         //     return alert('l\'acronyme est requis');
         // }
         let val = weekInput.value;
-        console.log('val', val);
+//         console.log('val', val);
         let isoDate;
         if (val !== '' && parseInt(val) > 0) {
             isoDate = getDateOfISOWeek(val, (new Date()).getFullYear());
@@ -123,7 +122,7 @@ function initClient() {
         authorizeButton.onclick = handleAuthClick;
         signoutButton.onclick = handleSignoutClick;
     }, function(error) {
-        appendPre(JSON.stringify(error, null, 2));
+//         console.log(JSON.stringify(error, null, 2));
     });
 }
 
@@ -193,7 +192,7 @@ function listUpcomingEvents(week = false) {
     week = getWeekNumber((new Date(week)))[1];
     let projects = {};
     let projectDontProccess = [];
-    console.log('gapi clien2', gapi.client);
+//     console.log('gapi clien2', gapi.client);
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
         'timeMin': first,
@@ -205,23 +204,10 @@ function listUpcomingEvents(week = false) {
     }).then(function(response) {
         var events = response.result.items;
         // appendPre('Upcoming events:');
-        console.log('events', events);
+//         console.log('events', events);
         if (events.length > 0) {
-            // let text = 'Déclaration Hebdomadaire d\'Activité (DHA);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     'Nombre d\'heures de congés de la semaine;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     'Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-            //     'QUI ?;N° SEM;CLIENT;PROJET;FAMILLE ACTIVITÉ;DETAIL DE LA TÂCHE ;Heures réellement réalisées;Commentaire sur l\'écart;;;;;;;;;;;;;;;;;;;;;;;';
 
             let acronymeInput = document.getElementById('acronyme');
-            if (acronymeInput.value === '') {
-
-                acronymeInput.value = events.creator.email;
-            }
             let acronyme = acronymeInput.value.trim().toUpperCase();
             if (!acronyme.match(/[A-Z]{3}/)) {
                 return alert('Votre acronyme doit contenir UNIQUEMENT 3 Lettres')
@@ -255,83 +241,98 @@ function listUpcomingEvents(week = false) {
                 let project;
                 let family;
                 let objName;
-                console.log('exploded text', explodedText);
+//                 console.log('exploded text', explodedText);
+//                 console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
                 let duration = (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000);
-                if (explodedText[0] !== undefined && explodedText[1] !== undefined && explodedText[2] !== undefined) {
-                    category = explodedText[0].trim().toUpperCase();
-                    let client_arr = explodedText[1].split('_');
+                if (explodedText[0] !== undefined && explodedText[1] !== undefined && explodedText[2] !== undefined && explodedText[3] !== undefined) {
+                    category = saveData(explodedText[0].trim().toUpperCase());
+                    // let client_arr = explodedText[1].split('_');
+                    // if ((client_arr[0] !== undefined && client_arr[1] !== undefined)) {
+                    client = explodedText[1].trim().toUpperCase();
+                    project = explodedText[2].trim().toUpperCase();
                     // objName = explodedText[1].trim().toUpperCase();
-                    family = explodedText[2].trim().toUpperCase();
-                    if ((client_arr[0] !== undefined && client_arr[1] !== undefined)) {
-                        client = client_arr[0].trim().toUpperCase();
-                        project = client_arr[1].trim().toUpperCase();
-                    } else {
-                        projectDontProccess.push({
-                            name: event.summary,
-                            duration: duration,
-                        });
-                        console.log('non trier ', explodedText, client_arr);
-                        continue;
-                    }
+                    family = explodedText[3].trim().toUpperCase();
+                    // } else {
+                    //     projectDontProccess.push({
+                    //         name: event.summary,
+                    //         duration: duration,
+                    //     });
+                    //     console.log('non trier ', explodedText, client_arr);
+                    //     continue;
+                    // }
                 } else if (explodedText[0] !== undefined && explodedText[1] !== undefined &&
-                    (explodedText[0].trim().toUpperCase() === 'AV' || explodedText[0].trim().toUpperCase() === 'I')) {
+                    ((explodedText[0].trim().toUpperCase() === 'AV') || (explodedText[0].trim().toUpperCase() === 'I' || explodedText[0].trim().toUpperCase() === 'INT') )) {
                     category = explodedText[0].trim().toUpperCase();
-                    let client_arr = explodedText[1].split('_');
+                    // let client_arr = explodedText[1].split('_');
                     // objName = explodedText[1].trim().toUpperCase();
                     // family = explodedText[2].trim().toUpperCase();
                     family = '';
-                    if ((client_arr[0] !== undefined && client_arr[1] !== undefined)) {
-                        client = client_arr[0].trim();
-                        project = client_arr[1].trim();
-                    } else {
+                    // if ((client_arr[1] !== undefined && client_arr[1] !== undefined)) {
+
+                    if ((category === 'I' || category === 'INT') && explodedText[2] === undefined) {
+                        project = explodedText[1].trim();
+                        client = 'Mayflower'
+                    } else if (explodedText[2] === undefined) {
                         projectDontProccess.push({
                             name: event.summary,
                             duration: duration
                         });
-                        console.log('non trier 2', explodedText, client_arr);
                         continue;
+                    } else {
+                        client = explodedText[1].trim();
+                        project = explodedText[2].trim();
                     }
+                    // } else {
+                    //     projectDontProccess.push({
+                    //         name: event.summary,
+                    //         duration: duration
+                    //     });
+                    //     console.log('non trier 2', explodedText, client_arr);
+                    //     continue;
+                    // }
                 } else {
-                    console.log('non trier 3', explodedText);
+//                     console.log('non trier 3', explodedText);
                     projectDontProccess.push({
                         name: event.summary,
                         duration: duration
                     });
                     continue;
                 }
-                // if (family === '' || category === 'AV' || category === 'I') {
-                //     objName = category.toUpperCase() + '-' + client.toUpperCase() + '_' + project.toUpperCase();
-                // } else {
-                objName = replaceForObjectName(category) + '-' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '-' + replaceForObjectName(family);
+                // objName = replaceForObjectName(category) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
+                // if (family !== '' && category !== 'AV' && category !== 'I') {
+                //      objName += '_' + replaceForObjectName(family);
+                // }
+                // if () else {
+                //     objName = replaceForObjectName(category) + '-' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + ;
                 // }
                 let description = event.description;
                 let detail = 'SANS';
                 let comment = 'Sans Commentaire';
                 if (description !== undefined) {
                     description = description.replace(new RegExp("&nbsp;", 'g'), ' ');
-                    let tacheMatches = description.match(/(.*)tache\s?\:\s?<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
+                    let tacheMatches = description.match(/(.*)t[a|â]ches?\s?\:?\s?<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     if (tacheMatches) {
-                        console.log('tache match', tacheMatches);
+//                         console.log('tache match', tacheMatches);
                         description = tacheMatches[1] + tacheMatches[3];
                         detail = tacheMatches[2];
                     } else {
                         detail = 'SANS';
                     }
-                    let commentMatches = description.match(/(.*)Commentaire\s*:\s*<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
-                    console.log('objname', objName);
+                    let commentMatches = description.match(/(.*)Commentaires?\s*:?\s*<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
+                    // console.log('objname', objName);
                     if (category === 'M') {
                         // description = 'detail';
                         let urgentMatches = description.match(/(.*)\<b\>URGENT\<\/b\>(.*)/i);
                         if (urgentMatches) {
                             comment = 'NON';
                             description = urgentMatches[1] + urgentMatches[3];
-                            console.log('urgent match');
+//                             console.log('urgent match');
                         } else {
-                            console.log('urgent dont match', );
+//                             console.log('urgent dont match', );
                             comment = 'OUI';
                         }
                     } else if (commentMatches) {
-                        console.log('comment match', commentMatches);
+//                         console.log('comment match', commentMatches);
                         description = commentMatches[1] + commentMatches[3];
                         comment = commentMatches[2];
                     } else {
@@ -340,38 +341,44 @@ function listUpcomingEvents(week = false) {
                 } else if (category === 'M') {
                     comment = 'OUI';
                 }
-                console.log('description', description, events);
-                console.log('projobjname', projects[objName]);
+//                 console.log('description', description, events);
+//                 console.log('projobjname', projects[objName]);
+                objName = replaceForObjectName(category) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
+                if (family !== '' && category !== 'AV' && category !== 'I') {
+                    objName += '_' + replaceForObjectName(family);
+                }
                 if (projects[objName] !== undefined) {
-                    if (projects[objName].detail !== detail && projects[objName].detail !== 'SANS' && detail !== 'SANS' && projects[objName + replaceForObjectName(detail)] === undefined) {
-                        let message = 'Votre intervention : "' + projects[objName].detail + '" est en conflit avec : "' + detail + '" sur le projet ' + parse_category(category) + ' : ' + toTitleCase(project.toLowerCase()) + ' de ' + toTitleCase(client.toLowerCase()) + ' \n';
-                        message += 'Créer deux Tâches Séparé ?';
-                        if (confirm(message)) {
-                            let randStr = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 3);
-                            projects[objName + replaceForObjectName(detail)] = {
-                                category: category.toUpperCase(),
-                                client: capitalizeFirstLetter(client),
-                                project: capitalizeFirstLetter(project),
-                                family: family.toUpperCase(),
-                                detail: detail,
-                                commentaire: comment,
-                                duration: duration
-                            };
-                        } else {
-                            if (confirm('Remplacer : "' + projects[objName].detail + '" Par : "' + detail + '"')) {
-                                projects[objName].detail = detail;
-                            }
-                            projects[objName].duration += duration;
-                        }
-                    } else if (projects[objName + replaceForObjectName(detail)] !== undefined) {
-                        projects[objName + replaceForObjectName(detail)].duration += duration;
-                    } else if (projects[objName].detail === 'SANS') {
-                        projects[objName].detail = detail;
-                        projects[objName].duration += duration;
-                    } else {
-                        projects[objName].duration += duration;
-                    }
-                    console.log('add duration');
+                    projects[objName].duration += duration;
+//                     console.log('proj duration', projects[objName].duration);
+//                     console.log(' duration', duration);
+                    // if (projects[objName].detail !== detail && projects[objName].detail !== 'SANS' && detail !== 'SANS' && projects[objName + replaceForObjectName(detail)] === undefined) {
+                    //     let message = 'Votre intervention : "' + projects[objName].detail + '" est en conflit avec : "' + detail + '" sur le projet ' + parse_category(category) + ' : ' + toTitleCase(project.toLowerCase()) + ' de ' + toTitleCase(client.toLowerCase()) + ' \n';
+                    //     message += 'Créer deux Tâches Séparé ?';
+                    //     if (confirm(message)) {
+                    //         projects[objName + replaceForObjectName(detail)] = {
+                    //             category: category.toUpperCase(),
+                    //             client: capitalizeFirstLetter(client),
+                    //             project: capitalizeFirstLetter(project),
+                    //             family: family.toUpperCase(),
+                    //             detail: detail,
+                    //             commentaire: comment,
+                    //             duration: duration
+                    //         };
+                    //     } else {
+                    //         if (confirm('Remplacer : "' + projects[objName].detail + '" Par : "' + detail + '"')) {
+                    //             projects[objName].detail = detail;
+                    //         }
+                    //         projects[objName].duration += duration;
+                    //     }
+                    // } else if (projects[objName + replaceForObjectName(detail)] !== undefined) {
+                    //     projects[objName + replaceForObjectName(detail)].duration += duration;
+                    // } else if (projects[objName].detail === 'SANS') {
+                    //     projects[objName].detail = detail;
+                    //     projects[objName].duration += duration;
+                    // } else {
+                    //     projects[objName].duration += duration;
+                    // }
+                    // console.log('add duration');
                 } else {
                     projects[objName] = {
                             category: category.toUpperCase(),
@@ -382,7 +389,8 @@ function listUpcomingEvents(week = false) {
                             commentaire: comment,
                             duration: duration
                     };
-                    console.log('add proj', objName);
+//                     console.log('add proj', objName);
+//                     console.log('duration', duration);
                 }
 
                 // text_content += 'AGU;S' + week + ';' + client + ';' + project + ';' + family + ';detail;' + duration.toString().replace('.', ',') + ';commentaire;;;;;;;;;;;;;;;;;;;;;;;\n';
@@ -408,8 +416,9 @@ function listUpcomingEvents(week = false) {
                 // console.log('obj ', key, obj.category);
                 switch (obj.category) {
                     case 'V':
+                    // case 'PRO':
                     // case 'v':
-                        console.log('add v');
+//                         console.log('add v');
 
                         // text_content = '<Row ss:AutoFitHeight="0" ss:Height="15.75">\n';
                         // text_content += '<Cell ss:StyleID="s37"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
@@ -435,7 +444,7 @@ function listUpcomingEvents(week = false) {
                         break;
                     case 'M':
                     // case 'm':
-                        console.log('add m');
+//                         console.log('add m');
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
                         //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
                         //     ';detail;' + obj.duration.toString().replace('.', ',') +
@@ -456,9 +465,10 @@ function listUpcomingEvents(week = false) {
                         // part_AV.count++;
                         part_AV.push(obj);
                         part_AV_duration += obj.duration;
-                        console.log('add av');
+//                         console.log('add av');
                         break;
                     case 'I':
+                    // case 'INT':
                     // case 'i':
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
                         //     ';' + obj.project.toUpperCase() + ';detail;' +
@@ -467,7 +477,7 @@ function listUpcomingEvents(week = false) {
                         // part_I.count++;
                         part_I.push(obj);
                         part_I_duration += obj.duration;
-                        console.log('add i');
+//                         console.log('add i');
                         break;
                 }
             }
@@ -479,20 +489,19 @@ function listUpcomingEvents(week = false) {
                 text_content = '';
                 for (let i = 0; i < projectDontProccess.length; i++) {
                     let obj = projectDontProccess[i];
-                    text_content += '<div class="col-6 text-danger text-center">Nom : ' + obj.name + ' Durée : ' + obj.duration + 'H</div>';
+                    text_content += '<div class="col-12 text-danger ">Nom : ' + obj.name + ' Durée : ' + obj.duration + 'H</div>';
                 }
                 // text_err = text_content;
-                console.log('text content', text_content);
-                let errMsg = '<span class="text-warning">Votre Projet doit être sous cette forme :</span><br><span class="text-success">V - Client_Projet - MEP (optionnel Pour AV et I)</span>';
-                div_err.innerHTML = '<div class="col-6 text-center">' + errMsg + '</div><br>' + text_content + '';
+//                 console.log('text content', text_content);
+                div_err.innerHTML = '' + text_content + '';
             } else {
                 document.getElementById('div_err').classList.add('d-none');
                 // div_err.parentElement.style.display = 'none';
             }
-            console.log('text_v', part_V);
-            console.log('part_AV', part_AV);
-            console.log('part_I', part_I);
-            console.log('part_M', part_M);
+//             console.log('text_v', part_V);
+//             console.log('part_AV', part_AV);
+//             console.log('part_I', part_I);
+//             console.log('part_M', part_M);
             let div_full = document.getElementById('full');
             empty(div_full);
 
@@ -572,1024 +581,7 @@ function listUpcomingEvents(week = false) {
             //     div_full.parentElement.style.display = 'none';
             //
             // }
-            let text_test = '<?xml version="1.0"?>\n' +
-                '<?mso-application progid="Excel.Sheet"?>\n' +
-                '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n' +
-                ' xmlns:o="urn:schemas-microsoft-com:office:office"\n' +
-                ' xmlns:x="urn:schemas-microsoft-com:office:excel"\n' +
-                ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\n' +
-                ' xmlns:html="http://www.w3.org/TR/REC-html40">\n' +
-                ' <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">\n' +
-                '  <LastAuthor>Antoine Guerra</LastAuthor>\n' +
-                '  <Created>2019-01-25T15:49:35Z</Created>\n' +
-                '  <LastSaved>2019-01-25T15:49:35Z</LastSaved>\n' +
-                '  <Version>16.00</Version>\n' +
-                ' </DocumentProperties>\n' +
-                ' <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">\n' +
-                '  <AllowPNG/>\n' +
-                ' </OfficeDocumentSettings>\n' +
-                ' <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">\n' +
-                '  <WindowHeight>15540</WindowHeight>\n' +
-                '  <WindowWidth>25600</WindowWidth>\n' +
-                '  <WindowTopX>32767</WindowTopX>\n' +
-                '  <WindowTopY>460</WindowTopY>\n' +
-                '  <ProtectStructure>False</ProtectStructure>\n' +
-                '  <ProtectWindows>False</ProtectWindows>\n' +
-                ' </ExcelWorkbook>\n' +
-                ' <Styles>\n' +
-                '  <Style ss:ID="Default" ss:Name="Normal">\n' +
-                '   <Alignment ss:Vertical="Bottom"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <Interior/>\n' +
-                '   <NumberFormat/>\n' +
-                '   <Protection/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056512">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056532">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056552">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056572">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056592">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056612">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056632">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056192">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056212">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056232">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056252">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056272">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056292">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106056312">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024352">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024372">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024392">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024412">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024432">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024452">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024472">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024492">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024512">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106024532">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055328">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055348">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055368">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055388">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055408">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055428">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055448">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055468">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055488">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055508">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055528">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055548">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055568">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055588">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055608">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="m140462106055628">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s15">\n' +
-                '   <Alignment ss:Vertical="Bottom"/>\n' +
-                '   <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s16">\n' +
-                '   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s17">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="22" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s18">\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s19">\n' +
-                '   <Alignment ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s20">\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="11" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s21">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s22">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="14" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s23">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="8" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s24">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#FF9300" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s25">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#FF9300" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s26">\n' +
-                '   <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s27">\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <Interior ss:Color="#FF9300" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s28">\n' +
-                '   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s29">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#9BBB59" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s30">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#9BBB59" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s31">\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <Interior ss:Color="#9BBB59" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s32">\n' +
-                '   <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s33">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s34">\n' +
-                '   <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s35">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s36">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#3F3F3F"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s37">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s38">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <Interior ss:Color="#C2D69B" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s39">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s40">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s41">\n' +
-                '   <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s42">\n' +
-                '   <Alignment ss:Horizontal="Right" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s43">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s44">\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <Interior ss:Color="#9BBB59" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s45">\n' +
-                '   <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s46">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s47">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s48">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s49">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#B2A1C7" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s50">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#B2A1C7" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s51">\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <Interior ss:Color="#B2A1C7" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s52">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <Interior ss:Color="#CCC0D9" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s53">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#0080FF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s54">\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <Interior ss:Color="#0080FF" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s55">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders>\n' +
-                '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"\n' +
-                '     ss:Color="#000000"/>\n' +
-                '   </Borders>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#FFFFFF"/>\n' +
-                '   <Interior ss:Color="#8DB3E2" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s56">\n' +
-                '   <Alignment ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="16" ss:Color="#000000" ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#F2F2F2" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s57">\n' +
-                '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="16" ss:Color="#000000"\n' +
-                '    ss:Bold="1"/>\n' +
-                '   <Interior ss:Color="#F2F2F2" ss:Pattern="Solid"/>\n' +
-                '   <NumberFormat ss:Format="0.0"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s58">\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Calibri" ss:Size="12" ss:Color="#000000"/>\n' +
-                '   <Interior ss:Color="#F2F2F2" ss:Pattern="Solid"/>\n' +
-                '  </Style>\n' +
-                '  <Style ss:ID="s70">\n' +
-                '   <Alignment ss:Vertical="Center" ss:WrapText="1"/>\n' +
-                '   <Borders/>\n' +
-                '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
-                '  </Style>\n' +
-                ' </Styles>\n' +
+            let text_test = xmlWorkBook + xmlStyle +
                 ' <Worksheet ss:Name="DHA">\n' +
                 '  <Table ss:ExpandedColumnCount="31" ss:ExpandedRowCount="1000" x:FullColumns="1"\n' +
                 '   x:FullRows="1" ss:StyleID="s15" ss:DefaultColumnWidth="67"\n' +
@@ -1613,42 +605,33 @@ function listUpcomingEvents(week = false) {
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
                 '    <Cell ss:StyleID="s24"><Data ss:Type="String">Nombre d\'heures de congés de la semaine</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s25"/>\n' +
-                '    <Cell ss:StyleID="s25"/>\n' +
-                '    <Cell ss:StyleID="s27"/>\n' +
-                '    <Cell ss:StyleID="s27"/>\n' +
-                '    <Cell ss:StyleID="s27"/>\n' +
-                '    <Cell ss:StyleID="s27"/>\n' +
-                '    <Cell ss:StyleID="s27"/>\n' +
+                emptyCell(25, 2) +
+                emptyCell(27, 5) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                '    <Cell ss:StyleID="s20"/>\n' +
-                '    <Cell ss:StyleID="s20"/>\n' +
+                emptyCell(20, 2) +
                 emptyCell(22, 25) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                '    <Cell ss:StyleID="s20"/>\n' +
-                '    <Cell ss:StyleID="s20"/>\n' +
+                // '    <Cell ss:StyleID="s20"/>\n' +
+                // '    <Cell ss:StyleID="s20"/>\n' +
+                emptyCell(20, 2) +
                 emptyCell(22, 5) +
                 '    <Cell ss:StyleID="s23"/>\n' +
                 emptyCell(22, 18) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                '    <Cell ss:StyleID="s20"/>\n' +
-                '    <Cell ss:StyleID="s20"/>\n' +
+                // '    <Cell ss:StyleID="s20"/>\n' +
+                // '    <Cell ss:StyleID="s20"/>\n' +
+                emptyCell(20, 2) +
                 emptyCell(22, 25) +
                 '   </Row>\n';
             if (part_V.length > 0) {
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                     '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                     '    <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !)</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s30"/>\n' +
-                    '    <Cell ss:StyleID="s30"/>\n' +
-                    '    <Cell ss:StyleID="s31"/>\n' +
-                    '    <Cell ss:StyleID="s31"/>\n' +
-                    '    <Cell ss:StyleID="s31"/>\n' +
-                    '    <Cell ss:StyleID="s31"/>\n' +
-                    '    <Cell ss:StyleID="s31"/>\n' +
+                    emptyCell(30, 2) +
+                    emptyCell(31, 5) +
                     '   </Row>\n';
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                     '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056232"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -1672,23 +655,20 @@ function listUpcomingEvents(week = false) {
                 for (let i = 0; i < part_V.length; i++) {
                     let object = part_V[i];
                     text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                        '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(object.family) + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
-                        '    <Cell ss:StyleID="s23"/>\n' +
+                        acronymeCell(acronyme.trim()) +
+                        weekCell(week) +
+                        clientCell(object.client) +
+                        projectCell(object.project) +
+                        familyCell(object.family) +
+                        detailCell(removeBalise(object.detail)) +
+                        durationCell(object.duration) +
+                        commentCell(removeBalise(object.commentaire)) +
+                        emptyCell(23, 1) +
                         emptyCell(33, 21) +
                         '   </Row>\n';
                 }
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
-                    '    <Cell ss:StyleID="s41"/>\n' +
-                    '    <Cell ss:StyleID="s41"/>\n' +
-                    '    <Cell ss:StyleID="s41"/>\n' +
-                    '    <Cell ss:StyleID="s41"/>\n' +
+                    emptyCell(41, 4) +
                     '    <Cell ss:StyleID="s42"/>\n' +
                     '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_V.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
@@ -1701,15 +681,10 @@ function listUpcomingEvents(week = false) {
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
                 '    <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé en maintenance (temps passé = temps déduit des contrats de maintenance)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s29"/>\n' +
-                '    <Cell ss:StyleID="s29"/>\n' +
-                '    <Cell ss:StyleID="s44"/>\n' +
-                '    <Cell ss:StyleID="s44"/>\n' +
-                '    <Cell ss:StyleID="s44"/>\n' +
-                '    <Cell ss:StyleID="s44"/>\n' +
-                '    <Cell ss:StyleID="s44"/>\n' +
+                emptyCell(29, 3) +
+                emptyCell(44, 4) +
+
                 '   </Row>\n' +
-                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75" ss:Span="1"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106055548"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106055568"><Data ss:Type="String">N° SEM</Data></Cell>\n' +
@@ -1729,23 +704,32 @@ function listUpcomingEvents(week = false) {
             for (let i = 0; i < part_M.length; i++) {
                 let object = part_M[i];
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(object.family) + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(object.family) + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
+                    acronymeCell(acronyme.trim()) +
+                    weekCell(week) +
+                    clientCell(object.client) +
+                    projectCell(object.project) +
+                    familyCell(object.family) +
+                    detailCell(removeBalise(object.detail)) +
+                    durationCell(object.duration) +
+                    // commentCell(removeBalise(object.commentaire)) +
                     '    <Cell ss:StyleID="m140462106055528"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s23"/>\n' +
                     emptyCell(33, 21) +
                     '   </Row>\n';
             }
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
-                '    <Cell ss:StyleID="s41"/>\n' +
-                '    <Cell ss:StyleID="s41"/>\n' +
-                '    <Cell ss:StyleID="s41"/>\n' +
-                '    <Cell ss:StyleID="s41"/>\n' +
+                    emptyCell(41, 4) +
+                // '    <Cell ss:StyleID="s41"/>\n' +
+                // '    <Cell ss:StyleID="s41"/>\n' +
+                // '    <Cell ss:StyleID="s41"/>\n' +
+                // '    <Cell ss:StyleID="s41"/>\n' +
                 '    <Cell ss:StyleID="s42"/>\n' +
                 '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_M.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
@@ -1759,11 +743,12 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s49"><Data ss:Type="String">Temps passé en avant-vente</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s50"/>\n' +
                 '    <Cell ss:StyleID="s50"/>\n' +
-                '    <Cell ss:StyleID="s51"/>\n' +
-                '    <Cell ss:StyleID="s51"/>\n' +
-                '    <Cell ss:StyleID="s51"/>\n' +
-                '    <Cell ss:StyleID="s51"/>\n' +
-                '    <Cell ss:StyleID="s51"/>\n' +
+                    emptyCell(51, 5) +
+                // '    <Cell ss:StyleID="s51"/>\n' +
+                // '    <Cell ss:StyleID="s51"/>\n' +
+                // '    <Cell ss:StyleID="s51"/>\n' +
+                // '    <Cell ss:StyleID="s51"/>\n' +
+                // '    <Cell ss:StyleID="s51"/>\n' +
                 '   </Row>\n';
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -1783,12 +768,18 @@ function listUpcomingEvents(week = false) {
             for (let i = 0; i < part_AV.length; i++) {
                 let object = part_AV[i];
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim().toUpperCase() + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s52"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim().toUpperCase() + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s52"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
+                    acronymeCell(acronyme.trim()) +
+                    weekCell(week) +
+                    clientCell(object.client) +
+                    projectCell(object.project) +
+                    detailCell(removeBalise(object.detail)) +
+                    durationCell(object.duration) +
                     '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106055528"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
                     emptyCell(33, 21) +
                     '   </Row>\n';
@@ -1808,11 +799,12 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s53"><Data ss:Type="String">Temps passé sur des projets Mayflower (site internet, marque…)</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s53"/>\n' +
                 '    <Cell ss:StyleID="s53"/>\n' +
-                '    <Cell ss:StyleID="s54"/>\n' +
-                '    <Cell ss:StyleID="s54"/>\n' +
-                '    <Cell ss:StyleID="s54"/>\n' +
-                '    <Cell ss:StyleID="s54"/>\n' +
-                '    <Cell ss:StyleID="s54"/>\n' +
+                    emptyCell(54, 5) +
+                // '    <Cell ss:StyleID="s54"/>\n' +
+                // '    <Cell ss:StyleID="s54"/>\n' +
+                // '    <Cell ss:StyleID="s54"/>\n' +
+                // '    <Cell ss:StyleID="s54"/>\n' +
+                // '    <Cell ss:StyleID="s54"/>\n' +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -1823,65 +815,27 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056552"><Data ss:Type="String">Temps passé</Data></Cell>\n' +
                 '    <Cell ss:MergeAcross="1" ss:MergeDown="1" ss:StyleID="m140462106056612"><Data ss:Type="String">Commentaire </Data></Cell>\n' +
                 '    <Cell ss:StyleID="s18"/>\n' +
-                emptyCell(33, 21) +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
+                    emptyCell(33, 21) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
                 '    <Cell ss:Index="9" ss:StyleID="s18"/>\n' +
-                emptyCell(33, 21) +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
-                // '    <Cell ss:StyleID="s33"/>\n' +
+                    emptyCell(33, 21) +
                 '   </Row>\n';
             for (let i = 0; i < part_I.length; i++) {
                 let object = part_I[i];
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s45"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + object.detail + '</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s55"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s45"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + object.detail + '</Data></Cell>\n' +
+                    // '    <Cell ss:StyleID="s55"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
+                    acronymeCell(acronyme.trim()) +
+                    weekCell(week) +
+                    clientCell(object.client) +
+                    projectCell(object.project) +
+                    detailCell(removeBalise(object.detail)) +
+                    durationCell(object.duration) +
                     '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106056532"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s23"/>\n' +
                     emptyCell(33, 21) +
@@ -1971,218 +925,47 @@ function listUpcomingEvents(week = false) {
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s16"><Data ss:Type="String">Famille d\'activités</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s16"><Data ss:Type="String">Exemples</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
+                    emptyCell(18, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Direction conseil, technique et éditoriale</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches d\'audit, benchmarmark, réalisation de recommandations, définition de plans de com, de stratégies éditoriales, de choix techniques…</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
+                    emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Pilotage de projet</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les réunions projets, les tâches liées au suivi, les briefs, le pilotage de l\'équipe interne ou des prestataires, les points téléphoniques client, les reportings…et les livrables associés (compte-rendus, cadrage…)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
+                    emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Conception</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Tous les brainstormings, zonings, le développement technique du projet, les recherches de modules techniques, le SEO, les  chemins de fer,  storyboards… et les livrables associés (specs, prés des zonings…)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
+                    emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Graphisme</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes la veille graphique, la conception graphique, les chartes graphiques, création de logos, retouche d\'image, mise en page, création de pictos, infographies…et les livrables associés (maquettes, moodboards…)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
+                    emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Mise en production</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches liées à la mise en production comme les recettes, changements de DNS, déploiements, déclaration Cnil, test d\'email, repo GIT….</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
+                    emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="61.5">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Formation</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Tout ce qui est production de document de formation, formation en présentiel, assistance téléphonique…</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
-                '    <Cell ss:StyleID="s21"/>\n' +
+                    emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s26"><Data ss:Type="String">Contenus et CM</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s28"><Data ss:Type="String">Tout ce qui est naming, travail sur du contenu (accroches, textes…), community management, insertion de contenu dans le back-office, recherche de visuel pour des articles… et les livrables associés</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
-                '    <Cell ss:StyleID="s18"/>\n' +
+                    emptyCell(18, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="54.75">\n' +
                 '    <Cell ss:StyleID="s32"><Data ss:Type="String">Maintenance et interventions post-projet</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s26"><Data ss:Type="String">Tout ce qui est maintenance applicative, maintenance évolutive, gestion des urgences mais aussi tout ce qui concerne les interventions hors période de garantie</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
-                '    <Cell ss:StyleID="s32"/>\n' +
+                    emptyCell(32, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75" ss:Span="779"/>\n' +
                 '  </Table>\n' +
@@ -2210,7 +993,7 @@ function listUpcomingEvents(week = false) {
                 ' </Worksheet>\n' +
                 '</Workbook>\n';
 
-            createDownloader('DHA-' + acronyme + '-S' + week + '.xml', text_test, div_full);
+            createDownloader('DHA-' + acronyme + '-S' + week + '.xml', text_test);
             document.getElementById('div_DHA').classList.remove('d-none');
 
 
@@ -2320,7 +1103,7 @@ function getWeekNumber(d) {
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
     // Get first day of year
     var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-    console.log('year start', yearStart);
+//     console.log('year start', yearStart);
     // Calculate full weeks to nearest Thursday
     var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
     // Return array of year and week number
@@ -2337,7 +1120,7 @@ function getDateOfISOWeek(w, y) {
     return ISOweekStart;
 }
 
-function createDownloader(filename, text, div) {
+function createDownloader(filename, text) {
     // var element = document.createElement('a');
     let element = document.getElementById('DHA');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -2345,6 +1128,7 @@ function createDownloader(filename, text, div) {
     element.setAttribute('download', filename);
     // element.innerText = filename;
     element.querySelector('#full').innerHTML = filename;
+    element.click();
     // element.style.display = 'none';
     // div.appendChild(element);
 
@@ -2365,5 +1149,61 @@ function removeBalise(text) {
     // console.log('text lala', text.replace(/<(?:.|\n)*?>/gm, ''));
     return text.replace(/<(?:.|\n)*?>/gm, '');;
 }
+
+function saveData(data) {
+    data = data.toUpperCase().trim();
+    switch (data) {
+        case 'PRO':
+        case 'VENDU':
+        case 'VENDUS':
+        case 'PROJET':
+        case 'PROJETS':
+            return 'V';
+
+        case 'INT':
+        case 'INTERNE':
+            return 'I';
+
+        case 'AVANT VENTE':
+        case 'AVANT VENTES':
+        case 'AVANTS VENTES':
+        case 'AVANTS VENTE':
+            return 'AV';
+
+        case 'MAINT':
+        case 'MAINTENANCE':
+            return 'M';
+
+        default:
+            return data;
+    }
+}
+
+function acronymeCell(acronyme) {
+    return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n';
+}
+function weekCell(week) {
+    return '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n';
+}
+function clientCell(client) {
+    return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + client + '</Data></Cell>\n';
+}
+function projectCell(project) {
+    return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + project + '</Data></Cell>\n';
+}
+function familyCell(family) {
+    return '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(family) + '</Data></Cell>\n';
+}
+function detailCell(detail) {
+    return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(detail) + '</Data></Cell>\n';
+}
+function durationCell(duration) {
+    return '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + duration + '</Data></Cell>\n';
+}
+function commentCell(comment) {
+    return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(comment) + '</Data></Cell>\n';
+}
+
+
 // var result = getWeekNumber(new Date());
 // document.write('It\'s currently week ' + result[1] + ' of ' + result[0]);
