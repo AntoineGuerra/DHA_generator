@@ -67,9 +67,9 @@ function handleClientLoad() {
                 let email = profile.getEmail();
                 let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i);
                 if (matchs) {
-//                     console.log('match', matchs);
+                     console.log('match', matchs);
                 }
-//                 console.log('ever', email);
+                 console.log('ever', email);
                 if (matchs.length >= 3) {
 
                     document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
@@ -85,7 +85,7 @@ function handleClientLoad() {
         //     return alert('l\'acronyme est requis');
         // }
         let val = weekInput.value;
-//         console.log('val', val);
+         console.log('val', val);
         let isoDate;
         if (val !== '' && parseInt(val) > 0) {
             isoDate = getDateOfISOWeek(val, (new Date()).getFullYear());
@@ -122,7 +122,7 @@ function initClient() {
         authorizeButton.onclick = handleAuthClick;
         signoutButton.onclick = handleSignoutClick;
     }, function(error) {
-//         console.log(JSON.stringify(error, null, 2));
+         console.log(JSON.stringify(error, null, 2));
     });
 }
 
@@ -192,7 +192,7 @@ function listUpcomingEvents(week = false) {
     week = getWeekNumber((new Date(week)))[1];
     let projects = {};
     let projectDontProccess = [];
-//     console.log('gapi clien2', gapi.client);
+     console.log('gapi clien2', gapi.client);
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
         'timeMin': first,
@@ -204,7 +204,7 @@ function listUpcomingEvents(week = false) {
     }).then(function(response) {
         var events = response.result.items;
         // appendPre('Upcoming events:');
-//         console.log('events', events);
+         console.log('events', events);
         if (events.length > 0) {
 
             let acronymeInput = document.getElementById('acronyme');
@@ -241,8 +241,8 @@ function listUpcomingEvents(week = false) {
                 let project;
                 let family;
                 let objName;
-//                 console.log('exploded text', explodedText);
-//                 console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
+                 console.log('exploded text', explodedText);
+                 console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
                 let duration = (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000);
                 if (explodedText[0] !== undefined && explodedText[1] !== undefined && explodedText[2] !== undefined && explodedText[3] !== undefined) {
                     category = saveData(explodedText[0].trim().toUpperCase());
@@ -275,7 +275,8 @@ function listUpcomingEvents(week = false) {
                     } else if (explodedText[2] === undefined) {
                         projectDontProccess.push({
                             name: event.summary,
-                            duration: duration
+                            duration: duration,
+                            link: event.htmlLink,
                         });
                         continue;
                     } else {
@@ -291,10 +292,11 @@ function listUpcomingEvents(week = false) {
                     //     continue;
                     // }
                 } else {
-//                     console.log('non trier 3', explodedText);
+                     console.log('non trier 3', explodedText);
                     projectDontProccess.push({
                         name: event.summary,
-                        duration: duration
+                        duration: duration,
+                        link: event.htmlLink,
                     });
                     continue;
                 }
@@ -312,7 +314,7 @@ function listUpcomingEvents(week = false) {
                     description = description.replace(new RegExp("&nbsp;", 'g'), ' ');
                     let tacheMatches = description.match(/(.*)t[a|â]ches?\s?\:?\s?<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     if (tacheMatches) {
-//                         console.log('tache match', tacheMatches);
+                         console.log('tache match', tacheMatches);
                         description = tacheMatches[1] + tacheMatches[3];
                         detail = tacheMatches[2];
                     } else {
@@ -326,13 +328,13 @@ function listUpcomingEvents(week = false) {
                         if (urgentMatches) {
                             comment = 'NON';
                             description = urgentMatches[1] + urgentMatches[3];
-//                             console.log('urgent match');
+                             console.log('urgent match');
                         } else {
-//                             console.log('urgent dont match', );
+                             console.log('urgent dont match', );
                             comment = 'OUI';
                         }
                     } else if (commentMatches) {
-//                         console.log('comment match', commentMatches);
+                         console.log('comment match', commentMatches);
                         description = commentMatches[1] + commentMatches[3];
                         comment = commentMatches[2];
                     } else {
@@ -341,47 +343,18 @@ function listUpcomingEvents(week = false) {
                 } else if (category === 'M') {
                     comment = 'OUI';
                 }
-//                 console.log('description', description, events);
-//                 console.log('projobjname', projects[objName]);
-                objName = replaceForObjectName(category) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
+                 console.log('description', description, events);
+                objName = replaceForObjectName(saveData(category)) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
                 if (family !== '' && category !== 'AV' && category !== 'I') {
                     objName += '_' + replaceForObjectName(family);
                 }
                 if (projects[objName] !== undefined) {
                     projects[objName].duration += duration;
-//                     console.log('proj duration', projects[objName].duration);
-//                     console.log(' duration', duration);
-                    // if (projects[objName].detail !== detail && projects[objName].detail !== 'SANS' && detail !== 'SANS' && projects[objName + replaceForObjectName(detail)] === undefined) {
-                    //     let message = 'Votre intervention : "' + projects[objName].detail + '" est en conflit avec : "' + detail + '" sur le projet ' + parse_category(category) + ' : ' + toTitleCase(project.toLowerCase()) + ' de ' + toTitleCase(client.toLowerCase()) + ' \n';
-                    //     message += 'Créer deux Tâches Séparé ?';
-                    //     if (confirm(message)) {
-                    //         projects[objName + replaceForObjectName(detail)] = {
-                    //             category: category.toUpperCase(),
-                    //             client: capitalizeFirstLetter(client),
-                    //             project: capitalizeFirstLetter(project),
-                    //             family: family.toUpperCase(),
-                    //             detail: detail,
-                    //             commentaire: comment,
-                    //             duration: duration
-                    //         };
-                    //     } else {
-                    //         if (confirm('Remplacer : "' + projects[objName].detail + '" Par : "' + detail + '"')) {
-                    //             projects[objName].detail = detail;
-                    //         }
-                    //         projects[objName].duration += duration;
-                    //     }
-                    // } else if (projects[objName + replaceForObjectName(detail)] !== undefined) {
-                    //     projects[objName + replaceForObjectName(detail)].duration += duration;
-                    // } else if (projects[objName].detail === 'SANS') {
-                    //     projects[objName].detail = detail;
-                    //     projects[objName].duration += duration;
-                    // } else {
-                    //     projects[objName].duration += duration;
-                    // }
-                    // console.log('add duration');
+                     console.log('proj duration', projects[objName].duration);
+                     console.log(' duration', duration);
                 } else {
                     projects[objName] = {
-                            category: category.toUpperCase(),
+                            category: saveData(category.toUpperCase()),
                             client: capitalizeFirstLetter(client),
                             project: capitalizeFirstLetter(project),
                             family: family.toUpperCase(),
@@ -389,8 +362,8 @@ function listUpcomingEvents(week = false) {
                             commentaire: comment,
                             duration: duration
                     };
-//                     console.log('add proj', objName);
-//                     console.log('duration', duration);
+                     console.log('add proj', objName);
+                     console.log('duration', duration);
                 }
 
                 // text_content += 'AGU;S' + week + ';' + client + ';' + project + ';' + family + ';detail;' + duration.toString().replace('.', ',') + ';commentaire;;;;;;;;;;;;;;;;;;;;;;;\n';
@@ -418,7 +391,7 @@ function listUpcomingEvents(week = false) {
                     case 'V':
                     // case 'PRO':
                     // case 'v':
-//                         console.log('add v');
+                         console.log('add v');
 
                         // text_content = '<Row ss:AutoFitHeight="0" ss:Height="15.75">\n';
                         // text_content += '<Cell ss:StyleID="s37"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
@@ -444,7 +417,7 @@ function listUpcomingEvents(week = false) {
                         break;
                     case 'M':
                     // case 'm':
-//                         console.log('add m');
+                         console.log('add m');
                         // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
                         //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
                         //     ';detail;' + obj.duration.toString().replace('.', ',') +
@@ -465,7 +438,7 @@ function listUpcomingEvents(week = false) {
                         // part_AV.count++;
                         part_AV.push(obj);
                         part_AV_duration += obj.duration;
-//                         console.log('add av');
+                         console.log('add av');
                         break;
                     case 'I':
                     // case 'INT':
@@ -477,7 +450,7 @@ function listUpcomingEvents(week = false) {
                         // part_I.count++;
                         part_I.push(obj);
                         part_I_duration += obj.duration;
-//                         console.log('add i');
+                         console.log('add i');
                         break;
                 }
             }
@@ -489,98 +462,22 @@ function listUpcomingEvents(week = false) {
                 text_content = '';
                 for (let i = 0; i < projectDontProccess.length; i++) {
                     let obj = projectDontProccess[i];
-                    text_content += '<div class="col-12 text-danger ">Nom : ' + obj.name + ' Durée : ' + obj.duration + 'H</div>';
+                    text_content += '<div class="col-12 text-danger ">Nom : <a href="' + obj.link + '">' + obj.name + '</a> Durée : ' + obj.duration + 'H</div>';
                 }
                 // text_err = text_content;
-//                 console.log('text content', text_content);
+                 console.log('text content', text_content);
                 div_err.innerHTML = '' + text_content + '';
             } else {
                 document.getElementById('div_err').classList.add('d-none');
                 // div_err.parentElement.style.display = 'none';
             }
-//             console.log('text_v', part_V);
-//             console.log('part_AV', part_AV);
-//             console.log('part_I', part_I);
-//             console.log('part_M', part_M);
+             console.log('text_v', part_V);
+             console.log('part_AV', part_AV);
+             console.log('part_I', part_I);
+             console.log('part_M', part_M);
             let div_full = document.getElementById('full');
             empty(div_full);
 
-            // let div_V = document.getElementById('V');
-            // empty(div_V);
-            // div_V.innerText = part_V;
-            // if (part_V !== undefined) {
-                // text_full += 'VENDU\n' + 'QUI ?;N SEM;CLIENT;PROJET;FAMILLE ACTIVITE;DETAIL;Temps;Commentaire\n' +
-                //     part_V + '\n';
-                // let txt = '';
-                // div_V.parentElement.style.display = 'block';
-                // txt += '<Row ss:AutoFitHeight="0" ss:Height="27">\n' +
-                //     '<Cell ss:StyleID="s44"/>\n' +
-                //     '<Cell ss:StyleID="s44"/>\n' +
-                //     '<Cell ss:StyleID="s44"/>\n' +
-                //     '<Cell ss:StyleID="s44"/>\n' +
-                //     '<Cell ss:StyleID="s45"/>\n' +
-                //     '<Cell ss:StyleID="s45"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
-                //     // '<Cell ss:StyleID="s46" ss:Formula="=SUM(R[-' + part_V.count + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
-                //     '<Cell ss:StyleID="s46"/>\n';
-                // for (let i = 0; i <= 22; i++) {
-                //     txt += '<Cell ss:StyleID="s35"/>\n';
-                // }
-                //     txt += '</Row>\n' + '';
-                // part_V.text += txt;
-                // createDownloader('DHA-VENTES-S' + week + '.xml', (part_V.text + endTable), div_V);
-            // } else {
-            //     div_V.parentElement.style.display = 'none';
-            //
-            // }
-
-            // let div_AV = document.getElementById('AV');
-            // empty(div_AV);
-            // div_AV.innerText = part_AV;
-            // if (part_AV !== undefined) {
-            //     div_AV.parentElement.style.display = 'block';
-                // text_full += 'AVANT VENTE\n' +
-                //     'QUI ?;N SEM;CLIENT;PROJET;DETAIL;Temps;Commentaire\n' +
-                //     part_AV;
-                // createDownloader('DHA-AVANT_VENTES-S' + week + '.csv', part_AV, div_AV);
-            // } else {
-            //     div_AV.parentElement.style.display = 'none';
-            //
-            // }
-            // let div_M = document.getElementById('M');
-            // empty(div_M);
-            // div_M.innerText = part_M;
-            // let txt = '';
-            // if (part_M !== undefined) {
-            //     // text_full += 'MAINTENANCE\n' +
-            //     //     'QUI ?;N SEM;CLIENT;PROJET;FAMILLE ACTIVITE;DETAIL;Temps;Tache programmee ? (non = urgence)\n' +
-            //     //     part_M.text;
-            //
-            //     div_M.parentElement.style.display = 'block';
-            //     // part_M.text += txt;
-            //     // createDownloader('DHA-MAINTENANCES-S' + week + '.csv', part_M.text, div_M);
-            // } else {
-            //     div_M.parentElement.style.display = 'none';
-            // }
-            // let div_I = document.getElementById('I');
-            // empty(div_I);
-            // // div_I.innerText = part_I;
-            // if (part_I !== undefined) {
-            //     div_I.parentElement.style.display = 'block';
-            //     // createDownloader('DHA-INTERNES-S' + week + '.csv', part_I, div_I);
-            //     // text_full += 'INTERNE\n' +
-            //     //     'QUI ?;N SEM;CLIENT;PROJET;DETAIL;Temps;Commentaire\n' +
-            //     //     part_I;
-            // } else {
-            //     div_I.parentElement.style.display = 'none';
-            //
-            // }
-            // if (part_V !== '' || part_M !== '' || part_I !== '' || part_AV !== '') {
-            //     div_full.parentElement.style.display = 'block';
-                // createDownloader('DHA-FULL-S' + week + '.csv', text_full, div_full);
-            // } else {
-            //     div_full.parentElement.style.display = 'none';
-            //
-            // }
             let text_test = xmlWorkBook + xmlStyle +
                 ' <Worksheet ss:Name="DHA">\n' +
                 '  <Table ss:ExpandedColumnCount="31" ss:ExpandedRowCount="1000" x:FullColumns="1"\n' +
@@ -626,7 +523,6 @@ function listUpcomingEvents(week = false) {
                 emptyCell(20, 2) +
                 emptyCell(22, 25) +
                 '   </Row>\n';
-            if (part_V.length > 0) {
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                     '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                     '    <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !)</Data></Cell>\n' +
@@ -676,8 +572,6 @@ function listUpcomingEvents(week = false) {
                     '    <Cell ss:StyleID="s23"/>\n' +
                     emptyCell(33, 21) +
                     '   </Row>\n';
-            }
-            // if (part_M.length > 0) {
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
                 '    <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé en maintenance (temps passé = temps déduit des contrats de maintenance)</Data></Cell>\n' +
@@ -704,13 +598,6 @@ function listUpcomingEvents(week = false) {
             for (let i = 0; i < part_M.length; i++) {
                 let object = part_M[i];
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(object.family) + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
                     acronymeCell(acronyme.trim()) +
                     weekCell(week) +
                     clientCell(object.client) +
@@ -718,7 +605,6 @@ function listUpcomingEvents(week = false) {
                     familyCell(object.family) +
                     detailCell(removeBalise(object.detail)) +
                     durationCell(object.duration) +
-                    // commentCell(removeBalise(object.commentaire)) +
                     '    <Cell ss:StyleID="m140462106055528"><Data ss:Type="String">' + removeBalise(object.commentaire) + '</Data></Cell>\n' +
                     '    <Cell ss:StyleID="s23"/>\n' +
                     emptyCell(33, 21) +
@@ -726,10 +612,6 @@ function listUpcomingEvents(week = false) {
             }
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
                     emptyCell(41, 4) +
-                // '    <Cell ss:StyleID="s41"/>\n' +
-                // '    <Cell ss:StyleID="s41"/>\n' +
-                // '    <Cell ss:StyleID="s41"/>\n' +
-                // '    <Cell ss:StyleID="s41"/>\n' +
                 '    <Cell ss:StyleID="s42"/>\n' +
                 '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_M.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
@@ -737,18 +619,12 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s23"/>\n' +
                 emptyCell(33, 21) +
                 '   </Row>\n';
-            // }
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                 '    <Cell ss:StyleID="s49"><Data ss:Type="String">Temps passé en avant-vente</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s50"/>\n' +
                 '    <Cell ss:StyleID="s50"/>\n' +
                     emptyCell(51, 5) +
-                // '    <Cell ss:StyleID="s51"/>\n' +
-                // '    <Cell ss:StyleID="s51"/>\n' +
-                // '    <Cell ss:StyleID="s51"/>\n' +
-                // '    <Cell ss:StyleID="s51"/>\n' +
-                // '    <Cell ss:StyleID="s51"/>\n' +
                 '   </Row>\n';
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -1103,7 +979,7 @@ function getWeekNumber(d) {
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
     // Get first day of year
     var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-//     console.log('year start', yearStart);
+     console.log('year start', yearStart);
     // Calculate full weeks to nearest Thursday
     var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
     // Return array of year and week number
