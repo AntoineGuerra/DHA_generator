@@ -8,14 +8,110 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
 var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+autoDl = false;
+defaultFamily = 'MEP';
 
-var authorizeButton = document.getElementById('authorize_button');
-var signoutButton = document.getElementById('signout_button');
+// var authorizeButton = document.getElementById('authorize_button');
+// var signoutButton = document.getElementById('signout_button');
+document.addEventListener("DOMContentLoaded", function() {
+    let acroCookie = getCookie('acronyme');
+    if (acroCookie !== undefined && acroCookie.length === 3) {
+        document.getElementById('acronyme').value = acroCookie;
+    }
+    let autoDlBtn = document.getElementById('autoDl');
+    let autoDlCookie = getCookie('autoDl');
+    if (autoDlCookie !== undefined) {
+        autoDl = JSON.parse(autoDlCookie);
+        console.log('cookie', getCookie('autoDl'));
+
+    }
+    let defaultFamilyCookie = getCookie('defaultFamily');
+    if (defaultFamilyCookie !== undefined) {
+        defaultFamily = defaultFamilyCookie;
+        document.getElementById('defaultFamily' + defaultFamilyCookie).setAttribute('selected', 'selected');
+    }
+
+    let defaultFamilySelect = document.getElementById('defaultFamily');
+    defaultFamilySelect.addEventListener('change', function () {
+        console.log('change', this.value);
+        document.cookie = 'defaultFamily=' + this.value + '; expires=Fri, 31 Dec 2030 23:59:59 GMT';
+    });
+    console.log('autodl', autoDl, (autoDl == true));
+    if (autoDl) {
+        autoDlBtn.classList.add('btn-outline-danger');
+        autoDlBtn.innerHTML = 'Désactiver Téléchargement automatique'
+        // this.classList.remove('btn-success');
+    } else {
+        autoDlBtn.classList.add('btn-outline-success');
+        autoDlBtn.innerHTML = 'Activer Téléchargement automatique'
+        console.log('cookie', getCookie('autoDl'));
+        // this.classList.remove('btn-danger');
+    }
+
+
+    autoDlBtn.addEventListener('click', function () {
+        if (autoDl) {
+            this.classList.add('btn-outline-success');
+            this.classList.remove('btn-outline-danger');
+            autoDl = false;
+            document.cookie = 'autoDl=false; expires=Fri, 31 Dec 2030 23:59:59 GMT';
+            this.innerHTML = 'Activer Téléchargement automatique'
+            console.log('cookie', getCookie('autoDl'));
+        } else {
+            this.classList.add('btn-outline-danger');
+            this.classList.remove('btn-outline-success');
+            autoDl = true;
+            document.cookie = 'autoDl=true; expires=Fri, 31 Dec 2030 23:59:59 GMT';
+            this.innerHTML = 'Désactiver Téléchargement automatique'
+            console.log('cookie', getCookie('autoDl'));
+        }
+    })
+});
 
 var endTable = '';
+isLogged = false;
+var getCookie = function (name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2) return parts.pop().split(";").shift();
+};
+function onSignIn(googleUser) {
+    // Useful data for your client-side scripts:
+    var profile = googleUser.getBasicProfile();
+    // console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+    // console.log('Full Name: ' + profile.getName());
+    // console.log('Given Name: ' + profile.getGivenName());
+    // console.log('Family Name: ' + profile.getFamilyName());
+    console.log("Profile: " + profile);
+    // console.log("Email: " + profile.getEmail());
+    let acronyme = profile.getGivenName().substr(0, 1).toUpperCase() + profile.getFamilyName().substr(0, 2).toUpperCase();
+    document.getElementById('acronyme').value = acronyme;
+    document.cookie = 'acronyme=' + acronyme + '; expires=Fri, 31 Dec 2030 23:59:59 GMT';
+    document.getElementById('connectGoogle').classList.add('d-none');
+    let userDiv = document.getElementById('UserDiv');
+    userDiv.classList.remove('d-none');
+    let userName = document.getElementById('user-name');
+    userName.innerHTML = 'Hello ' + profile.getGivenName();
+    let userImage = document.getElementById('user-image');
+    userImage.setAttribute('src', profile.getImageUrl());
+    userImage.style.maxWidth = '50px';
+    userImage.style.maxHeight = '50px';
+    let signOut = document.getElementById('signOut');
+    signOut.addEventListener('click', signOut);
+    signOut.classList.remove('d-none');
 
+    // The ID token you need to pass to your backend:
+    // var id_token = googleUser.getAuthResponse().id_token;
+    // console.log("ID Token: " + id_token);
+    isLogged = true;
+}
 
-
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+}
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -41,46 +137,50 @@ function handleClientLoad() {
     let acronyme = document.getElementById('acronyme').value;
     // document.getElementById('acronyme').value = 'test';
     // console.log('gapi clien1', gapi);
-    checkClient = window.setInterval(function () {
-        if (gapi !== undefined && gapi.auth2 !== undefined) {
-            // gapi.client.calendar.events.list({
-            //     'calendarId': 'primary',
-            //     'showDeleted': false,
-            //     'singleEvents': true,
-            //     'maxResults': 1,
-            //     // 'orderBy': 'startTime'
-            // }).then(function(response) {
-            //     var events = response.result.items;
-            //     if (events[0] !== undefined && events[0].creator !== undefined && events[0].creator.email !== undefined) {
-            //
-            //     }
-            // });
-            auth2 = gapi.auth2.getAuthInstance();
-            if (auth2.isSignedIn.get()) {
-                var profile = auth2.currentUser.get().getBasicProfile();
-                // console.log('ID: ' + profile.getId());
-                // console.log('Full Name: ' + profile.getName());
-                // console.log('Given Name: ' + profile.getGivenName());
-                // console.log('Family Name: ' + profile.getFamilyName());
-                // console.log('Image URL: ' + profile.getImageUrl());
-                // console.log('Email: ' + profile.getEmail());
-                let email = profile.getEmail();
-                let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i);
-                if (matchs) {
-                     console.log('match', matchs);
-                }
-                 console.log('ever', email);
-                if (matchs.length >= 3) {
 
-                    document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
-                }
-            }
-            clearInterval(checkClient);
-        }
-    }, 500);
+    // checkClient = window.setInterval(function () {
+    //     if (gapi !== undefined && gapi.auth2 !== undefined) {
+    //         // gapi.client.calendar.events.list({
+    //         //     'calendarId': 'primary',
+    //         //     'showDeleted': false,
+    //         //     'singleEvents': true,
+    //         //     'maxResults': 1,
+    //         //     // 'orderBy': 'startTime'
+    //         // }).then(function(response) {
+    //         //     var events = response.result.items;
+    //         //     if (events[0] !== undefined && events[0].creator !== undefined && events[0].creator.email !== undefined) {
+    //         //
+    //         //     }
+    //         // });
+    //         auth2 = gapi.auth2.getAuthInstance();
+    //         if (auth2.isSignedIn.get()) {
+    //             var profile = auth2.currentUser.get().getBasicProfile();
+    //             // console.log('ID: ' + profile.getId());
+    //             // console.log('Full Name: ' + profile.getName());
+    //             // console.log('Given Name: ' + profile.getGivenName());
+    //             // console.log('Family Name: ' + profile.getFamilyName());
+    //             // console.log('Image URL: ' + profile.getImageUrl());
+    //             // console.log('Email: ' + profile.getEmail());
+    //             let email = profile.getEmail();
+    //             let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i);
+    //             if (matchs) {
+    //                  console.log('match', matchs);
+    //             }
+    //              console.log('ever', email);
+    //             if (matchs.length >= 3) {
+    //
+    //                 document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
+    //             }
+    //         }
+    //         clearInterval(checkClient);
+    //     }
+    // }, 500);
     
     generateBtn.addEventListener('click', function (event) {
         event.preventDefault();
+        if (!isLogged) {
+            return alert('Vous devez être connecté !')
+        }
         // if (acronyme === '') {
         //     return alert('l\'acronyme est requis');
         // }
@@ -115,12 +215,12 @@ function initClient() {
         scope: SCOPES
     }).then(function () {
         // Listen for sign-in state changes.
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+        // gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
         // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        authorizeButton.onclick = handleAuthClick;
-        signoutButton.onclick = handleSignoutClick;
+        // updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        // authorizeButton.onclick = handleAuthClick;
+        // signoutButton.onclick = handleSignoutClick;
     }, function(error) {
          console.log(JSON.stringify(error, null, 2));
     });
@@ -192,7 +292,7 @@ function listUpcomingEvents(week = false) {
     week = getWeekNumber((new Date(week)))[1];
     let projects = {};
     let projectDontProccess = [];
-     console.log('gapi clien2', gapi.client);
+     // console.log('gapi clien2', gapi.client);
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
         'timeMin': first,
@@ -251,7 +351,8 @@ function listUpcomingEvents(week = false) {
                     client = explodedText[1].trim().toUpperCase();
                     project = explodedText[2].trim().toUpperCase();
                     // objName = explodedText[1].trim().toUpperCase();
-                    family = explodedText[3].trim().toUpperCase();
+                    family = explodedText[3].trim();
+
                     // } else {
                     //     projectDontProccess.push({
                     //         name: event.summary,
@@ -315,7 +416,7 @@ function listUpcomingEvents(week = false) {
                     let tacheMatches = description.match(/(.*)t[a|â]ches?\s?\:?\s?<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     if (tacheMatches) {
                          console.log('tache match', tacheMatches);
-                        description = tacheMatches[1] + tacheMatches[3];
+                        // description = tacheMatches[1] + tacheMatches[3];
                         detail = tacheMatches[2];
                     } else {
                         detail = 'SANS';
@@ -327,7 +428,7 @@ function listUpcomingEvents(week = false) {
                         let urgentMatches = description.match(/(.*)\<b\>URGENT\<\/b\>(.*)/i);
                         if (urgentMatches) {
                             comment = 'NON';
-                            description = urgentMatches[1] + urgentMatches[3];
+                            // description = urgentMatches[1] + urgentMatches[3];
                              console.log('urgent match');
                         } else {
                              console.log('urgent dont match', );
@@ -335,7 +436,7 @@ function listUpcomingEvents(week = false) {
                         }
                     } else if (commentMatches) {
                          console.log('comment match', commentMatches);
-                        description = commentMatches[1] + commentMatches[3];
+                        // description = commentMatches[1] + commentMatches[3];
                         comment = commentMatches[2];
                     } else {
                         comment = 'Sans Commentaire';
@@ -343,6 +444,20 @@ function listUpcomingEvents(week = false) {
                 } else if (category === 'M') {
                     comment = 'OUI';
                 }
+                let parsed = parse_family(family);
+                if (!parsed) {
+                    detail = family;
+                    family = parse_family(defaultFamily);
+                    if (description !== undefined) {
+                        let matchFamily = description.match(/.*famil[l|y]{1}e?\s?:?\s?<b>([^<]*)<\/b>.*/i);
+                        if (matchFamily) {
+                            family = parse_family(matchFamily[1]);
+                        }
+                    }
+                } else {
+                    family = parsed;
+                }
+
                  console.log('description', description, events);
                 objName = replaceForObjectName(saveData(category)) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
                 if (family !== '' && category !== 'AV' && category !== 'I') {
@@ -462,7 +577,7 @@ function listUpcomingEvents(week = false) {
                 text_content = '';
                 for (let i = 0; i < projectDontProccess.length; i++) {
                     let obj = projectDontProccess[i];
-                    text_content += '<div class="col-12 text-danger ">Nom : <a href="' + obj.link + '">' + obj.name + '</a> Durée : ' + obj.duration + 'H</div>';
+                    text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '">' + obj.name + '</a> Durée : ' + obj.duration + 'H</div>';
                 }
                 // text_err = text_content;
                  console.log('text content', text_content);
@@ -921,6 +1036,7 @@ function parse_category(category) {
 
 
 function parse_family(family) {
+    family = family.toUpperCase();
     if (family.match(/MEP|Mise\s?en\s?Production/i)) {
         return 'Mise en production';
     } else if (family.match(/Conception/i)) {
@@ -937,8 +1053,12 @@ function parse_family(family) {
         return 'Contenus et CM';
     } else if (family.match(/Maintenance|interventions|PP/i)) {
         return 'Maintenance et interventions post-projet';
+    } else {
+        return false;
     }
 }
+
+
 function capitalizeFirstLetter(string) {
     string = string.toLowerCase();
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -1004,7 +1124,9 @@ function createDownloader(filename, text) {
     element.setAttribute('download', filename);
     // element.innerText = filename;
     element.querySelector('#full').innerHTML = filename;
-    element.click();
+    if (autoDl) {
+        element.click();
+    }
     // element.style.display = 'none';
     // div.appendChild(element);
 
@@ -1034,6 +1156,7 @@ function saveData(data) {
         case 'VENDUS':
         case 'PROJET':
         case 'PROJETS':
+        case 'P':
             return 'V';
 
         case 'INT':

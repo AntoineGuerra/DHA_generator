@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>
+        DHA GENERATOR</title>
+    <meta charset="utf-8"/>
+    <link type="text/css" rel="stylesheet" href="public/css/bootstrap_4.css">
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="889910005804-93lmvk75fa0un1dpd7ju8usqqp1orf2g.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+</head>
 <body>
 
 
@@ -7,15 +17,30 @@
 <div class="container">
     <h1 class="text-center">DHA GENERATOR</h1>
     <div class="row">
-        <button id="authorize_button"
-                style="display: none;" class="btn-outline-success btn">
-            Authorize
-        </button>
-        <button id="signout_button"
-                style="display: none;" class="btn btn-outline-danger">
-            Sign
-            Out
-        </button>
+        <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" id="connectGoogle"></div>
+        <button class="btn btn-outline-danger rounded d-none mr-3" id="signOut">Sign Out</button>
+        <button class="btn" id="autoDl">Disable auto Download</button>
+        <button id="settings"><i class="fas fa-cog"></i></button>
+
+        <script>
+
+        </script>
+    </div>
+    <div class="row">
+        <span class="text-muted">Famille d'activité par défault</span>
+        <select class="btn btn-light" id="defaultFamily">
+            <option id="defaultFamilyMEP" value="MEP">Mise En Production</option>
+            <option id="defaultFamilyGraphisme" value="Graphisme">Graphisme</option>
+            <option id="defaultFamilyConception" value="Conception">Conception</option>
+            <option id="defaultFamilyPDP" value="PDP">Pilotage de projet</option>
+            <option id="defaultFamilyDirection" value="Direction">Direction conseil, technique et éditoriale</option>
+            <option id="defaultFamilyContenus" value="Contenus">Contenus et CM</option>
+            <option id="defaultFamilyMaintenance" value="Maintenance">Maintenance et interventions post-projet</option>
+        </select>
+    </div>
+    <div class="row d-none m-3" id="UserDiv">
+        <img id="user-image" class="rounded-circle">
+        <h3 id="user-name" style="line-height: 50px" class="pl-2"></h3>
     </div>
     <div class="row">
         <form>
@@ -75,10 +100,4 @@
 
 ?>
 </body>
-<head>
-    <title>
-        DHA GENERATOR</title>
-    <meta charset="utf-8"/>
-    <link type="text/css" rel="stylesheet" href="public/css/bootstrap_4.css">
-</head>
 </html>
