@@ -74,8 +74,10 @@
     </div>
     <div class="row d-none" id="div_err">
         <hr>
-        <span class="col-12">Votre Projet doit être sous cette forme :</span>
-        <span class="text-success col-12">V (categorie) - Client - Projet - MEP (famille : optionnel Pour AV et INT)</span>
+
+        <span class="col-12">Veuillez respecter cette <a href="https://github.com/AntoineGuerra/DHA_generator#remplir-sous-cette-forme-" target="_blank">syntaxe</a></span>
+<!--        <span class="col-12">Votre Projet doit être sous cette forme :</span>-->
+<!--        <span class="text-success col-12">V (categorie) - Client - Projet - MEP (famille : optionnel Pour AV et INT)</span>-->
         <hr>
         <span class="col-12">
             Impossible à traiter
@@ -95,6 +97,7 @@
 <!--<link href="http://cdn.grapecity.com/spreadjs/hosted/css/gc.spread.sheets.excel2013white.11.0.1.css" rel="stylesheet" type="text/css" />-->
 <!--<script type="text/javascript" src="http://cdn.grapecity.com/spreadjs/hosted/scripts/gc.spread.sheets.all.11.0.1.min.js"></script>-->
 <!--<script type="text/javascript" src="http://cdn.grapecity.com/spreadjs/hosted/scripts/interop/gc.spread.excelio.11.0.1.min.js"></script>-->
+<script type="text/javascript" src="settings.js"></script>
 <script type="text/javascript" src="public/js/modal-settings.js"></script>
 <script type="text/javascript" src="public/js/xmlContainer.js"></script>
 <script type="text/javascript" src="public/js/script.js"></script>
