@@ -1,7 +1,5 @@
 # MACOS
 .DS_Store
-
 # PHP STORM
 .idea/
-
-/settings.js
+settings.js
