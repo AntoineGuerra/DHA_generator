@@ -128,75 +128,21 @@ function handleClientLoad() {
     let div_M = document.getElementById('M');
     let div_I = document.getElementById('I');
     let text_err = document.getElementById('err');
-    // div_full.parentElement.style.display = 'none';
-    // div_V.parentElement.style.display = 'none';
-    // div_AV.parentElement.style.display = 'none';
-    // div_M.parentElement.style.display = 'none';
-    // div_I.parentElement.style.display = 'none';
-    // text_err.parentElement.style.display = 'none';
     let acronyme = document.getElementById('acronyme').value;
-    // document.getElementById('acronyme').value = 'test';
-    // console.log('gapi clien1', gapi);
-
-    // checkClient = window.setInterval(function () {
-    //     if (gapi !== undefined && gapi.auth2 !== undefined) {
-    //         // gapi.client.calendar.events.list({
-    //         //     'calendarId': 'primary',
-    //         //     'showDeleted': false,
-    //         //     'singleEvents': true,
-    //         //     'maxResults': 1,
-    //         //     // 'orderBy': 'startTime'
-    //         // }).then(function(response) {
-    //         //     var events = response.result.items;
-    //         //     if (events[0] !== undefined && events[0].creator !== undefined && events[0].creator.email !== undefined) {
-    //         //
-    //         //     }
-    //         // });
-    //         auth2 = gapi.auth2.getAuthInstance();
-    //         if (auth2.isSignedIn.get()) {
-    //             var profile = auth2.currentUser.get().getBasicProfile();
-    //             // console.log('ID: ' + profile.getId());
-    //             // console.log('Full Name: ' + profile.getName());
-    //             // console.log('Given Name: ' + profile.getGivenName());
-    //             // console.log('Family Name: ' + profile.getFamilyName());
-    //             // console.log('Image URL: ' + profile.getImageUrl());
-    //             // console.log('Email: ' + profile.getEmail());
-    //             let email = profile.getEmail();
-    //             let matchs = email.match(/^([a-z]{1})[^\.]*\.([a-z]{2}).*/i);
-    //             if (matchs) {
-    //                  console.log('match', matchs);
-    //             }
-    //              console.log('ever', email);
-    //             if (matchs.length >= 3) {
-    //
-    //                 document.getElementById('acronyme').value = (matchs[1] + matchs[2]).toUpperCase();
-    //             }
-    //         }
-    //         clearInterval(checkClient);
-    //     }
-    // }, 500);
     
     generateBtn.addEventListener('click', function (event) {
         event.preventDefault();
         if (!isLogged) {
             return alert('Vous devez être connecté !')
         }
-        // if (acronyme === '') {
-        //     return alert('l\'acronyme est requis');
-        // }
         let val = weekInput.value;
          console.log('val', val);
         let isoDate;
         if (val !== '' && parseInt(val) > 0) {
             isoDate = getDateOfISOWeek(val, (new Date()).getFullYear());
-            // console.log('iso date', isoDate);
-            // console.log('iso date', isoDate.toISOString());
-            // listUpcomingEvents(val);
-
         } else {
             let time = getWeekNumber((new Date()));
             isoDate = getDateOfISOWeek(time[1], time[0])
-            // console.log('date by week', getDateOfISOWeek(time[1], time[0]));
         }
 
         listUpcomingEvents(isoDate);
@@ -214,13 +160,7 @@ function initClient() {
         discoveryDocs: DISCOVERY_DOCS,
         scope: SCOPES
     }).then(function () {
-        // Listen for sign-in state changes.
-        // gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
-        // Handle the initial sign-in state.
-        // updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        // authorizeButton.onclick = handleAuthClick;
-        // signoutButton.onclick = handleSignoutClick;
     }, function(error) {
          console.log(JSON.stringify(error, null, 2));
     });
@@ -272,6 +212,7 @@ function replaceForObjectName(name) {
     name = name.replace(/[^\w]/gm, 'x');
     return name;
 }
+
 
 /**
  * Print the summary and start datetime/date of the next ten events in
@@ -326,6 +267,8 @@ function listUpcomingEvents(week = false) {
             let text_full = '';
             for (i = 0; i < events.length; i++) {
                 var event = events[i];
+
+
                 var when = event.start.dateTime;
                 var to = event.end.dateTime;
                 if (!when) {
@@ -341,39 +284,84 @@ function listUpcomingEvents(week = false) {
                 let project;
                 let family;
                 let objName;
-                 console.log('exploded text', explodedText);
-                 console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
+                console.log('exploded text', explodedText);
+                console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
+            
                 let duration = (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000);
+
+                let accepted = true;
+                if (event.attendees !== undefined) {
+                    let attendees = event.attendees;
+                    // console.log('testt', event.attendees.length);
+                    for (let j = 0; j < attendees.length; j++) {
+
+                        if (attendees[j].self !== undefined && attendees[j].self) {
+
+                            /** Its my response */
+                            switch (attendees[j].responseStatus) {
+                                case 'needsAction':
+                                    // let accept = confirm('La tâche : <a href="' + event.htmlLink + '" target="_blank">' + event.summary + '</a> n\'a pas été accepté<br>Souhaitez-vous l\'enregistrer ?' );
+                                    let accept = confirm('La tâche : ' + event.summary + ' (durée : ' + duration + ') n\'a pas été accepté\nSouhaitez-vous l\'enregistrer ?' );
+                                    if (!accept) {
+                                        accepted = false;
+                                        continue;
+                                    }
+                                    break;
+                                case 'declined':
+                                    accepted = false;
+                                    break;
+                            }
+                            if (attendees[j].responseStatus === 'needsAction') {
+                                projectDontProccess.push({
+                                    name: event.summary,
+                                    duration: duration,
+                                    link: event.htmlLink,
+                                });
+                            }
+                        }
+
+                    }
+                }
+
+                if (!accepted) {
+                    projectDontProccess.push({
+                        name: event.summary,
+                        duration: duration,
+                        link: event.htmlLink,
+                        declined: true,
+                    });
+                    continue;
+                }
+
+                /** Check if data are defined */
                 if (explodedText[0] !== undefined && explodedText[1] !== undefined && explodedText[2] !== undefined && explodedText[3] !== undefined) {
+
                     category = saveData(explodedText[0].trim().toUpperCase());
-                    // let client_arr = explodedText[1].split('_');
-                    // if ((client_arr[0] !== undefined && client_arr[1] !== undefined)) {
                     client = explodedText[1].trim().toUpperCase();
                     project = explodedText[2].trim().toUpperCase();
-                    // objName = explodedText[1].trim().toUpperCase();
                     family = explodedText[3].trim();
+                    console.log('family', family);
 
-                    // } else {
-                    //     projectDontProccess.push({
-                    //         name: event.summary,
-                    //         duration: duration,
-                    //     });
-                    //     console.log('non trier ', explodedText, client_arr);
-                    //     continue;
-                    // }
                 } else if (explodedText[0] !== undefined && explodedText[1] !== undefined &&
-                    ((explodedText[0].trim().toUpperCase() === 'AV') || (explodedText[0].trim().toUpperCase() === 'I' || explodedText[0].trim().toUpperCase() === 'INT') )) {
+                    ((explodedText[0].trim().toUpperCase() === 'AV') || (explodedText[0].trim().toUpperCase() === 'I' ||
+                        explodedText[0].trim().toUpperCase() === 'INT') )) {
+
+                    /** IF is AV || INT = family can be not defined */
+
                     category = explodedText[0].trim().toUpperCase();
-                    // let client_arr = explodedText[1].split('_');
-                    // objName = explodedText[1].trim().toUpperCase();
-                    // family = explodedText[2].trim().toUpperCase();
                     family = '';
-                    // if ((client_arr[1] !== undefined && client_arr[1] !== undefined)) {
 
                     if ((category === 'I' || category === 'INT') && explodedText[2] === undefined) {
+
+                        /** IF is INT client can be not defined */
+
                         project = explodedText[1].trim();
                         client = 'Mayflower'
+
                     } else if (explodedText[2] === undefined) {
+
+                        /** CANNOT process */
+
                         projectDontProccess.push({
                             name: event.summary,
                             duration: duration,
@@ -384,16 +372,10 @@ function listUpcomingEvents(week = false) {
                         client = explodedText[1].trim();
                         project = explodedText[2].trim();
                     }
-                    // } else {
-                    //     projectDontProccess.push({
-                    //         name: event.summary,
-                    //         duration: duration
-                    //     });
-                    //     console.log('non trier 2', explodedText, client_arr);
-                    //     continue;
-                    // }
                 } else {
-                     console.log('non trier 3', explodedText);
+
+                    /** CANNOT process */
+
                     projectDontProccess.push({
                         name: event.summary,
                         duration: duration,
@@ -401,26 +383,25 @@ function listUpcomingEvents(week = false) {
                     });
                     continue;
                 }
-                // objName = replaceForObjectName(category) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
-                // if (family !== '' && category !== 'AV' && category !== 'I') {
-                //      objName += '_' + replaceForObjectName(family);
-                // }
-                // if () else {
-                //     objName = replaceForObjectName(category) + '-' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + ;
-                // }
                 let description = event.description;
                 let detail = 'SANS';
                 let comment = 'Sans Commentaire';
+
+                /** FILTER description */
+
                 if (description !== undefined) {
                     description = description.replace(new RegExp("&nbsp;", 'g'), ' ');
+
+                    /** FILTER tache */
                     let tacheMatches = description.match(/(.*)t[a|â]ches?\s?\:?\s?<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     if (tacheMatches) {
-                         console.log('tache match', tacheMatches);
-                        // description = tacheMatches[1] + tacheMatches[3];
+                        console.log('tache match', tacheMatches);
                         detail = tacheMatches[2];
                     } else {
                         detail = 'SANS';
                     }
+
+                    /** FILTER comment */
                     let commentMatches = description.match(/(.*)Commentaires?\s*:?\s*<?b?r?>?\s?\<b\>([^<]*)\<\/b\>(.*)/i);
                     // console.log('objname', objName);
                     if (category === 'M') {
@@ -442,16 +423,25 @@ function listUpcomingEvents(week = false) {
                         comment = 'Sans Commentaire';
                     }
                 } else if (category === 'M') {
+
+                    /** IF MAINT = URGENT ? */
                     comment = 'OUI';
                 }
                 let parsed = parse_family(family);
+                console.log('parsed family', parsed);
                 if (!parsed) {
+
+                    /** FAMILY is not valid = Probably is tache */
+
                     detail = family;
                     family = parse_family(defaultFamily);
                     if (description !== undefined) {
+
+                        /** FILTER FAMILY */
                         let matchFamily = description.match(/.*famil[l|y]{1}e?\s?:?\s?<b>([^<]*)<\/b>.*/i);
                         if (matchFamily) {
                             family = parse_family(matchFamily[1]);
+                            console.log('match family', family, description);
                         }
                     }
                 } else {
@@ -459,15 +449,27 @@ function listUpcomingEvents(week = false) {
                 }
 
                  console.log('description', description, events);
-                objName = replaceForObjectName(saveData(category)) + '_' + replaceForObjectName(client) + '_' + replaceForObjectName(project) + '_' + replaceForObjectName(detail);
+
+                /** Projects GROUP BY (category, client, project, tache) */
+                objName = replaceForObjectName(saveData(category)) + '_' + replaceForObjectName(client) + '_' +
+                    replaceForObjectName(project) + '_' + replaceForObjectName(detail);
+
                 if (family !== '' && category !== 'AV' && category !== 'I') {
+
+                    /** IF is V || M GROUP BY family too */
                     objName += '_' + replaceForObjectName(family);
+
                 }
+
                 if (projects[objName] !== undefined) {
+
+                    /** SAME Project EXIST */
                     projects[objName].duration += duration;
                      console.log('proj duration', projects[objName].duration);
                      console.log(' duration', duration);
                 } else {
+
+                    /** SAVE Project */
                     projects[objName] = {
                             category: saveData(category.toUpperCase()),
                             client: capitalizeFirstLetter(client),
@@ -480,89 +482,30 @@ function listUpcomingEvents(week = false) {
                      console.log('add proj', objName);
                      console.log('duration', duration);
                 }
-
-                // text_content += 'AGU;S' + week + ';' + client + ';' + project + ';' + family + ';detail;' + duration.toString().replace('.', ',') + ';commentaire;;;;;;;;;;;;;;;;;;;;;;;\n';
-                // console.log('text content', text_content);
-                // eval('text_' + category + ' += ' + text_content);
-
-                // console.log('explodedText', explodedText[1].trim());
-                // console.log('duration', new Date(to).getTime());
-                // appendPre(event.summary + ' To (' + to + ')' + ' duration (' + duration + ')')
             }
-            // console.log('project', projects);
+
             for (var key in projects) {
                 // skip loop if the property is from prototype
                 if (!projects.hasOwnProperty(key)) continue;
 
                 var obj = projects[key];
-                // eval('text_' + obj.category + ' += "' + text_content + '"');
-
-                // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
-                //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
-                //     ';detail;' + obj.duration.toString().replace('.', ',') +
-                //     ';commentaire\n';
-                // console.log('obj ', key, obj.category);
                 switch (obj.category) {
                     case 'V':
-                    // case 'PRO':
-                    // case 'v':
                          console.log('add v');
-
-                        // text_content = '<Row ss:AutoFitHeight="0" ss:Height="15.75">\n';
-                        // text_content += '<Cell ss:StyleID="s37"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s37"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.client.toUpperCase() + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s37"><Data ss:Type="String">' + obj.project.toUpperCase() + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s128"><Data ss:Type="String">' + capitalizeFirstLetter(parse_family(obj.family)) + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s132"><Data ss:Type="String">' + removeBalise(obj.detail) + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s130"><Data ss:Type="Number">' + obj.duration.toString().replace('.', ',') + '</Data></Cell>\n' +
-                        //     '<Cell ss:StyleID="s132"><Data ss:Type="String">' + removeBalise(obj.commentaire) + '</Data></Cell>\n';
-                        // for (let i = 0; i <= 22; i++) {
-                        //     text_content += '<Cell ss:StyleID="s35"/>\n';
-                        // }
-                        // text_content += '</Row>\n';
-                        // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
-                        //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
-                        //     ';detail;' + obj.duration.toString().replace('.', ',') +
-                        //     ';commentaire\n';
                         part_V.push(obj);
                         part_V_duration += obj.duration;
-                        // part_V.text += text_content;
-                        // part_V.count++;
                         break;
                     case 'M':
-                    // case 'm':
                          console.log('add m');
-                        // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() + ';' +
-                        //     obj.project.toUpperCase() + ';' + capitalizeFirstLetter(parse_family(obj.family).toLowerCase()) +
-                        //     ';detail;' + obj.duration.toString().replace('.', ',') +
-                        //     ';commentaire\n';
-                        // part_M.text += text_content;
-                        // part_M.count++;
                         part_M.push(obj);
                         part_M_duration += obj.duration;
                         break;
                     case 'AV':
-                    // case 'Av':
-                    // case 'av':
-                    // case 'aV':
-                        // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
-                        //     ';' + obj.project.toUpperCase() + ';detail;' +
-                        //     obj.duration.toString().replace('.', ',') + ';commentaire\n';
-                        // part_AV.text += text_content;
-                        // part_AV.count++;
                         part_AV.push(obj);
                         part_AV_duration += obj.duration;
                          console.log('add av');
                         break;
                     case 'I':
-                    // case 'INT':
-                    // case 'i':
-                        // text_content = acronyme.trim().toUpperCase() + ';S' + week + ';' + obj.client.toUpperCase() +
-                        //     ';' + obj.project.toUpperCase() + ';detail;' +
-                        //     obj.duration.toString().replace('.', ',') + ';commentaire\n';
-                        // part_I.text += text_content;
-                        // part_I.count++;
                         part_I.push(obj);
                         part_I_duration += obj.duration;
                          console.log('add i');
@@ -577,7 +520,8 @@ function listUpcomingEvents(week = false) {
                 text_content = '';
                 for (let i = 0; i < projectDontProccess.length; i++) {
                     let obj = projectDontProccess[i];
-                    text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '">' + obj.name + '</a> Durée : ' + obj.duration + 'H</div>';
+                    let declined = (obj.declined) ? 'Refusé !' : '';
+                    text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
                 }
                 // text_err = text_content;
                  console.log('text content', text_content);
@@ -615,34 +559,37 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s20"/>\n' +
                 emptyCell(22, 25) +
                 '   </Row>\n' +
-                '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
-                '    <Cell ss:StyleID="s24"><Data ss:Type="String">Nombre d\'heures de congés de la semaine</Data></Cell>\n' +
-                emptyCell(25, 2) +
-                emptyCell(27, 5) +
-                '   </Row>\n' +
-                '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                emptyCell(20, 2) +
-                emptyCell(22, 25) +
-                '   </Row>\n' +
-                '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                // '    <Cell ss:StyleID="s20"/>\n' +
-                // '    <Cell ss:StyleID="s20"/>\n' +
-                emptyCell(20, 2) +
-                emptyCell(22, 5) +
-                '    <Cell ss:StyleID="s23"/>\n' +
-                emptyCell(22, 18) +
-                '   </Row>\n' +
-                '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                // '    <Cell ss:StyleID="s20"/>\n' +
-                // '    <Cell ss:StyleID="s20"/>\n' +
-                emptyCell(20, 2) +
-                emptyCell(22, 25) +
+                '   <Row ss:AutoFitHeight="0" ss:Height="42" ss:StyleID="s72">\n' +
+                '    <Cell ss:MergeAcross="7" ss:StyleID="s71"><ss:Data ss:Type="String" xmlns="http://www.w3.org/TR/REC-html40"><B><Font html:Color="#404040">DHA S</Font><Font html:Color="#16CABD">' + week + ' ' + acronyme + '</Font></B></ss:Data></Cell>\n' +
                 '   </Row>\n';
+                // '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
+                // '    <Cell ss:StyleID="s24"><Data ss:Type="String">Nombre d\'heures de congés de la semaine</Data></Cell>\n' +
+                // emptyCell(25, 2) +
+                // emptyCell(27, 5) +
+                // '   </Row>';
+                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                // emptyCell(20, 2) +
+                // emptyCell(22, 25) +
+                // '   </Row>\n' +
+                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                // // '    <Cell ss:StyleID="s20"/>\n' +
+                // // '    <Cell ss:StyleID="s20"/>\n' +
+                // emptyCell(20, 2) +
+                // emptyCell(22, 5) +
+                // '    <Cell ss:StyleID="s23"/>\n' +
+                // emptyCell(22, 18) +
+                // '   </Row>\n' +
+                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                // // '    <Cell ss:StyleID="s20"/>\n' +
+                // // '    <Cell ss:StyleID="s20"/>\n' +
+                // emptyCell(20, 2) +
+                // emptyCell(22, 25) +
+                // '   </Row>\n';
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                     '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
-                    '    <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé sur des projets vendus (IMPORTANT POUR LES NOUVEAUX PROJETS ! Pour aider les Chefs de Projet, merci de reprendre l\'intitulé exact de la tâche tel que défini dans le CIP !)</Data></Cell>\n' +
-                    emptyCell(30, 2) +
-                    emptyCell(31, 5) +
+                    '    <Cell ss:StyleID="s73"><Data ss:Type="String">Temps passé sur des projets (temps vendu)</Data></Cell>\n' +
+                    emptyCell(73, 2) +
+                    emptyCell(73, 5) +
                     '   </Row>\n';
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                     '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056232"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -689,9 +636,9 @@ function listUpcomingEvents(week = false) {
                     '   </Row>\n';
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
-                '    <Cell ss:StyleID="s29"><Data ss:Type="String">Temps passé en maintenance (temps passé = temps déduit des contrats de maintenance)</Data></Cell>\n' +
-                emptyCell(29, 3) +
-                emptyCell(44, 4) +
+                '    <Cell ss:StyleID="s73"><Data ss:Type="String">Temps passé en maintenance (temps vendu)</Data></Cell>\n' +
+                emptyCell(73, 3) +
+                emptyCell(73, 4) +
 
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
@@ -736,10 +683,10 @@ function listUpcomingEvents(week = false) {
                 '   </Row>\n';
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
-                '    <Cell ss:StyleID="s49"><Data ss:Type="String">Temps passé en avant-vente</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s50"/>\n' +
-                '    <Cell ss:StyleID="s50"/>\n' +
-                    emptyCell(51, 5) +
+                '    <Cell ss:StyleID="s74"><Data ss:Type="String">Temps passé en avant-vente</Data></Cell>\n' +
+                '    <Cell ss:StyleID="s74"/>\n' +
+                '    <Cell ss:StyleID="s74"/>\n' +
+                    emptyCell(74, 5) +
                 '   </Row>\n';
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -759,12 +706,6 @@ function listUpcomingEvents(week = false) {
             for (let i = 0; i < part_AV.length; i++) {
                 let object = part_AV[i];
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim().toUpperCase() + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(object.detail) + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s52"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
                     acronymeCell(acronyme.trim()) +
                     weekCell(week) +
                     clientCell(object.client) +
@@ -787,15 +728,10 @@ function listUpcomingEvents(week = false) {
 
             text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
-                '    <Cell ss:StyleID="s53"><Data ss:Type="String">Temps passé sur des projets Mayflower (site internet, marque…)</Data></Cell>\n' +
-                '    <Cell ss:StyleID="s53"/>\n' +
-                '    <Cell ss:StyleID="s53"/>\n' +
-                    emptyCell(54, 5) +
-                // '    <Cell ss:StyleID="s54"/>\n' +
-                // '    <Cell ss:StyleID="s54"/>\n' +
-                // '    <Cell ss:StyleID="s54"/>\n' +
-                // '    <Cell ss:StyleID="s54"/>\n' +
-                // '    <Cell ss:StyleID="s54"/>\n' +
+                '    <Cell ss:StyleID="s75"><Data ss:Type="String">Temps passé sur des projets Mayflower (site internet, marque…)</Data></Cell>\n' +
+                '    <Cell ss:StyleID="s75"/>\n' +
+                '    <Cell ss:StyleID="s75"/>\n' +
+                    emptyCell(75, 5) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -815,12 +751,6 @@ function listUpcomingEvents(week = false) {
             for (let i = 0; i < part_I.length; i++) {
                 let object = part_I[i];
                 text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s45"><Data ss:Type="String">' + object.client + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + object.project + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + object.detail + '</Data></Cell>\n' +
-                    // '    <Cell ss:StyleID="s55"><Data ss:Type="Number">' + object.duration + '</Data></Cell>\n' +
                     acronymeCell(acronyme.trim()) +
                     weekCell(week) +
                     clientCell(object.client) +
@@ -842,7 +772,7 @@ function listUpcomingEvents(week = false) {
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                 '    <Cell ss:StyleID="s56"><Data ss:Type="String">TOTAL HEURES VENDUES</Data></Cell>\n' +
                      emptyCell(56, 2) +
-                '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (11 + part_V.length) + 'C7+R' + (16 + part_V.length + part_M.length) + 'C7)"><Data\n' +
+                '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (8 + part_V.length) + 'C7+R' + (13 + part_V.length + part_M.length) + 'C7)"><Data\n' +
                 '      ss:Type="Number">' + (part_V_duration + part_M_duration) + '</Data></Cell>\n' +
                      emptyCell(58, 4) +
                 '   </Row>\n' +
@@ -850,9 +780,9 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s56"><Data ss:Type="String">TOTAL SEMAINE</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s56"/>\n' +
                 '    <Cell ss:StyleID="s56"/>\n' +
-                '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (11 + part_V.length) + 'C7+R' +
-                    (16 + part_V.length + part_M.length) + 'C7+R' + (21 + part_V.length + part_M.length + part_AV.length) +
-                    'C6+R' + (26 + part_V.length + part_M.length + part_AV.length + part_I.length) + 'C6)"><Data\n' +
+                '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (8 + part_V.length) + 'C7+R' +
+                    (13 + part_V.length + part_M.length) + 'C7+R' + (18 + part_V.length + part_M.length + part_AV.length) +
+                    'C6+R' + (23 + part_V.length + part_M.length + part_AV.length + part_I.length) + 'C6)"><Data\n' +
                 '      ss:Type="Number">' + (part_V_duration + part_M_duration + part_I_duration + part_AV_duration) + '</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
@@ -1037,21 +967,21 @@ function parse_category(category) {
 
 function parse_family(family) {
     family = family.toUpperCase();
-    if (family.match(/MEP|Mise\s?en\s?Production/i)) {
+    if (family.match(/MEP|Mises?\s?en\s?Productions?/i)) {
         return 'Mise en production';
-    } else if (family.match(/Conception/i)) {
+    } else if (family.match(/Conceptions?/i)) {
         return 'Conception';
-    } else if (family.match(/Graphisme/i)) {
+    } else if (family.match(/Graphismes?/i)) {
         return 'Graphisme';
-    } else if (family.match(/Pilotage\s?de\s?projet|PDP/i)) {
+    } else if (family.match(/Pilotages?\s?de\s?projets?/i)) {
         return 'Pilotage de projet';
-    } else if (family.match(/Direction|Conseil|[ée]dito/i)) {
+    } else if (family.match(/Directions?|Conseils?|[ée]ditos?/i)) {
         return 'Direction conseil, technique et éditoriale';
     } else if (family.match(/Formation/i)) {
         return 'Formation';
     } else if (family.match(/Contenus|CM/i)) {
         return 'Contenus et CM';
-    } else if (family.match(/Maintenance|interventions|PP/i)) {
+    } else if (family.match(/Maintenance|interventions/i)) {
         return 'Maintenance et interventions post-projet';
     } else {
         return false;
@@ -1197,7 +1127,7 @@ function detailCell(detail) {
     return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(detail) + '</Data></Cell>\n';
 }
 function durationCell(duration) {
-    return '    <Cell ss:StyleID="s38"><Data ss:Type="Number">' + duration + '</Data></Cell>\n';
+    return '    <Cell ss:StyleID="s76"><Data ss:Type="Number">' + duration + '</Data></Cell>\n';
 }
 function commentCell(comment) {
     return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(comment) + '</Data></Cell>\n';

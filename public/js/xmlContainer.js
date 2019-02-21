@@ -1018,4 +1018,42 @@ const xmlStyle = ' <Styles>\n' +
     '   <Borders/>\n' +
     '   <Font ss:FontName="Open Sans" ss:Size="12" ss:Color="#000000"/>\n' +
     '  </Style>\n' +
+    '  <Style ss:ID="s71">\n' +
+    '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
+    '   <Borders/>\n' +
+    '   <Font ss:FontName="Rubik Regular" ss:Size="22" ss:Color="#404040" ss:Bold="1"/>\n' +
+    '  </Style>' +
+    '  <Style ss:ID="s72">\n' +
+    '   <Alignment ss:Vertical="Center"/>\n' +
+    '   <Borders/>\n' +
+    '   <Font ss:FontName="Rubik Regular" ss:Size="22" ss:Color="#404040" ss:Bold="1"/>\n' +
+    '  </Style>' +
+    '  <Style ss:ID="s73">\n' + // Maintenance / vendu Header
+    '   <Alignment ss:Vertical="Center"/>\n' +
+    '   <Font ss:FontName="Rubik Medium" ss:Size="16" ss:Color="#FFFFFF" ss:Bold="1"/>\n' +
+    '   <Interior ss:Color="#1EAC8C" ss:Pattern="Solid"/>\n' +
+    '  </Style>' +
+    '  <Style ss:ID="s74">\n' + // avant vente Header
+    '   <Alignment ss:Vertical="Center"/>\n' +
+    '   <Font ss:FontName="Rubik Medium" ss:Size="16" ss:Color="#FFFFFF"/>\n' +
+    '   <Interior ss:Color="#FF9300" ss:Pattern="Solid"/>\n' +
+    '  </Style>' +
+    '  <Style ss:ID="s75">\n' + // Interne Header
+    '   <Alignment ss:Vertical="Center"/>\n' +
+    '   <Font ss:FontName="Rubik Medium" ss:Size="16" ss:Color="#FFFFFF"/>\n' +
+    '   <Interior ss:Color="#16CABD" ss:Pattern="Solid"/>\n' +
+    '  </Style>' +
+    '<Style ss:ID="s76">\n' + // Number
+    '   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>\n' +
+    '   <Borders>\n' +
+    '    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>\n' +
+    '    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>\n' +
+    '    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>\n' +
+    '    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>\n' +
+    '   </Borders>\n' +
+    '   <Font ss:FontName="Rubik Regular" ss:Size="12" ss:Color="#404040"/>\n' +
+    '   <Interior ss:Color="#F2F2F2" ss:Pattern="Solid"/>\n' +
+    '   <NumberFormat ss:Format="0.0"/>\n' +
+    '   <Protection/>\n' +
+    '  </Style>' +
     ' </Styles>\n';
