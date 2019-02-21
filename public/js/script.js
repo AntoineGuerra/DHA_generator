@@ -13,7 +13,7 @@ defaultFamily = 'MEP';
 
 // var authorizeButton = document.getElementById('authorize_button');
 // var signoutButton = document.getElementById('signout_button');
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     let acroCookie = getCookie('acronyme');
     if (acroCookie !== undefined && acroCookie.length === 3) {
         document.getElementById('acronyme').value = acroCookie;
@@ -75,6 +75,7 @@ var getCookie = function (name) {
     var parts = value.split("; " + name + "=");
     if (parts.length == 2) return parts.pop().split(";").shift();
 };
+
 function onSignIn(googleUser) {
     // Useful data for your client-side scripts:
     var profile = googleUser.getBasicProfile();
@@ -129,14 +130,14 @@ function handleClientLoad() {
     let div_I = document.getElementById('I');
     let text_err = document.getElementById('err');
     let acronyme = document.getElementById('acronyme').value;
-    
+
     generateBtn.addEventListener('click', function (event) {
         event.preventDefault();
         if (!isLogged) {
             return alert('Vous devez être connecté !')
         }
         let val = weekInput.value;
-         console.log('val', val);
+        console.log('val', val);
         let isoDate;
         if (val !== '' && parseInt(val) > 0) {
             isoDate = getDateOfISOWeek(val, (new Date()).getFullYear());
@@ -161,8 +162,8 @@ function initClient() {
         scope: SCOPES
     }).then(function () {
 
-    }, function(error) {
-         console.log(JSON.stringify(error, null, 2));
+    }, function (error) {
+        console.log(JSON.stringify(error, null, 2));
     });
 }
 
@@ -233,7 +234,7 @@ function listUpcomingEvents(week = false) {
     week = getWeekNumber((new Date(week)))[1];
     let projects = {};
     let projectDontProccess = [];
-     // console.log('gapi clien2', gapi.client);
+    // console.log('gapi clien2', gapi.client);
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
         'timeMin': first,
@@ -242,10 +243,10 @@ function listUpcomingEvents(week = false) {
         'singleEvents': true,
         // 'maxResults': 20,
         'orderBy': 'startTime'
-    }).then(function(response) {
+    }).then(function (response) {
         var events = response.result.items;
         // appendPre('Upcoming events:');
-         console.log('events', events);
+        console.log('events', events);
         if (events.length > 0) {
 
             let acronymeInput = document.getElementById('acronyme');
@@ -284,10 +285,10 @@ function listUpcomingEvents(week = false) {
                 let project;
                 let family;
                 let objName;
-                console.log('exploded text', explodedText);
-                console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
-            
-                let duration = (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000);
+                // console.log('exploded text', explodedText);
+                // console.log('test', (((new Date(to)).getTime() - (new Date(when)).getTime() ) / 3600000));
+
+                let duration = (((new Date(to)).getTime() - (new Date(when)).getTime()) / 3600000);
 
                 let accepted = true;
                 if (event.attendees !== undefined) {
@@ -301,7 +302,7 @@ function listUpcomingEvents(week = false) {
                             switch (attendees[j].responseStatus) {
                                 case 'needsAction':
                                     // let accept = confirm('La tâche : <a href="' + event.htmlLink + '" target="_blank">' + event.summary + '</a> n\'a pas été accepté<br>Souhaitez-vous l\'enregistrer ?' );
-                                    let accept = confirm('La tâche : ' + event.summary + ' (durée : ' + duration + ') n\'a pas été accepté\nSouhaitez-vous l\'enregistrer ?' );
+                                    let accept = confirm('La tâche : ' + event.summary + ' (durée : ' + duration + ') n\'a pas été accepté\nSouhaitez-vous l\'enregistrer ?');
                                     if (!accept) {
                                         accepted = false;
                                         continue;
@@ -343,15 +344,15 @@ function listUpcomingEvents(week = false) {
                     console.log('family', family);
 
                 } else if (explodedText[0] !== undefined && explodedText[1] !== undefined &&
-                    ((explodedText[0].trim().toUpperCase() === 'AV') || (explodedText[0].trim().toUpperCase() === 'I' ||
-                        explodedText[0].trim().toUpperCase() === 'INT') )) {
+                    ((explodedText[0].trim().toUpperCase() === 'AV') || (explodedText[0].trim().toUpperCase() === 'I' ||
+                        explodedText[0].trim().toUpperCase() === 'INT'))) {
 
                     /** IF is AV || INT = family can be not defined */
 
                     category = explodedText[0].trim().toUpperCase();
                     family = '';
 
-                    if ((category === 'I' || category === 'INT') && explodedText[2] === undefined) {
+                    if ((category === 'I' || category === 'INT') && explodedText[2] === undefined) {
 
                         /** IF is INT client can be not defined */
 
@@ -410,13 +411,13 @@ function listUpcomingEvents(week = false) {
                         if (urgentMatches) {
                             comment = 'NON';
                             // description = urgentMatches[1] + urgentMatches[3];
-                             console.log('urgent match');
+                            console.log('urgent match');
                         } else {
-                             console.log('urgent dont match', );
+                            console.log('urgent dont match',);
                             comment = 'OUI';
                         }
                     } else if (commentMatches) {
-                         console.log('comment match', commentMatches);
+                        console.log('comment match', commentMatches);
                         // description = commentMatches[1] + commentMatches[3];
                         comment = commentMatches[2];
                     } else {
@@ -448,7 +449,7 @@ function listUpcomingEvents(week = false) {
                     family = parsed;
                 }
 
-                 console.log('description', description, events);
+                console.log('description', description, events);
 
                 /** Projects GROUP BY (category, client, project, tache) */
                 objName = replaceForObjectName(saveData(category)) + '_' + replaceForObjectName(client) + '_' +
@@ -465,22 +466,22 @@ function listUpcomingEvents(week = false) {
 
                     /** SAME Project EXIST */
                     projects[objName].duration += duration;
-                     console.log('proj duration', projects[objName].duration);
-                     console.log(' duration', duration);
+                    console.log('proj duration', projects[objName].duration);
+                    console.log(' duration', duration);
                 } else {
 
                     /** SAVE Project */
                     projects[objName] = {
-                            category: saveData(category.toUpperCase()),
-                            client: capitalizeFirstLetter(client),
-                            project: capitalizeFirstLetter(project),
-                            family: family.toUpperCase(),
-                            detail: detail,
-                            commentaire: comment,
-                            duration: duration
+                        category: saveData(category.toUpperCase()),
+                        client: capitalizeFirstLetter(client),
+                        project: capitalizeFirstLetter(project),
+                        family: family.toUpperCase(),
+                        detail: detail,
+                        commentaire: comment,
+                        duration: duration
                     };
-                     console.log('add proj', objName);
-                     console.log('duration', duration);
+                    console.log('add proj', objName);
+                    console.log('duration', duration);
                 }
             }
 
@@ -491,24 +492,24 @@ function listUpcomingEvents(week = false) {
                 var obj = projects[key];
                 switch (obj.category) {
                     case 'V':
-                         console.log('add v');
+                        console.log('add v');
                         part_V.push(obj);
                         part_V_duration += obj.duration;
                         break;
                     case 'M':
-                         console.log('add m');
+                        console.log('add m');
                         part_M.push(obj);
                         part_M_duration += obj.duration;
                         break;
                     case 'AV':
                         part_AV.push(obj);
                         part_AV_duration += obj.duration;
-                         console.log('add av');
+                        console.log('add av');
                         break;
                     case 'I':
                         part_I.push(obj);
                         part_I_duration += obj.duration;
-                         console.log('add i');
+                        console.log('add i');
                         break;
                 }
             }
@@ -524,20 +525,20 @@ function listUpcomingEvents(week = false) {
                     text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
                 }
                 // text_err = text_content;
-                 console.log('text content', text_content);
+                console.log('text content', text_content);
                 div_err.innerHTML = '' + text_content + '';
             } else {
                 document.getElementById('div_err').classList.add('d-none');
                 // div_err.parentElement.style.display = 'none';
             }
-             console.log('text_v', part_V);
-             console.log('part_AV', part_AV);
-             console.log('part_I', part_I);
-             console.log('part_M', part_M);
+            console.log('text_v', part_V);
+            console.log('part_AV', part_AV);
+            console.log('part_I', part_I);
+            console.log('part_M', part_M);
             let div_full = document.getElementById('full');
             empty(div_full);
 
-            let text_test = xmlWorkBook + xmlStyle +
+            let xmlContent = xmlWorkBook + xmlStyle +
                 ' <Worksheet ss:Name="DHA">\n' +
                 '  <Table ss:ExpandedColumnCount="31" ss:ExpandedRowCount="1000" x:FullColumns="1"\n' +
                 '   x:FullRows="1" ss:StyleID="s15" ss:DefaultColumnWidth="67"\n' +
@@ -562,84 +563,62 @@ function listUpcomingEvents(week = false) {
                 '   <Row ss:AutoFitHeight="0" ss:Height="42" ss:StyleID="s72">\n' +
                 '    <Cell ss:MergeAcross="7" ss:StyleID="s71"><ss:Data ss:Type="String" xmlns="http://www.w3.org/TR/REC-html40"><B><Font html:Color="#404040">DHA S</Font><Font html:Color="#16CABD">' + week + ' ' + acronyme + '</Font></B></ss:Data></Cell>\n' +
                 '   </Row>\n';
-                // '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
-                // '    <Cell ss:StyleID="s24"><Data ss:Type="String">Nombre d\'heures de congés de la semaine</Data></Cell>\n' +
-                // emptyCell(25, 2) +
-                // emptyCell(27, 5) +
-                // '   </Row>';
-                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                // emptyCell(20, 2) +
-                // emptyCell(22, 25) +
-                // '   </Row>\n' +
-                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                // // '    <Cell ss:StyleID="s20"/>\n' +
-                // // '    <Cell ss:StyleID="s20"/>\n' +
-                // emptyCell(20, 2) +
-                // emptyCell(22, 5) +
-                // '    <Cell ss:StyleID="s23"/>\n' +
-                // emptyCell(22, 18) +
-                // '   </Row>\n' +
-                // '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                // // '    <Cell ss:StyleID="s20"/>\n' +
-                // // '    <Cell ss:StyleID="s20"/>\n' +
-                // emptyCell(20, 2) +
-                // emptyCell(22, 25) +
-                // '   </Row>\n';
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
-                    '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
-                    '    <Cell ss:StyleID="s73"><Data ss:Type="String">Temps passé sur des projets (temps vendu)</Data></Cell>\n' +
-                    emptyCell(73, 2) +
-                    emptyCell(73, 5) +
-                    '   </Row>\n';
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056232"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056252"><Data ss:Type="String">N° SEM</Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056272"><Data ss:Type="String">CLIENT</Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056292"><Data ss:Type="String">PROJET</Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056312"><Data ss:Type="String">FAMILLE ACTIVITÉ</Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056212"><Data ss:Type="String">DETAIL DE LA TÂCHE </Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024432"><Data ss:Type="String">Heures réellement réalisées</Data></Cell>\n' +
-                    '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056192"><Data ss:Type="String">Commentaire sur l\'écart</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s18"/>\n' +
-                    emptyCell(33, 18) +
-                    '   </Row>\n' +
-                    '   <Row ss:AutoFitHeight="0" ss:Height="36.75">\n' +
-                    '    <Cell ss:Index="9" ss:StyleID="s18"/>\n' +
-                    emptyCell(33, 18) +
-                    '    <Cell ss:StyleID="s18"/>\n' +
-                    '    <Cell ss:StyleID="s18"/>\n' +
-                    '    <Cell ss:StyleID="s18"/>\n' +
-                    '   </Row>\n';
-                for (let i = 0; i < part_V.length; i++) {
-                    let object = part_V[i];
-                    text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
-                        acronymeCell(acronyme.trim()) +
-                        weekCell(week) +
-                        clientCell(object.client) +
-                        projectCell(object.project) +
-                        familyCell(object.family) +
-                        detailCell(removeBalise(object.detail)) +
-                        durationCell(object.duration) +
-                        commentCell(removeBalise(object.commentaire)) +
-                        emptyCell(23, 1) +
-                        emptyCell(33, 21) +
-                        '   </Row>\n';
-                }
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
-                    emptyCell(41, 4) +
-                    '    <Cell ss:StyleID="s42"/>\n' +
-                    '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_V.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
-                    '    <Cell ss:StyleID="s43"/>\n' +
-                    '    <Cell ss:StyleID="s23"/>\n' +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
+                '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
+                '    <Cell ss:StyleID="s73"><Data ss:Type="String">Temps passé sur des projets (temps vendu)</Data></Cell>\n' +
+                emptyCell(73, 2) +
+                emptyCell(73, 5) +
+                '   </Row>\n';
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056232"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056252"><Data ss:Type="String">N° SEM</Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056272"><Data ss:Type="String">CLIENT</Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056292"><Data ss:Type="String">PROJET</Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056312"><Data ss:Type="String">FAMILLE ACTIVITÉ</Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056212"><Data ss:Type="String">DETAIL DE LA TÂCHE </Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024432"><Data ss:Type="String">Heures réellement réalisées</Data></Cell>\n' +
+                '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056192"><Data ss:Type="String">Commentaire sur l\'écart</Data></Cell>\n' +
+                '    <Cell ss:StyleID="s18"/>\n' +
+                emptyCell(33, 18) +
+                '   </Row>\n' +
+                '   <Row ss:AutoFitHeight="0" ss:Height="36.75">\n' +
+                '    <Cell ss:Index="9" ss:StyleID="s18"/>\n' +
+                emptyCell(33, 18) +
+                '    <Cell ss:StyleID="s18"/>\n' +
+                '    <Cell ss:StyleID="s18"/>\n' +
+                '    <Cell ss:StyleID="s18"/>\n' +
+                '   </Row>\n';
+            for (let i = 0; i < part_V.length; i++) {
+                let object = part_V[i];
+                xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                    acronymeCell(acronyme.trim()) +
+                    weekCell(week) +
+                    clientCell(object.client) +
+                    projectCell(object.project) +
+                    familyCell(object.family) +
+                    detailCell(removeBalise(object.detail)) +
+                    durationCell(object.duration) +
+                    commentCell(removeBalise(object.commentaire)) +
+                    emptyCell(23, 1) +
                     emptyCell(33, 21) +
                     '   </Row>\n';
-            text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24"/>\n' +
+            }
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
+                emptyCell(41, 4) +
+                '    <Cell ss:StyleID="s42"/>\n' +
+                '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
+                '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_V.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
+                '    <Cell ss:StyleID="s43"/>\n' +
+                '    <Cell ss:StyleID="s23"/>\n' +
+                emptyCell(33, 21) +
+                '   </Row>\n';
+
+            /** MAINT HEADER */
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="24"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="45.75">\n' +
                 '    <Cell ss:StyleID="s73"><Data ss:Type="String">Temps passé en maintenance (temps vendu)</Data></Cell>\n' +
                 emptyCell(73, 3) +
                 emptyCell(73, 4) +
-
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106055548"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -659,7 +638,7 @@ function listUpcomingEvents(week = false) {
                 '   </Row>\n';
             for (let i = 0; i < part_M.length; i++) {
                 let object = part_M[i];
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
                     acronymeCell(acronyme.trim()) +
                     weekCell(week) +
                     clientCell(object.client) +
@@ -672,8 +651,8 @@ function listUpcomingEvents(week = false) {
                     emptyCell(33, 21) +
                     '   </Row>\n';
             }
-            text_test += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
-                    emptyCell(41, 4) +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="27">\n' +
+                emptyCell(41, 4) +
                 '    <Cell ss:StyleID="s42"/>\n' +
                 '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_M.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
@@ -681,14 +660,14 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:StyleID="s23"/>\n' +
                 emptyCell(33, 21) +
                 '   </Row>\n';
-            text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                 '    <Cell ss:StyleID="s74"><Data ss:Type="String">Temps passé en avant-vente</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s74"/>\n' +
                 '    <Cell ss:StyleID="s74"/>\n' +
-                    emptyCell(74, 5) +
+                emptyCell(74, 5) +
                 '   </Row>\n';
-            text_test += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024392"><Data ss:Type="String">N° SEM</Data></Cell>\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024412"><Data ss:Type="String">CLIENT</Data></Cell>\n' +
@@ -705,7 +684,7 @@ function listUpcomingEvents(week = false) {
                 '   </Row>\n';
             for (let i = 0; i < part_AV.length; i++) {
                 let object = part_AV[i];
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
                     acronymeCell(acronyme.trim()) +
                     weekCell(week) +
                     clientCell(object.client) +
@@ -716,7 +695,7 @@ function listUpcomingEvents(week = false) {
                     emptyCell(33, 21) +
                     '   </Row>\n';
             }
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24.75">\n' +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="24.75">\n' +
                 '    <Cell ss:StyleID="s41"/>\n' +
                 '    <Cell ss:StyleID="s41"/>\n' +
                 '    <Cell ss:StyleID="s41"/>\n' +
@@ -726,12 +705,12 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:MergeAcross="1" ss:StyleID="m140462106055448"/>\n' +
                 '   </Row>\n';
 
-            text_test += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                 '    <Cell ss:StyleID="s75"><Data ss:Type="String">Temps passé sur des projets Mayflower (site internet, marque…)</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s75"/>\n' +
                 '    <Cell ss:StyleID="s75"/>\n' +
-                    emptyCell(75, 5) +
+                emptyCell(75, 5) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18">\n' +
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106024372"><Data ss:Type="String">QUI ?</Data></Cell>\n' +
@@ -742,15 +721,15 @@ function listUpcomingEvents(week = false) {
                 '    <Cell ss:MergeDown="1" ss:StyleID="m140462106056552"><Data ss:Type="String">Temps passé</Data></Cell>\n' +
                 '    <Cell ss:MergeAcross="1" ss:MergeDown="1" ss:StyleID="m140462106056612"><Data ss:Type="String">Commentaire </Data></Cell>\n' +
                 '    <Cell ss:StyleID="s18"/>\n' +
-                    emptyCell(33, 21) +
+                emptyCell(33, 21) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
                 '    <Cell ss:Index="9" ss:StyleID="s18"/>\n' +
-                    emptyCell(33, 21) +
+                emptyCell(33, 21) +
                 '   </Row>\n';
             for (let i = 0; i < part_I.length; i++) {
                 let object = part_I[i];
-                text_test += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
+                xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="15.75">\n' +
                     acronymeCell(acronyme.trim()) +
                     weekCell(week) +
                     clientCell(object.client) +
@@ -762,7 +741,7 @@ function listUpcomingEvents(week = false) {
                     emptyCell(33, 21) +
                     '   </Row>\n';
             }
-            text_test += '   <Row ss:AutoFitHeight="0" ss:Height="24.75">\n' +
+            xmlContent += '   <Row ss:AutoFitHeight="0" ss:Height="24.75">\n' +
                 emptyCell(41, 4) +
                 '    <Cell ss:StyleID="s42"><Data ss:Type="String">Total (heures)</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s43" ss:Formula="=SUM(R[-' + part_I.length + ']C:R[-1]C)"><Data ss:Type="Number"></Data></Cell>\n' +
@@ -771,18 +750,18 @@ function listUpcomingEvents(week = false) {
                 '   <Row ss:AutoFitHeight="0" ss:Height="25.5"/>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="48">\n' +
                 '    <Cell ss:StyleID="s56"><Data ss:Type="String">TOTAL HEURES VENDUES</Data></Cell>\n' +
-                     emptyCell(56, 2) +
+                emptyCell(56, 2) +
                 '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (8 + part_V.length) + 'C7+R' + (13 + part_V.length + part_M.length) + 'C7)"><Data\n' +
                 '      ss:Type="Number">' + (part_V_duration + part_M_duration) + '</Data></Cell>\n' +
-                     emptyCell(58, 4) +
+                emptyCell(58, 4) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="30.75">\n' +
                 '    <Cell ss:StyleID="s56"><Data ss:Type="String">TOTAL SEMAINE</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s56"/>\n' +
                 '    <Cell ss:StyleID="s56"/>\n' +
                 '    <Cell ss:StyleID="s57" ss:Formula="=SUM(R' + (8 + part_V.length) + 'C7+R' +
-                    (13 + part_V.length + part_M.length) + 'C7+R' + (18 + part_V.length + part_M.length + part_AV.length) +
-                    'C6+R' + (23 + part_V.length + part_M.length + part_AV.length + part_I.length) + 'C6)"><Data\n' +
+                (13 + part_V.length + part_M.length) + 'C7+R' + (18 + part_V.length + part_M.length + part_AV.length) +
+                'C6+R' + (23 + part_V.length + part_M.length + part_AV.length + part_I.length) + 'C6)"><Data\n' +
                 '      ss:Type="Number">' + (part_V_duration + part_M_duration + part_I_duration + part_AV_duration) + '</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
                 '    <Cell ss:StyleID="s58"/>\n' +
@@ -846,47 +825,47 @@ function listUpcomingEvents(week = false) {
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s16"><Data ss:Type="String">Famille d\'activités</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s16"><Data ss:Type="String">Exemples</Data></Cell>\n' +
-                    emptyCell(18, 19) +
+                emptyCell(18, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Direction conseil, technique et éditoriale</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches d\'audit, benchmarmark, réalisation de recommandations, définition de plans de com, de stratégies éditoriales, de choix techniques…</Data></Cell>\n' +
-                    emptyCell(21, 19) +
+                emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Pilotage de projet</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les réunions projets, les tâches liées au suivi, les briefs, le pilotage de l\'équipe interne ou des prestataires, les points téléphoniques client, les reportings…et les livrables associés (compte-rendus, cadrage…)</Data></Cell>\n' +
-                    emptyCell(21, 19) +
+                emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Conception</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Tous les brainstormings, zonings, le développement technique du projet, les recherches de modules techniques, le SEO, les  chemins de fer,  storyboards… et les livrables associés (specs, prés des zonings…)</Data></Cell>\n' +
-                    emptyCell(21, 19) +
+                emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Graphisme</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes la veille graphique, la conception graphique, les chartes graphiques, création de logos, retouche d\'image, mise en page, création de pictos, infographies…et les livrables associés (maquettes, moodboards…)</Data></Cell>\n' +
-                    emptyCell(21, 19) +
+                emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Mise en production</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches liées à la mise en production comme les recettes, changements de DNS, déploiements, déclaration Cnil, test d\'email, repo GIT….</Data></Cell>\n' +
-                    emptyCell(21, 19) +
+                emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="61.5">\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Formation</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s19"><Data ss:Type="String">Tout ce qui est production de document de formation, formation en présentiel, assistance téléphonique…</Data></Cell>\n' +
-                    emptyCell(21, 19) +
+                emptyCell(21, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
                 '    <Cell ss:StyleID="s26"><Data ss:Type="String">Contenus et CM</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s28"><Data ss:Type="String">Tout ce qui est naming, travail sur du contenu (accroches, textes…), community management, insertion de contenu dans le back-office, recherche de visuel pour des articles… et les livrables associés</Data></Cell>\n' +
-                    emptyCell(18, 19) +
+                emptyCell(18, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="54.75">\n' +
                 '    <Cell ss:StyleID="s32"><Data ss:Type="String">Maintenance et interventions post-projet</Data></Cell>\n' +
                 '    <Cell ss:StyleID="s26"><Data ss:Type="String">Tout ce qui est maintenance applicative, maintenance évolutive, gestion des urgences mais aussi tout ce qui concerne les interventions hors période de garantie</Data></Cell>\n' +
-                    emptyCell(32, 19) +
+                emptyCell(32, 19) +
                 '   </Row>\n' +
                 '   <Row ss:AutoFitHeight="0" ss:Height="15.75" ss:Span="779"/>\n' +
                 '  </Table>\n' +
@@ -914,16 +893,11 @@ function listUpcomingEvents(week = false) {
                 ' </Worksheet>\n' +
                 '</Workbook>\n';
 
-            createDownloader('DHA-' + acronyme + '-S' + week + '.xml', text_test);
+            createDownloader('DHA-' + acronyme + '-S' + week + '.xml', xmlContent);
             document.getElementById('div_DHA').classList.remove('d-none');
 
 
             //END TEST
-
-
-
-
-
 
 
             // let div_err = document.getElementById('err');
@@ -996,10 +970,11 @@ function capitalizeFirstLetter(string) {
 
 function toTitleCase(str) {
     str = str.toLowerCase();
-    return str.replace(/\w\S*/g, function(txt){
+    return str.replace(/\w\S*/g, function (txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
 }
+
 // function parseValue(value) {
 //
 // }
@@ -1026,15 +1001,16 @@ function getWeekNumber(d) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     // Set to nearest Thursday: current date + 4 - current day number
     // Make Sunday's day number 7
-    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
     // Get first day of year
-    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-     console.log('year start', yearStart);
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    console.log('year start', yearStart);
     // Calculate full weeks to nearest Thursday
-    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     // Return array of year and week number
     return [d.getUTCFullYear(), weekNo];
 }
+
 function getDateOfISOWeek(w, y) {
     var simple = new Date(y, 0, 1 + (w - 1) * 7);
     var dow = simple.getDay();
@@ -1075,7 +1051,8 @@ function removeBalise(text) {
     text = text.replace(/<b>URGENT<\/b>/gmi, ' ');
     // }
     // console.log('text lala', text.replace(/<(?:.|\n)*?>/gm, ''));
-    return text.replace(/<(?:.|\n)*?>/gm, '');;
+    return text.replace(/<(?:.|\n)*?>/gm, '');
+    ;
 }
 
 function saveData(data) {
@@ -1111,24 +1088,31 @@ function saveData(data) {
 function acronymeCell(acronyme) {
     return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n';
 }
+
 function weekCell(week) {
     return '    <Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n';
 }
+
 function clientCell(client) {
     return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + client + '</Data></Cell>\n';
 }
+
 function projectCell(project) {
     return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + project + '</Data></Cell>\n';
 }
+
 function familyCell(family) {
     return '    <Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(family) + '</Data></Cell>\n';
 }
+
 function detailCell(detail) {
     return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(detail) + '</Data></Cell>\n';
 }
+
 function durationCell(duration) {
     return '    <Cell ss:StyleID="s76"><Data ss:Type="Number">' + duration + '</Data></Cell>\n';
 }
+
 function commentCell(comment) {
     return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(comment) + '</Data></Cell>\n';
 }
