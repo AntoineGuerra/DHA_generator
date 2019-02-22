@@ -6,7 +6,7 @@
     <meta charset="utf-8"/>
     <link type="text/css" rel="stylesheet" href="public/css/bootstrap_4.css">
     <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="889910005804-93lmvk75fa0un1dpd7ju8usqqp1orf2g.apps.googleusercontent.com">
+    <meta name="google-signin-client_id" content="889910005804-tq4btqe01v6sapk7fk65telp3kcdle3p.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link rel="stylesheet" href="public/css/custom.css">

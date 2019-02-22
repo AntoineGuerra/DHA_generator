@@ -143,7 +143,6 @@ function handleClientLoad() {
             let time = getWeekNumber((new Date()));
             isoDate = getDateOfISOWeek(time[1], time[0])
         }
-
         listUpcomingEvents(isoDate);
     });
 }
@@ -331,14 +330,15 @@ function listUpcomingEvents(week = false) {
                     });
                     continue;
                 }
-
+                let detail = 'SANS';
                 /** Check if data are defined */
+                console.log('exploded', explodedText, explodedText[0].trim().toUpperCase());
                 if (explodedText[0] !== undefined && explodedText[1] !== undefined && explodedText[2] !== undefined && explodedText[3] !== undefined) {
 
-                    category = saveData(explodedText[0].trim().toUpperCase());
-                    client = explodedText[1].trim().toUpperCase();
-                    project = explodedText[2].trim().toUpperCase();
-                    family = explodedText[3].trim();
+                    category = saveCategory(explodedText[0].trim().toUpperCase());
+                    client = saveClient(explodedText[1]);//@todo here change for int -> project
+                    project = saveProject(explodedText[2]);
+                    family = saveFamily(explodedText[3]);
                     console.log('family', family);
 
                 } else if (explodedText[0] !== undefined && explodedText[1] !== undefined &&
@@ -349,13 +349,25 @@ function listUpcomingEvents(week = false) {
 
                     category = explodedText[0].trim().toUpperCase();
                     family = '';
-
-                    if ((category === 'I' || category === 'INT') && explodedText[2] === undefined) {
-
+                    console.log('category', category);
+                    if ((category === 'I' || category === 'INT')) {
+                        console.log('INTERNE', explodedText);
                         /** IF is INT client can be not defined */
-
-                        project = explodedText[1].trim();
-                        client = 'Mayflower'
+                        if (explodedText[2] === undefined || explodedText[3] === undefined) {
+                            console.log('IS MAY');
+                            project = explodedText[1].trim();
+                            client = 'Mayflower';
+                            if (explodedText[2] !== undefined) {
+                                detail = removeBalise(explodedText[2]);
+                            }
+                        } else {
+                            console.log('put in vendu');
+                            category = 'V';
+                            client = saveClient(explodedText[1]);
+                            project = saveProject(explodedText[2]);
+                            detail = saveTache(explodedText[3]);
+                            // family = saveProject(explodedText[2]);
+                        }
 
                     } else if (explodedText[2] === undefined) {
 
@@ -383,7 +395,6 @@ function listUpcomingEvents(week = false) {
                     continue;
                 }
                 let description = event.description;
-                let detail = 'SANS';
                 let comment = 'Sans Commentaire';
 
                 /** FILTER description */
@@ -450,7 +461,7 @@ function listUpcomingEvents(week = false) {
                 console.log('description', description, events);
 
                 /** Projects GROUP BY (category, client, project, tache) */
-                objName = replaceForObjectName(saveData(category)) + '_' + replaceForObjectName(client) + '_' +
+                objName = replaceForObjectName(saveCategory(category)) + '_' + replaceForObjectName(client) + '_' +
                     replaceForObjectName(project) + '_' + replaceForObjectName(detail);
 
                 if (family !== '' && category !== 'AV' && category !== 'I') {
@@ -470,7 +481,7 @@ function listUpcomingEvents(week = false) {
 
                     /** SAVE Project */
                     projects[objName] = {
-                        category: saveData(category.toUpperCase()),
+                        category: saveCategory(category.toUpperCase()),
                         client: capitalizeFirstLetter(client),
                         project: capitalizeFirstLetter(project),
                         family: family.toUpperCase(),
@@ -1031,29 +1042,17 @@ function createDownloader(filename, text) {
     if (autoDl) {
         element.click();
     }
-    // element.style.display = 'none';
-    // div.appendChild(element);
-
-    // element.click();
-
-    // document.body.removeChild(element);
 }
 
-function removeBalise(text) {
-    // let matches = text.match(/\<.*\>(.*)\<\/.*\>/);
-    // while (matches) {
-    //     text = matches[1];
-    //     console.log('match text', text, matches);
-    //     matches = text.match(/\<.*\>(.*)\<\/.*\>/);
+function removeBalise(text, description = true) {
+    if (description) {
+        text = text.replace(/<b>URGENT<\/b>/gmi, ' ');
+    }
     text = text.replace(/\&nbsp/gm, ' ');
-    text = text.replace(/<b>URGENT<\/b>/gmi, ' ');
-    // }
-    // console.log('text lala', text.replace(/<(?:.|\n)*?>/gm, ''));
     return text.replace(/<(?:.|\n)*?>/gm, '');
-    ;
 }
 
-function saveData(data) {
+function saveCategory(data) {
     data = data.toUpperCase().trim();
     switch (data) {
         case 'PRO':
@@ -1082,6 +1081,21 @@ function saveData(data) {
             return data;
     }
 }
+
+
+function saveClient(client) {
+    return client.trim().toUpperCase();
+}
+function saveProject(project) {
+    return project.trim().toUpperCase();
+}
+function saveTache(tache) {
+    //@todo complete saveClient
+}
+function saveFamily(family) {
+    return family.trim();
+}
+
 
 function acronymeCell(acronyme) {
     return '    <Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n';
@@ -1114,6 +1128,7 @@ function durationCell(duration) {
 function commentCell(comment) {
     return '    <Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(comment) + '</Data></Cell>\n';
 }
+
 
 
 // var result = getWeekNumber(new Date());
