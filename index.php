@@ -101,6 +101,17 @@
 <script type="text/javascript" src="public/js/modal-settings.js"></script>
 <script type="text/javascript" src="public/js/xmlContainer.js"></script>
 <script type="text/javascript" src="public/js/script.js"></script>
+
+<script type="text/javascript" src="public/js/xmlBase.js"></script>
+<script type="text/javascript" src="public/js/xmlBuilder.js"></script>
+<script type="text/javascript" src="public/js/eventFilter.js"></script>
+<script type="text/javascript" src="public/js/dhaBuilder.js"></script>
+<script type="text/javascript">
+    let dha = new DhaBuilder(7, 'AGU')
+</script>
+
+
+
 <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
 
 <?php

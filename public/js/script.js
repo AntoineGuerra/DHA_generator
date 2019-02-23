@@ -122,11 +122,11 @@ function handleClientLoad() {
     let current_week = getWeekNumber((new Date()))[1];
     weekInput.value = current_week;
     let div_full = document.getElementById('full');
-    let div_V = document.getElementById('V');
-    let div_AV = document.getElementById('AV');
-    let div_M = document.getElementById('M');
-    let div_I = document.getElementById('I');
-    let text_err = document.getElementById('err');
+    // let div_V = document.getElementById('V');
+    // let div_AV = document.getElementById('AV');
+    // let div_M = document.getElementById('M');
+    // let div_I = document.getElementById('I');
+    // let text_err = document.getElementById('err');
     let acronyme = document.getElementById('acronyme').value;
 
     generateBtn.addEventListener('click', function (event) {
@@ -265,7 +265,7 @@ function listUpcomingEvents(week = false) {
             let text_full = '';
             for (i = 0; i < events.length; i++) {
                 var event = events[i];
-
+                let test = new EventFilter(event);
 
                 var when = event.start.dateTime;
                 var to = event.end.dateTime;
@@ -309,13 +309,13 @@ function listUpcomingEvents(week = false) {
                                     accepted = false;
                                     break;
                             }
-                            if (attendees[j].responseStatus === 'needsAction') {
-                                projectDontProccess.push({
-                                    name: event.summary,
-                                    duration: duration,
-                                    link: event.htmlLink,
-                                });
-                            }
+                            // if (attendees[j].responseStatus === 'needsAction') {
+                            //     projectDontProccess.push({
+                            //         name: event.summary,
+                            //         duration: duration,
+                            //         link: event.htmlLink,
+                            //     });
+                            // } //@ todo try remove this
                         }
 
                     }
@@ -344,7 +344,7 @@ function listUpcomingEvents(week = false) {
                 } else if (explodedText[0] !== undefined && explodedText[1] !== undefined &&
                     ((explodedText[0].trim().toUpperCase() === 'AV') || (explodedText[0].trim().toUpperCase() === 'I' ||
                         explodedText[0].trim().toUpperCase() === 'INT'))) {
-
+                    //@todo #22
                     /** IF is AV || INT = family can be not defined */
 
                     category = explodedText[0].trim().toUpperCase();
