@@ -1,8 +1,56 @@
 class DhaBuilder {
 
-    constructor(week, acronyme) {
+    constructor(week, acronyme, events, defaultFamily) {
+        const dha = this;
+        this.projects = {};
+        this.errorProjects = [];
+        this.week = week;
+        this.acronyme = acronyme;
+        this.parts = {
+            vendu: [],
+            maintenance: [],
+            avantVente: [],
+            interne: [],
+        };
+        // this.parsedEvents = [];
+        for (let i = 0; i < events.length; i++) {
 
-        this.xmlBuilder = new XmlBuilder(week, acronyme, {
+            var event = events[i];
+            new EventFilter(event, defaultFamily, dha);
+            console.log('new this.projects', this.projects);
+
+        }
+        for (let key in this.projects) {
+            // skip loop if the property is from prototype
+            if (!this.projects.hasOwnProperty(key)) continue;
+
+            let project = this.projects[key];
+            switch (project.category) {
+                case this.categorys.vendu:
+                    console.log('add v');
+                    this.parts.vendu.push(project);
+                    break;
+                case this.categorys.maintenance:
+                    console.log('add m');
+                    this.parts.maintenance.push(project);
+                    break;
+                case this.categorys.avantVente:
+                    this.parts.avantVente.push(project);
+                    console.log('add av');
+                    break;
+                case this.categorys.interne:
+                    this.parts.interne.push(project);
+                    console.log('add i');
+                    break;
+            }
+        }
+
+        this.xmlBuilder = new XmlBuilder(this.week, this.acronyme, this.parts);
+        this.createDownloader('DHA-' + this.acronyme + '-S' + this.week + '.xml', this.xmlBuilder.content);
+    }
+
+    get testParts() {
+        return {
             vendu : [
                 {
                     client: 'test cli',
@@ -80,8 +128,20 @@ class DhaBuilder {
 
             ],
 
-        });
-        this.createDownloader('test.xml', this.xmlBuilder.content);
+        };
+    }
+
+    /**
+     * Really it's CONSTANT
+     * @returns {{avantVente: string, interne: string, maintenance: string, vendu: string}}
+     */
+    get categorys() {
+        return {
+            vendu: 'V',
+            maintenance: 'M',
+            avantVente: 'AV',
+            interne: 'I',
+        }
     }
 
     createDownloader(filename, text) {
@@ -96,7 +156,6 @@ class DhaBuilder {
             element.click();
         }
     }
-
 
 
 }

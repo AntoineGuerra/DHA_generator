@@ -21,9 +21,89 @@ const xmlWorkBook = '<?xml version="1.0"?>\n' +
     '  <WindowWidth>25600</WindowWidth>\n' +
     '  <WindowTopX>32767</WindowTopX>\n' +
     '  <WindowTopY>460</WindowTopY>\n' +
+    '  <ActiveSheet>1</ActiveSheet>\n' +
     '  <ProtectStructure>False</ProtectStructure>\n' +
     '  <ProtectWindows>False</ProtectWindows>\n' +
     ' </ExcelWorkbook>\n';
+
+const xmlWorkBookFirst = ' <Worksheet ss:Name="Nomemclature activités">\n' +
+'  <Table ss:ExpandedColumnCount="22" ss:ExpandedRowCount="1000" x:FullColumns="1"\n' +
+'   x:FullRows="1" ss:StyleID="s15" ss:DefaultColumnWidth="67"\n' +
+'   ss:DefaultRowHeight="15">\n' +
+'   <Column ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="287"/>\n' +
+'   <Column ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="412"/>\n' +
+'   <Column ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="65" ss:Span="3"/>\n' +
+'   <Column ss:Index="7" ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="63"\n' +
+'    ss:Span="15"/>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s16"><Data ss:Type="String">Famille d\'activités</Data></Cell>\n' +
+'    <Cell ss:StyleID="s16"><Data ss:Type="String">Exemples</Data></Cell>\n' +
+emptyCell(18, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Direction conseil, technique et éditoriale</Data></Cell>\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches d\'audit, benchmarmark, réalisation de recommandations, définition de plans de com, de stratégies éditoriales, de choix techniques…</Data></Cell>\n' +
+emptyCell(21, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Pilotage de projet</Data></Cell>\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les réunions projets, les tâches liées au suivi, les briefs, le pilotage de l\'équipe interne ou des prestataires, les points téléphoniques client, les reportings…et les livrables associés (compte-rendus, cadrage…)</Data></Cell>\n' +
+emptyCell(21, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Conception</Data></Cell>\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Tous les brainstormings, zonings, le développement technique du projet, les recherches de modules techniques, le SEO, les  chemins de fer,  storyboards… et les livrables associés (specs, prés des zonings…)</Data></Cell>\n' +
+emptyCell(21, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Graphisme</Data></Cell>\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes la veille graphique, la conception graphique, les chartes graphiques, création de logos, retouche d\'image, mise en page, création de pictos, infographies…et les livrables associés (maquettes, moodboards…)</Data></Cell>\n' +
+emptyCell(21, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Mise en production</Data></Cell>\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches liées à la mise en production comme les recettes, changements de DNS, déploiements, déclaration Cnil, test d\'email, repo GIT….</Data></Cell>\n' +
+emptyCell(21, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="61.5">\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Formation</Data></Cell>\n' +
+'    <Cell ss:StyleID="s19"><Data ss:Type="String">Tout ce qui est production de document de formation, formation en présentiel, assistance téléphonique…</Data></Cell>\n' +
+emptyCell(21, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
+'    <Cell ss:StyleID="s26"><Data ss:Type="String">Contenus et CM</Data></Cell>\n' +
+'    <Cell ss:StyleID="s28"><Data ss:Type="String">Tout ce qui est naming, travail sur du contenu (accroches, textes…), community management, insertion de contenu dans le back-office, recherche de visuel pour des articles… et les livrables associés</Data></Cell>\n' +
+emptyCell(18, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="54.75">\n' +
+'    <Cell ss:StyleID="s32"><Data ss:Type="String">Maintenance et interventions post-projet</Data></Cell>\n' +
+'    <Cell ss:StyleID="s26"><Data ss:Type="String">Tout ce qui est maintenance applicative, maintenance évolutive, gestion des urgences mais aussi tout ce qui concerne les interventions hors période de garantie</Data></Cell>\n' +
+emptyCell(32, 19) +
+'   </Row>\n' +
+'   <Row ss:AutoFitHeight="0" ss:Height="15.75" ss:Span="779"/>\n' +
+'  </Table>\n' +
+'  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">\n' +
+'   <PageSetup>\n' +
+'    <Layout x:Orientation="Landscape"/>\n' +
+'    <Header x:Margin="0"/>\n' +
+'    <Footer x:Margin="0"/>\n' +
+'   </PageSetup>\n' +
+'   <Unsynced/>\n' +
+'   <Print>\n' +
+'    <ValidPrinterInfo/>\n' +
+'    <HorizontalResolution>600</HorizontalResolution>\n' +
+'    <VerticalResolution>600</VerticalResolution>\n' +
+'   </Print>\n' +
+'   <Panes>\n' +
+'    <Pane>\n' +
+'     <Number>3</Number>\n' +
+'     <ActiveRow>5</ActiveRow>\n' +
+'    </Pane>\n' +
+'   </Panes>\n' +
+'   <ProtectObjects>False</ProtectObjects>\n' +
+'   <ProtectScenarios>False</ProtectScenarios>\n' +
+'  </WorksheetOptions>\n' +
+' </Worksheet>\n';
 
 const endXmlWorkBook = '  </Table>\n' +
     '  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">\n' +
@@ -51,9 +131,9 @@ const endXmlWorkBook = '  </Table>\n' +
     '   <ProtectScenarios>False</ProtectScenarios>\n' +
     '  </WorksheetOptions>\n' +
     '  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">\n' +
-    '   <Range>R29C8:R32C8,R13C8</Range>\n' +
+    '   <Range>R7C5:R16C5</Range>\n' +
     '   <Type>List</Type>\n' +
-    '   <Value>R38C11:R39C11</Value>\n' +
+    '   <Value>\'Nomemclature activités\'!R2C1:R9C1</Value>\n' +
     '   <InputHide/>\n' +
     '  </DataValidation>\n' +
     '  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">\n' +
@@ -69,85 +149,8 @@ const endXmlWorkBook = '  </Table>\n' +
     '   <InputHide/>\n' +
     '  </DataValidation>\n' +
     ' </Worksheet>\n' +
-    // ' <Worksheet ss:Name="Nomemclature activités">\n' +
-    // '  <Table ss:ExpandedColumnCount="22" ss:ExpandedRowCount="1000" x:FullColumns="1"\n' +
-    // '   x:FullRows="1" ss:StyleID="s15" ss:DefaultColumnWidth="67"\n' +
-    // '   ss:DefaultRowHeight="15">\n' +
-    // '   <Column ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="287"/>\n' +
-    // '   <Column ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="412"/>\n' +
-    // '   <Column ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="65" ss:Span="3"/>\n' +
-    // '   <Column ss:Index="7" ss:StyleID="s15" ss:AutoFitWidth="0" ss:Width="63"\n' +
-    // '    ss:Span="15"/>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s16"><Data ss:Type="String">Famille d\'activités</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s16"><Data ss:Type="String">Exemples</Data></Cell>\n' +
-    // emptyCell(18, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Direction conseil, technique et éditoriale</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches d\'audit, benchmarmark, réalisation de recommandations, définition de plans de com, de stratégies éditoriales, de choix techniques…</Data></Cell>\n' +
-    // emptyCell(21, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Pilotage de projet</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les réunions projets, les tâches liées au suivi, les briefs, le pilotage de l\'équipe interne ou des prestataires, les points téléphoniques client, les reportings…et les livrables associés (compte-rendus, cadrage…)</Data></Cell>\n' +
-    // emptyCell(21, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Conception</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Tous les brainstormings, zonings, le développement technique du projet, les recherches de modules techniques, le SEO, les  chemins de fer,  storyboards… et les livrables associés (specs, prés des zonings…)</Data></Cell>\n' +
-    // emptyCell(21, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Graphisme</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes la veille graphique, la conception graphique, les chartes graphiques, création de logos, retouche d\'image, mise en page, création de pictos, infographies…et les livrables associés (maquettes, moodboards…)</Data></Cell>\n' +
-    // emptyCell(21, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Mise en production</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Toutes les tâches liées à la mise en production comme les recettes, changements de DNS, déploiements, déclaration Cnil, test d\'email, repo GIT….</Data></Cell>\n' +
-    // emptyCell(21, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="61.5">\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Formation</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s19"><Data ss:Type="String">Tout ce qui est production de document de formation, formation en présentiel, assistance téléphonique…</Data></Cell>\n' +
-    // emptyCell(21, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="18.75">\n' +
-    // '    <Cell ss:StyleID="s26"><Data ss:Type="String">Contenus et CM</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s28"><Data ss:Type="String">Tout ce qui est naming, travail sur du contenu (accroches, textes…), community management, insertion de contenu dans le back-office, recherche de visuel pour des articles… et les livrables associés</Data></Cell>\n' +
-    // emptyCell(18, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="54.75">\n' +
-    // '    <Cell ss:StyleID="s32"><Data ss:Type="String">Maintenance et interventions post-projet</Data></Cell>\n' +
-    // '    <Cell ss:StyleID="s26"><Data ss:Type="String">Tout ce qui est maintenance applicative, maintenance évolutive, gestion des urgences mais aussi tout ce qui concerne les interventions hors période de garantie</Data></Cell>\n' +
-    // emptyCell(32, 19) +
-    // '   </Row>\n' +
-    // '   <Row ss:AutoFitHeight="0" ss:Height="15.75" ss:Span="779"/>\n' +
-    // '  </Table>\n' +
-    // '  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">\n' +
-    // '   <PageSetup>\n' +
-    // '    <Layout x:Orientation="Landscape"/>\n' +
-    // '    <Header x:Margin="0"/>\n' +
-    // '    <Footer x:Margin="0"/>\n' +
-    // '   </PageSetup>\n' +
-    // '   <Unsynced/>\n' +
-    // '   <Print>\n' +
-    // '    <ValidPrinterInfo/>\n' +
-    // '    <HorizontalResolution>600</HorizontalResolution>\n' +
-    // '    <VerticalResolution>600</VerticalResolution>\n' +
-    // '   </Print>\n' +
-    // '   <Panes>\n' +
-    // '    <Pane>\n' +
-    // '     <Number>3</Number>\n' +
-    // '     <ActiveRow>5</ActiveRow>\n' +
-    // '    </Pane>\n' +
-    // '   </Panes>\n' +
-    // '   <ProtectObjects>False</ProtectObjects>\n' +
-    // '   <ProtectScenarios>False</ProtectScenarios>\n' +
-    // '  </WorksheetOptions>\n' +
-    // ' </Worksheet>\n' +
-    '</Workbook>\n'
+    //
+    '</Workbook>\n';
 
 const xmlStyle = ' <Styles>\n' +
     '  <Style ss:ID="Default" ss:Name="Normal">\n' +

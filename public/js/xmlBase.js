@@ -1,7 +1,10 @@
 class XmlBase {
 
+    static currentRow = 0;
+    static currentCol = 0;
+    static  maxCol = 0
 
-    constructor(week, acronyme) {
+    constructor() {
         this.xmlCellIndent = '';
         this.cellIndent = 4;
         this.xmlColIndent = '';
@@ -11,7 +14,10 @@ class XmlBase {
             string: 'String',
             number: 'Number',
         };
+        // this.currentRow = 0;
 
+        // this.currentCol = 0;
+        // this.maxCol = 0;
         // this.content = this.workBook + this.styleSheet + this.dhaHeader(week, acronyme);
 
     }
@@ -70,6 +76,7 @@ class XmlBase {
      * @returns {string}
      */
     col(styleID, width, specs = []) {
+        XmlBase.maxCol++;
         return this.colIndent + '<Column ' + specs.join(' ') + ' ss:StyleID="' + styleID + '" ss:AutoFitWidth="0" ss:Width="' + width + '"/>\n';
 
     }
@@ -80,16 +87,26 @@ class XmlBase {
      * @param dataType {dataTypes}
      * @param dataContent {string}
      * @param specs {array}
-     * @returns {string}
+     * @returns {{number: number, xml: string}}
      */
     cell(styleID, dataType, dataContent = '', specs = []) {
-        return this.cellIndent + '<Cell ' + specs.join(' ') + ' ss:StyleID="' + styleID + '"><Data ss:Type="' + dataType + '">' + dataContent + '</Data></Cell>\n';
+        XmlBase.currentCol++;
+        let xml = this.cellIndent + '<Cell ' + specs.join(' ') +
+            ' ss:StyleID="' + styleID + '"><Data ss:Type="' + dataType + '">' + dataContent + '</Data></Cell>\n';
+        let data = {xml: xml, number: XmlBase.currentCol};
+        // if (XmlBase.currentCol > XmlBase.maxCol) {
+        //     XmlBase.currentCol = 1;
+        // }
+        return data;
     }
 
     row(height, content = '', specs = []) {
-        return this.colIndent + '<Row  ' + specs.join(' ') + ' ss:AutoFitHeight="0" ss:Height="' + height + '">\n' +
+        XmlBase.currentCol = 0;
+        XmlBase.currentRow++;
+        let xml = this.colIndent + '<Row  ' + specs.join(' ') + ' ss:AutoFitHeight="0" ss:Height="' + height + '">\n' +
             content +
             this.colIndent + '</Row>\n';
+        return {xml: xml, number: XmlBase.currentRow};
     }
 
 
@@ -142,45 +159,45 @@ class XmlBase {
 
 
     acronymeCell(acronyme) {
-        return this.cell('s34', this.dataTypes.string, acronyme);
+        return this.cell('s34', this.dataTypes.string, acronyme).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s34"><Data ss:Type="String">' + acronyme.trim() + '</Data></Cell>\n';
     }
 
     weekCell(week) {
-        return this.cell('s34', this.dataTypes.string, 'S' + week);
+        return this.cell('s34', this.dataTypes.string, 'S' + week).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s34"><Data ss:Type="String">S' + week + '</Data></Cell>\n';
     }
 
     clientCell(client) {
-        return this.cell('s34', this.dataTypes.string, client);
+        return this.cell('s34', this.dataTypes.string, this.upperFirst(client)).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s34"><Data ss:Type="String">' + client + '</Data></Cell>\n';
     }
 
     projectCell(project) {
-        return this.cell('s34', this.dataTypes.string, project);
+        return this.cell('s34', this.dataTypes.string, this.upperFirst(project)).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s34"><Data ss:Type="String">' + project + '</Data></Cell>\n';
     }
 
     familyCell(family) {
-        return this.cell('s36', this.dataTypes.string, family);
+        return this.cell('s36', this.dataTypes.string, family).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s36"><Data ss:Type="String">' + parse_family(family) + '</Data></Cell>\n';
     }
 
-    detailCell(detail) {
-        return this.cell('s39', this.dataTypes.string, detail);
+    tacheCell(tache) {
+        return this.cell('s39', this.dataTypes.string, tache).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(detail) + '</Data></Cell>\n';
     }
 
     durationCell(duration) {
-        return this.cell('s76', this.dataTypes.number, duration);
+        return this.cell('s76', this.dataTypes.number, duration).xml;
         // return this.cellIndent + '<Cell ss:StyleID="s76"><Data ss:Type="Number">' + duration + '</Data></Cell>\n';
     }
 
     commentCell(comment, merge = false) {
         if (!merge) {
-            return this.cell('s39', this.dataTypes.string, comment);
+            return this.cell('s39', this.dataTypes.string, comment).xml;
         } else {
-            return this.cell('m140462106056532', this.dataTypes.string, comment, ['ss:MergeAcross="1"']);
+            return this.cell('m140462106056532', this.dataTypes.string, comment, ['ss:MergeAcross="1"']).xml;
         }
         // return this.cellIndent + '<Cell ss:StyleID="s39"><Data ss:Type="String">' + removeBalise(comment) + '</Data></Cell>\n';
     }
@@ -191,5 +208,17 @@ class XmlBase {
             text += this.cellIndent + '<Cell ss:StyleID="s' + style + '"/>\n';
         }
         return text;
+    }
+
+    /**
+     * upper first letter
+     * @param string {string}
+     * @returns {string}
+     */
+    upperFirst(string) {
+        string = string.toLowerCase();
+        return string.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
     }
 }
