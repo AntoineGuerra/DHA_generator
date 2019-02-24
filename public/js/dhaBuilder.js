@@ -171,6 +171,7 @@ class DhaBuilder {
 
         if (this.errorProjects.length > 0) {
             document.getElementById('table-error').classList.remove('d-none');
+            document.getElementById('syntax-error').classList.remove('d-none');
             let text_content = '';
             for (let i = 0; i < this.errorProjects.length; i++) {
                 let obj = this.errorProjects[i];

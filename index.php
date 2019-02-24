@@ -73,6 +73,8 @@
         </div>
     </div>
 
+
+    <h3 class="col-12 d-none" id="syntax-error">Veuillez respecter cette <a href="https://github.com/AntoineGuerra/DHA_generator#remplir-sous-cette-forme-" target="_blank">syntaxe</a></h3>
     <table class="table table-hover d-none" id="table-error">
         <thead>
         <tr>
