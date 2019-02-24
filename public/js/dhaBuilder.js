@@ -26,116 +26,122 @@ class DhaBuilder {
 
             let project = this.projects[key];
             switch (project.category) {
-                case this.categorys.vendu:
+                case DhaBuilder.categorys.vendu:
                     console.log('add v');
                     this.parts.vendu.push(project);
                     break;
-                case this.categorys.maintenance:
+                case DhaBuilder.categorys.maintenance:
                     console.log('add m');
                     this.parts.maintenance.push(project);
                     break;
-                case this.categorys.avantVente:
+                case DhaBuilder.categorys.avantVente:
                     this.parts.avantVente.push(project);
                     console.log('add av');
                     break;
-                case this.categorys.interne:
+                case DhaBuilder.categorys.interne:
                     this.parts.interne.push(project);
                     console.log('add i');
                     break;
             }
         }
 
+        XmlBase.cellIndent = 4;
+        XmlBase.colIndent = 3;
+
         this.xmlBuilder = new XmlBuilder(this.week, this.acronyme, this.parts);
-        this.createDownloader('DHA-' + this.acronyme + '-S' + this.week + '.xml', this.xmlBuilder.content);
+        DhaBuilder.createDownloader('DHA-' + this.acronyme + '-S' + this.week + '.xml', this.xmlBuilder.content);
+
+        this.displayErrors();
+
     }
 
-    get testParts() {
-        return {
-            vendu : [
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    family: 'test fam',
-                    tache: 'test tach',
-                    duration: 2,
-                    comment: 'test com',
-                },
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    family: 'test fam',
-                    tache: 'test tach',
-                    duration: 23,
-                    comment: 'test com',
-                },
-
-            ],
-            maintenance: [
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    family: 'test fam',
-                    tache: 'test tach',
-                    duration: 2,
-                    comment: 'test com',
-                },
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    family: 'test fam',
-                    tache: 'test tach',
-                    duration: 23,
-                    comment: 'test com',
-                },
-
-            ],
-            avantVente: [
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    // family: 'test fam',
-                    tache: 'test tach',
-                    duration: 2,
-                    comment: 'test com',
-                },
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    // family: 'test fam',
-                    tache: 'test tach',
-                    duration: 23,
-                    comment: 'test com',
-                },
-
-            ],
-            interne: [
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    // family: 'test fam',
-                    tache: 'test tach',
-                    duration: 2,
-                    comment: 'test com',
-                },
-                {
-                    client: 'test cli',
-                    project: 'test proj',
-                    // family: 'test fam',
-                    tache: 'test tach',
-                    duration: 23,
-                    comment: 'test com',
-                },
-
-            ],
-
-        };
-    }
+    // get testParts() {
+    //     return {
+    //         vendu : [
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 2,
+    //                 comment: 'test com',
+    //             },
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 23,
+    //                 comment: 'test com',
+    //             },
+    //
+    //         ],
+    //         maintenance: [
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 2,
+    //                 comment: 'test com',
+    //             },
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 23,
+    //                 comment: 'test com',
+    //             },
+    //
+    //         ],
+    //         avantVente: [
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 // family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 2,
+    //                 comment: 'test com',
+    //             },
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 // family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 23,
+    //                 comment: 'test com',
+    //             },
+    //
+    //         ],
+    //         interne: [
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 // family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 2,
+    //                 comment: 'test com',
+    //             },
+    //             {
+    //                 client: 'test cli',
+    //                 project: 'test proj',
+    //                 // family: 'test fam',
+    //                 tache: 'test tach',
+    //                 duration: 23,
+    //                 comment: 'test com',
+    //             },
+    //
+    //         ],
+    //
+    //     };
+    // }
 
     /**
      * Really it's CONSTANT
      * @returns {{avantVente: string, interne: string, maintenance: string, vendu: string}}
      */
-    get categorys() {
+    static get categorys() {
         return {
             vendu: 'V',
             maintenance: 'M',
@@ -144,7 +150,7 @@ class DhaBuilder {
         }
     }
 
-    createDownloader(filename, text) {
+    static createDownloader(filename, text) {
         // var element = document.createElement('a');
         let element = document.getElementById('DHA');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -157,5 +163,22 @@ class DhaBuilder {
         }
     }
 
+    displayErrors() {
+        let div_err = document.getElementById('err');
+
+        if (this.errorProjects.length > 0) {
+            document.getElementById('div_err').classList.remove('d-none');
+            let text_content = '';
+            for (let i = 0; i < this.errorProjects.length; i++) {
+                let obj = this.errorProjects[i];
+                let declined = (obj.declined) ? 'Refusé !' : '';
+                text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
+            }
+            console.log('text content', text_content);
+            div_err.innerHTML = text_content;
+        } else {
+            document.getElementById('div_err').classList.add('d-none');
+        }
+    }
 
 }

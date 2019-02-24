@@ -41,9 +41,11 @@ class PartXML extends XmlBase {
         this.rows = {
             header: 0,
             total: 0,
+            family: 0,
         };
         this.cols = {
             duration: 0,
+            family: 0,
         };
         this.haveFamily = true;
         this.headerStyle = '';
@@ -84,7 +86,7 @@ class PartXML extends XmlBase {
             headerRowContent
         );
         this.cols.duration = durationCell.number;
-        alert(this.title + durationCell.number)
+        // alert(this.title + durationCell.number)
         if (this.haveFamily && familyCell) {
             this.cols.family = familyCell.number
         }
@@ -93,7 +95,7 @@ class PartXML extends XmlBase {
         header += headerRow.xml;
 
         header += this.row(36.75,
-            this.cellIndent + '<Cell ss:Index="9" ss:StyleID="s18"/>\n'
+            XmlBase.cellIndent + '<Cell ss:Index="9" ss:StyleID="s18"/>\n'
         ).xml;
 
         return header;

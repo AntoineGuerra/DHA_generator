@@ -10,7 +10,6 @@ class EventFilter {
         this.endTime = EventFilter.getEndTime(this.event);
 
 
-
         this.allProjects = this.dha.projects;
         this.errorProjects = this.dha.errorProjects;
 
@@ -25,6 +24,7 @@ class EventFilter {
 
         this.valid = true;
 
+        this.declined = false;
 
         this.getDuration();
         this.checkEventDeclined(this.event);
@@ -43,12 +43,15 @@ class EventFilter {
         this.filterDescription(this.event.description);
 
         if (!this.saveFinalProject() || !this.valid) {
-            this.errorProjects.push({
+            let err = {
                 name: event.summary,
                 duration: this.duration,
                 link: event.htmlLink,
-            });
+                declined: this.declined,
+            };
+            this.errorProjects.push(err);
         }
+
 
 
     }
@@ -120,24 +123,24 @@ class EventFilter {
             case 'PROJET':
             case 'PROJETS':
             case 'P':
-                return this.dha.categorys.vendu;
+                return DhaBuilder.categorys.vendu;
 
             case 'I':
             case 'INT':
             case 'INTERNE':
-                return this.dha.categorys.interne;
+                return DhaBuilder.categorys.interne;
 
             case 'AV':
             case 'AVANT VENTE':
             case 'AVANT VENTES':
             case 'AVANTS VENTES':
             case 'AVANTS VENTE':
-                return this.dha.categorys.avantVente;
+                return DhaBuilder.categorys.avantVente;
 
             case 'M':
             case 'MAINT':
             case 'MAINTENANCE':
-                return this.dha.categorys.maintenance;
+                return DhaBuilder.categorys.maintenance;
 
             default:
                 // return category;
@@ -244,11 +247,13 @@ class EventFilter {
                             let accept = confirm('La tâche : ' + event.summary + ' (durée : ' + duration + ') n\'a pas été accepté\nSouhaitez-vous l\'enregistrer ?');
                             if (!accept) {
                                 this.valid = false;
+                                this.declined = true;
                                 continue;
                             }
                             break;
                         case 'declined':
                             this.valid = false;
+                            this.declined = true;
                             break;
                     }
                 }
@@ -290,7 +295,7 @@ class EventFilter {
     }
 
     checkInterne(datas) {
-        if (this.category === this.dha.categorys.interne) {
+        if (this.category === DhaBuilder.categorys.interne) {
             console.log('it\'s interne', 'category', this.category, 'client', this.client, 'project', this.project);
             /** in Really : Client is undefined */
             if (!this.project) {
@@ -299,7 +304,7 @@ class EventFilter {
                 this.tache = datas[2];
             } else if (this.client !== 'MAYFLOWER') {
                 console.log('put in vendu case');
-                this.category = this.dha.categorys.vendu;
+                this.category = DhaBuilder.categorys.vendu;
             }
         }
     }
@@ -317,7 +322,7 @@ class EventFilter {
 
             /** FILTER comment */
             let commentMatches = description.match(/(.*)Commentaires?\s*:?\s*<?b?r?>?\s?<b>([^<]*)<\/b>(.*)/i);
-            if (this.category === this.dha.categorys.maintenance) {
+            if (this.category === DhaBuilder.categorys.maintenance) {
                 let urgentMatches = description.match(/(.*)<b>URGENT<\/b>(.*)/i);
                 if (urgentMatches) {
                     this.comment = 'NON';
@@ -338,7 +343,7 @@ class EventFilter {
                 this.family = matchFamily[1];
                 console.log('match family', this.family, description);
             }
-        } else if (this.category === this.dha.categorys.maintenance) {
+        } else if (this.category === DhaBuilder.categorys.maintenance) {
 
             /** IF MAINT === URGENT ? */
             this.comment = 'OUI';
@@ -353,7 +358,7 @@ class EventFilter {
             let objName = this.category + '_' + this.client + '_' +
                 this.project + '_' + this.tache;
 
-            if (this.family !== false && (this.category === this.dha.categorys.vendu || this.category === this.dha.categorys.maintenance)) {
+            if (this.family !== false && (this.category === DhaBuilder.categorys.vendu || this.category === DhaBuilder.categorys.maintenance)) {
 
                 /** IF is V || M GROUP BY family too */
                 objName += '_' + replaceForObjectName(this.family);

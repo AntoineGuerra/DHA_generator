@@ -77,7 +77,7 @@ class XmlBuilder extends XmlBase {
                 this.emptyCell(22, 25)
                 ).xml +
             this.row(42,
-                this.cellIndent + '<Cell ss:MergeAcross="7" ss:StyleID="s71"><ss:Data ss:Type="String" xmlns="http://www.w3.org/TR/REC-html40"><B><Font html:Color="#404040">DHA S</Font><Font html:Color="#16CABD">' + this.week + ' ' + this.acronyme + '</Font></B></ss:Data></Cell>\n'
+                XmlBase.cellIndent + '<Cell ss:MergeAcross="7" ss:StyleID="s71"><ss:Data ss:Type="String" xmlns="http://www.w3.org/TR/REC-html40"><B><Font html:Color="#404040">DHA S</Font><Font html:Color="#16CABD">' + this.week + ' ' + this.acronyme + '</Font></B></ss:Data></Cell>\n'
                 , ['ss:StyleID="s72"']
             ).xml;
     }
@@ -323,16 +323,20 @@ class XmlBuilder extends XmlBase {
     }
 
     footer() {
-        let firstLineVendu = 7;
+        let firstLineVendu = this.vendu.rows.header + 1;
         let lastLineVendu = firstLineVendu + this.parts.vendu.length;
 
-        let firstLineMaintenance = (lastLineVendu + 5);
+        let firstLineMaintenance = this.maintenance.rows.header + 1;
         let lastLineMaintenance = (firstLineMaintenance + this.parts.maintenance.length);
 
         let listRanges = {
-            vendu: 'R' + firstLineVendu + 'C5:R' + lastLineVendu + 'C5',
-            maintenance: 'R' + firstLineMaintenance + 'C5:R' + lastLineMaintenance + 'C5',
+            vendu: 'R' + firstLineVendu + 'C' + this.vendu.cols.family + ':' + 
+                'R' + lastLineVendu + 'C'+ this.maintenance.cols.family,
+            maintenance: 'R' + firstLineMaintenance + 'C' + this.maintenance.cols.family + ':' +
+                'R' + lastLineMaintenance + 'C' + this.maintenance.cols.family,
         };
+        console.log('list ranges', listRanges);
+        
 
         return '  </Table>\n' +
             '  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">\n' +
@@ -371,22 +375,7 @@ class XmlBuilder extends XmlBase {
             '   <Value>\'Nomemclature activités\'!R2C1:R9C1</Value>\n' +
             '   <InputHide/>\n' +
             '  </DataValidation>\n' +
-
-            //
-            // '  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">\n' +
-            // '   <Range>R39C10:R40C10,R50C10:R51C10</Range>\n' +
-            // '   <Type>List</Type>\n' +
-            // '   <Value>R39C10:R40C10</Value>\n' +
-            // '   <InputHide/>\n' +
-            // '  </DataValidation>\n' +
-            // '  <DataValidation xmlns="urn:schemas-microsoft-com:office:excel">\n' +
-            // '   <Range>R11C5:R12C5,R15C5:R21C5</Range>\n' +
-            // '   <Type>List</Type>\n' +
-            // '   <Value>\'Nomemclature activités\'!R2C1:R9C1</Value>\n' +
-            // '   <InputHide/>\n' +
-            // '  </DataValidation>\n' +
             ' </Worksheet>\n' +
-            //
             '</Workbook>\n';
     }
 
