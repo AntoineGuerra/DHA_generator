@@ -33,10 +33,10 @@
             <button class="btn" id="autoDl">Disable auto Download</button><br>
             <span class="text-muted">Famille d'activité par défault</span>
             <select class="btn btn-light" id="defaultFamily">
-                <option id="defaultFamilyMEP" value="MEP">Mise En Production</option>
+                <option id="defaultFamilyMEP" value="Mise En Production">Mise En Production</option>
                 <option id="defaultFamilyGraphisme" value="Graphisme">Graphisme</option>
                 <option id="defaultFamilyConception" value="Conception">Conception</option>
-                <option id="defaultFamilyPDP" value="PDP">Pilotage de projet</option>
+                <option id="defaultFamilyPDP" value="Pilotage de projet">Pilotage de projet</option>
                 <option id="defaultFamilyDirection" value="Direction">Direction conseil, technique et éditoriale</option>
                 <option id="defaultFamilyContenus" value="Contenus">Contenus et CM</option>
                 <option id="defaultFamilyMaintenance" value="Maintenance">Maintenance et interventions post-projet</option>
@@ -72,6 +72,31 @@
             </a>
         </div>
     </div>
+
+    <table class="table table-hover d-none" id="table-error">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Tâche</th>
+            <th scope="col">Date</th>
+            <th scope="col">Durée</th>
+            <th scope="col">Raison</th>
+        </tr>
+        </thead>
+        <tbody id="table-error-content">
+<!--        <tr>-->
+<!--            <th scope="row">2</th>-->
+<!--            <td>Jacob</td>-->
+<!--            <td>Thornton</td>-->
+<!--            <td>@fat</td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <th scope="row">3</th>-->
+<!--            <td colspan="2">Larry the Bird</td>-->
+<!--            <td>@twitter</td>-->
+<!--        </tr>-->
+        </tbody>
+    </table>
     <div class="row d-none" id="div_err">
         <hr>
 

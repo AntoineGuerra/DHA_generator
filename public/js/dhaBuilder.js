@@ -53,6 +53,9 @@ class DhaBuilder {
 
         this.displayErrors();
 
+        XmlBase.currentRow = 0;
+        XmlBase.currentCol = 0;
+
     }
 
     // get testParts() {
@@ -164,15 +167,25 @@ class DhaBuilder {
     }
 
     displayErrors() {
-        let div_err = document.getElementById('err');
+        let div_err = document.getElementById('table-error-content');
 
         if (this.errorProjects.length > 0) {
-            document.getElementById('div_err').classList.remove('d-none');
+            document.getElementById('table-error').classList.remove('d-none');
             let text_content = '';
             for (let i = 0; i < this.errorProjects.length; i++) {
                 let obj = this.errorProjects[i];
                 let declined = (obj.declined) ? 'Refusé !' : '';
-                text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
+
+                text_content +=  '<tr onclick="window.open(\'' + obj.link + '\', \'_blank\');"' + ' class="clickable">' +
+                        '<th scope="row">' + i + '</th>' +
+                        '<td>' + obj.name + '</td>' +
+                        '<td>' + obj.date + '</td>' +
+                        '<td>' + obj.duration + 'H</td>' +
+                        '<td>' + obj.error + '</td>' +
+                    '</tr>';
+
+
+                // text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
             }
             console.log('text content', text_content);
             div_err.innerHTML = text_content;

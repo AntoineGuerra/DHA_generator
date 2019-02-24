@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let defaultFamilySelect = document.getElementById('defaultFamily');
     defaultFamilySelect.addEventListener('change', function () {
         console.log('change', this.value);
+        defaultFamily = this.value
         document.cookie = 'defaultFamily=' + this.value + '; expires=Fri, 31 Dec 2030 23:59:59 GMT';
     });
     console.log('autodl', autoDl, (autoDl == true));

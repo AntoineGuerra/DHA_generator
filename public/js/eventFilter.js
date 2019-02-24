@@ -1,4 +1,16 @@
 class EventFilter {
+    get error() {
+        return this._error;
+    }
+
+    set error(value) {
+        if (this._error.length > 0) {
+            this._error += ', ';
+        }
+        this._error = value;
+    }
+
+
 
     constructor(event, defaultFamily, dhaBuilder) {
         console.log('call event filter', event);
@@ -9,6 +21,7 @@ class EventFilter {
         this.startTime = EventFilter.getStartTime(this.event);
         this.endTime = EventFilter.getEndTime(this.event);
 
+        this._error = '';
 
         this.allProjects = this.dha.projects;
         this.errorProjects = this.dha.errorProjects;
@@ -43,11 +56,24 @@ class EventFilter {
         this.filterDescription(this.event.description);
 
         if (!this.saveFinalProject() || !this.valid) {
+
+            let startDate = new Date(this.startTime);
+            let endDate = new Date(this.endTime);
+
+            let date = startDate.toDateString() + ' de ' + startDate.getHours() + 'H';
+            date += (startDate.getMinutes() > 0) ? startDate.getMinutes() : '00';
+
+            date += ' à ' + endDate.getHours() + 'H';
+            date += (endDate.getMinutes() > 0) ? endDate.getMinutes() : '00';
+
+
             let err = {
                 name: event.summary,
                 duration: this.duration,
                 link: event.htmlLink,
                 declined: this.declined,
+                error: this.error,
+                date: date,
             };
             this.errorProjects.push(err);
         }
@@ -211,7 +237,7 @@ class EventFilter {
             return 'Formation';
         } else if (family.match(/Contenus|CM/i)) {
             return 'Contenus et CM';
-        } else if (family.match(/interventions|post-projet/i)) {
+        } else if (family.match(/interventions|Maintenance/i)) {
             return 'Maintenance et interventions post-projet';
         } else {
             return false;
@@ -248,12 +274,14 @@ class EventFilter {
                             if (!accept) {
                                 this.valid = false;
                                 this.declined = true;
+                                this.error = 'Annulé par l\'utilisateur';
                                 continue;
                             }
                             break;
                         case 'declined':
                             this.valid = false;
                             this.declined = true;
+                            this.error = 'Refusé par l\'utilisateur dans l\'agenda';
                             break;
                     }
                 }
@@ -390,6 +418,15 @@ class EventFilter {
             }
             return true;
         } else {
+            if (!this.category) {
+                this.error += 'Catégorie Invalide : <pre>' + this.category + '</pre>';
+            }
+            if (!this.client) {
+                this.error += 'Client Invalide : <pre>' + this.client + '</pre>';
+            }
+            if (!this.project) {
+                this.error += 'Projet Invalide : <pre>' + this.project + '</pre>';
+            }
             return false;
         }
     }
