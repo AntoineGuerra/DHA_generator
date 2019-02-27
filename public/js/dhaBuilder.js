@@ -175,14 +175,16 @@ class DhaBuilder {
             let text_content = '';
             for (let i = 0; i < this.errorProjects.length; i++) {
                 let obj = this.errorProjects[i];
-                let declined = (obj.declined) ? 'Refusé !' : '';
+                // let declined = (obj.declined) ? 'Refusé !' : '';
 
-                text_content +=  '<tr onclick="window.open(\'' + obj.link + '\', \'_blank\');"' + ' class="clickable">' +
+                text_content +=  '<tr>' +
+                // text_content +=  '<tr onclick="window.open(\'' + obj.link + '\', \'_blank\');"' + ' class="clickable">' +
                         '<th scope="row">' + i + '</th>' +
                         '<td>' + obj.name + '</td>' +
                         '<td>' + obj.date + '</td>' +
                         '<td>' + obj.duration + 'H</td>' +
                         '<td>' + obj.error + '</td>' +
+                        '<td>' + obj.actions.edit + obj.actions.show + '</td>' +
                     '</tr>';
 
 

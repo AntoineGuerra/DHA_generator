@@ -83,6 +83,7 @@
             <th scope="col">Date</th>
             <th scope="col">Durée</th>
             <th scope="col">Raison</th>
+            <th scope="col">Actions</th>
         </tr>
         </thead>
         <tbody id="table-error-content">

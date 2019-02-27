@@ -4,11 +4,17 @@ class EventFilter {
     }
 
     set error(value) {
+        console.log('_error : "', this._error , '"value : "', value + "\"");
         if (this._error.length > 0) {
             this._error += ', ';
+            if (this._error.length >= 50) {
+                this._error += '<br>';
+            }
+            // value = this._error + ', ' + value;
         }
-        this._error = value;
+        this._error += value;
     }
+
 
 
 
@@ -66,14 +72,23 @@ class EventFilter {
             date += ' à ' + endDate.getHours() + 'H';
             date += (endDate.getMinutes() > 0) ? endDate.getMinutes() : '00';
 
+            let link = event.htmlLink;
+
+            let eventID = link.match(/event\?eid=(\w*)/)[1];
+
+            console.log('event id ', eventID);
 
             let err = {
                 name: event.summary,
                 duration: this.duration,
-                link: event.htmlLink,
+                link: link,
                 declined: this.declined,
-                error: this.error,
+                error: '<pre>' + this.error + '</pre>',
                 date: date,
+                actions: {
+                    edit: '<a href="https://calendar.google.com/calendar/r/eventedit/' + eventID + '" target="_blank"><button class="btn btn-outline-primary">Editer</button></a>',
+                    show: '<a href="' + link + '" target="_blank"><button class="btn btn-outline-success">Voir</button></a>',
+                },
             };
             this.errorProjects.push(err);
         }
@@ -154,6 +169,7 @@ class EventFilter {
             case 'I':
             case 'INT':
             case 'INTERNE':
+            case 'RH':
                 return DhaBuilder.categorys.interne;
 
             case 'AV':
@@ -330,10 +346,11 @@ class EventFilter {
                 this.project = this.client;
                 this.client = 'Mayflower';
                 this.tache = datas[2];
-            } else if (this.client !== 'MAYFLOWER') {
-                console.log('put in vendu case');
-                this.category = DhaBuilder.categorys.vendu;
             }
+            // else if (this.client !== 'MAYFLOWER') {
+            //     console.log('put in vendu case');
+            //     this.category = DhaBuilder.categorys.vendu;
+            // }
         }
     }
 
@@ -419,13 +436,13 @@ class EventFilter {
             return true;
         } else {
             if (!this.category) {
-                this.error += 'Catégorie Invalide : <pre>' + this.category + '</pre>';
+                this.error = 'Catégorie Invalide : ' + this.category + '';
             }
             if (!this.client) {
-                this.error += 'Client Invalide : <pre>' + this.client + '</pre>';
+                this.error = 'Client Invalide : ' + this.client + '';
             }
             if (!this.project) {
-                this.error += 'Projet Invalide : <pre>' + this.project + '</pre>';
+                this.error = 'Projet Invalide : ' + this.project + '';
             }
             return false;
         }
