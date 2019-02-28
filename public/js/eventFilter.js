@@ -110,7 +110,7 @@ class EventFilter {
     }
 
     set category(value) {
-        this._category = this.saveCategory(value);
+        this._category = EventFilter.saveCategory(value);
     }
 
     get comment() {
@@ -154,7 +154,7 @@ class EventFilter {
      *      ELSE
      *          false
      */
-    saveCategory(category) {
+    static saveCategory(category) {
         category = category.toUpperCase().trim();
         switch (category) {
             case 'V':
@@ -238,6 +238,9 @@ class EventFilter {
      */
     static saveFamily(family) {
         // return (family !== undefined) ? this.stripTags(family.trim()) : false;
+        if (!family) {
+            return false;
+        }
         family = family.toUpperCase();
         if (family.match(/MEP|Mises?\s?en\s?Productions?/i)) {
             return 'Mise en production';
@@ -245,7 +248,7 @@ class EventFilter {
             return 'Conception';
         } else if (family.match(/Graphismes?/i)) {
             return 'Graphisme';
-        } else if (family.match(/Pilotages?\s?de\s?projets?/i)) {
+        } else if (family.match(/Pilotages?\s?de\s?projets?|PDP/i)) {
             return 'Pilotage de projet';
         } else if (family.match(/Directions?|Conseils?|[ée]ditos?/i)) {
             return 'Direction conseil, technique et éditoriale';
@@ -258,6 +261,30 @@ class EventFilter {
         } else {
             return false;
         }
+    }
+
+    static saveFamilyCookie(family) {
+        if (family.match(/MEP|Mises?\s?en\s?Productions?/i)) {
+            family = 'MEP';
+        } else if (family.match(/Conceptions?/i)) {
+            family = 'Conception';
+        } else if (family.match(/Graphismes?/i)) {
+            family = 'Graphisme';
+        } else if (family === 'PDP') {
+            family = 'PDP';
+        } else if (family.match(/Directions?|Conseils?|[ée]ditos?/i)) {
+            family = 'Direction';
+        } else if (family.match(/Formation/i)) {
+            family = 'Formation';
+        } else if (family.match(/Contenus|CM/i)) {
+            family = 'Contenus';
+        } else if (family.match(/interventions|Maintenance/i)) {
+            family = 'Maintenance';
+        } else {
+            return false;
+        }
+        console.log('save cookie ', 'defaultFamily=' + family + '; expires=Fri, 31 Dec 2030 23:59:59 GMT');
+        document.cookie = 'defaultFamily=' + family + '; expires=Fri, 31 Dec 2030 23:59:59 GMT';
     }
 
     /**

@@ -2,10 +2,17 @@
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+// var DISCOVERY_DOCS = ["https://www.googleapis.com/calendar/v3/users/me/calendarList"];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+var SCOPES = [
+    "https://www.googleapis.com/auth/plus.login",
+    "https://www.googleapis.com/auth/calendar",
+    // "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/calendar.events",
+    // "https://www.googleapis.com/auth/calendar.events.readonly",
+];
 autoDl = false;
 defaultFamily = 'MEP';
 
@@ -24,7 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
     let defaultFamilyCookie = getCookie('defaultFamily');
-    if (defaultFamilyCookie !== undefined) {
+    console.log('condition cookie', (EventFilter.saveFamily(defaultFamilyCookie) ? true : false));
+    if (defaultFamilyCookie !== undefined && EventFilter.saveFamily(defaultFamilyCookie)) {
         defaultFamily = defaultFamilyCookie;
         document.getElementById('defaultFamily' + defaultFamilyCookie).setAttribute('selected', 'selected');
     }
@@ -32,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let defaultFamilySelect = document.getElementById('defaultFamily');
     defaultFamilySelect.addEventListener('change', function () {
         console.log('change', this.value);
-        defaultFamily = this.value
-        document.cookie = 'defaultFamily=' + this.value + '; expires=Fri, 31 Dec 2030 23:59:59 GMT';
+        defaultFamily = EventFilter.saveFamily(this.value)
+        EventFilter.saveFamilyCookie(this.value);
     });
     console.log('autodl', autoDl, (autoDl == true));
     if (autoDl) {
@@ -128,7 +136,7 @@ function handleClientLoad() {
     // let div_M = document.getElementById('M');
     // let div_I = document.getElementById('I');
     // let text_err = document.getElementById('err');
-    let acronyme = document.getElementById('acronyme').value;
+    // let acronyme = document.getElementById('acronyme').value;
 
     generateBtn.addEventListener('click', function (event) {
         event.preventDefault();
@@ -146,6 +154,46 @@ function handleClientLoad() {
         }
         listUpcomingEvents(isoDate);
     });
+    console.log('test btn', document.getElementById('test'));
+    document.getElementById('test').click(function () {
+        console.log('tessttt');
+        var event = {
+            'summary': 'Google I/O 2015',
+            'location': '800 Howard St., San Francisco, CA 94103',
+            'description': 'A chance to hear more about Google\'s developer products.',
+            'start': {
+                'dateTime': '2019-02-28T09:00:00-07:00',
+                'timeZone': 'America/Los_Angeles'
+            },
+            'end': {
+                'dateTime': '2019-02-28T17:00:00-07:00',
+                'timeZone': 'America/Los_Angeles'
+            },
+            'recurrence': [
+                'RRULE:FREQ=DAILY;COUNT=2'
+            ],
+            'attendees': [
+                {'email': 'lpage@example.com'},
+                {'email': 'sbrin@example.com'}
+            ],
+            'reminders': {
+                'useDefault': false,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10}
+                ]
+            }
+        };
+
+        var request = gapi.client.calendar.events.insert({
+            'calendarId': 'primary',
+            'resource': event
+        });
+
+        request.execute(function(event) {
+            appendPre('Event created: ' + event.htmlLink);
+        });
+    })
 }
 
 /**
@@ -253,9 +301,9 @@ function listUpcomingEvents(week = false) {
                 return alert('Votre acronyme doit contenir UNIQUEMENT 3 Lettres')
             }
 
-            let div_err = '';
-            let text_content = '';
-            let text_full = '';
+            // let div_err = '';
+            // let text_content = '';
+            // let text_full = '';
             let dha = new DhaBuilder(week, acronyme, events, defaultFamily);
             div_err = document.getElementById('err');
             //
@@ -282,6 +330,7 @@ function listUpcomingEvents(week = false) {
             return alert('Vous n\'avez rien pour cette semaine dans votre agenda !')
         }
     });
+
 }
 
 function empty(div) {
