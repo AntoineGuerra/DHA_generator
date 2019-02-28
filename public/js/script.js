@@ -32,13 +32,13 @@ function authenticate() {
                 "https://www.googleapis.com/auth/calendar.readonly"
         }).then(function(response) {
             console.log("Sign-in successful"); 
-            console.log('response auth', response);
+//             console.log('response auth', response);
             if (response.w3 !== undefined) {
                 let user = response.w3;
                 if (user.ofa && user.wea) {
                     document.getElementById('acronyme').value = (user.ofa.substr(0, 1) + user.wea.substr(0, 2)).toUpperCase();
                 }
-                console.log('response.w3', user.ofa.substr(0, 1), user.wea.substr(0, 2));
+//                 console.log('response.w3', user.ofa.substr(0, 1), user.wea.substr(0, 2));
             }
             isLogged = true;
             let connectBtn = document.getElementById('Gauth');
@@ -56,7 +56,7 @@ function loadClient() {
     // isLogged = true;
     return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
         .then(function() {
-            console.log("GAPI client loaded for API", gapi.client);
+//             console.log("GAPI client loaded for API", gapi.client);
                 handleClientLoad()
             },
             function(err) { console.error("Error loading GAPI client for API", err); });
@@ -81,11 +81,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let autoDlCookie = getCookie('autoDl');
     if (autoDlCookie !== undefined) {
         autoDl = JSON.parse(autoDlCookie);
-        console.log('cookie', getCookie('autoDl'));
+//         console.log('cookie', getCookie('autoDl'));
 
     }
     let defaultFamilyCookie = getCookie('defaultFamily');
-    console.log('condition cookie', (EventFilter.saveFamily(defaultFamilyCookie) ? true : false));
+//     console.log('condition cookie', (EventFilter.saveFamily(defaultFamilyCookie) ? true : false));
     if (defaultFamilyCookie !== undefined && EventFilter.saveFamily(defaultFamilyCookie)) {
         defaultFamily = defaultFamilyCookie;
         document.getElementById('defaultFamily' + defaultFamilyCookie).setAttribute('selected', 'selected');
@@ -93,11 +93,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let defaultFamilySelect = document.getElementById('defaultFamily');
     defaultFamilySelect.addEventListener('change', function () {
-        console.log('change', this.value);
+//         console.log('change', this.value);
         defaultFamily = EventFilter.saveFamily(this.value)
         EventFilter.saveFamilyCookie(this.value);
     });
-    console.log('autodl', autoDl, (autoDl == true));
+//     console.log('autodl', autoDl, (autoDl == true));
     if (autoDl) {
         autoDlBtn.classList.add('btn-outline-danger');
         autoDlBtn.innerHTML = 'Désactiver Téléchargement automatique'
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         autoDlBtn.classList.add('btn-outline-success');
         autoDlBtn.innerHTML = 'Activer Téléchargement automatique'
-        console.log('cookie', getCookie('autoDl'));
+//         console.log('cookie', getCookie('autoDl'));
         // this.classList.remove('btn-danger');
     }
 
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //                 },
         //                 function(err) { console.error("Execute error", err); });
         // onSignIn(gapi.client)
-        console.log('gapi', gapi);
+//         console.log('gapi', gapi);
         // authenticate().then(loadClient);
     });
     document.getElementById('Gauth').addEventListener('click', function () {
@@ -143,14 +143,14 @@ document.addEventListener("DOMContentLoaded", function () {
             autoDl = false;
             document.cookie = 'autoDl=false; expires=Fri, 31 Dec 2030 23:59:59 GMT';
             this.innerHTML = 'Activer Téléchargement automatique'
-            console.log('cookie', getCookie('autoDl'));
+//             console.log('cookie', getCookie('autoDl'));
         } else {
             this.classList.add('btn-outline-danger');
             this.classList.remove('btn-outline-success');
             autoDl = true;
             document.cookie = 'autoDl=true; expires=Fri, 31 Dec 2030 23:59:59 GMT';
             this.innerHTML = 'Désactiver Téléchargement automatique'
-            console.log('cookie', getCookie('autoDl'));
+//             console.log('cookie', getCookie('autoDl'));
         }
     })
 });
@@ -170,7 +170,7 @@ function onSignIn(googleUser) {
     // console.log('Full Name: ' + profile.getName());
     // console.log('Given Name: ' + profile.getGivenName());
     // console.log('Family Name: ' + profile.getFamilyName());
-    console.log("Profile: " + profile);
+//     console.log("Profile: " + profile);
     // console.log("Email: " + profile.getEmail());
     let acronyme = profile.getGivenName().substr(0, 1).toUpperCase() + profile.getFamilyName().substr(0, 2).toUpperCase();
     document.getElementById('acronyme').value = acronyme;
@@ -197,7 +197,7 @@ function onSignIn(googleUser) {
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
-        console.log('User signed out.');
+//         console.log('User signed out.');
     });
 }
 
@@ -224,7 +224,7 @@ function handleClientLoad() {
             return alert('Vous devez être connecté !')
         }
         let val = weekInput.value;
-        console.log('val', val);
+//         console.log('val', val);
         let isoDate;
         if (val !== '' && parseInt(val) > 0) {
             isoDate = getDateOfISOWeek(val, (new Date()).getFullYear());
@@ -234,7 +234,7 @@ function handleClientLoad() {
         }
         listUpcomingEvents(isoDate);
     });
-
+//
 
 
     console.log('test btn', document.getElementById('test'));
@@ -290,9 +290,9 @@ function initClient() {
         discoveryDocs: DISCOVERY_DOCS,
         scope: SCOPES
     }).then(function (response) {
-        console.log('client init', response);
+//         console.log('client init', response);
     }, function (error) {
-        console.log(JSON.stringify(error, null, 2));
+//         console.log(JSON.stringify(error, null, 2));
     });
 }
 
@@ -364,7 +364,7 @@ function listUpcomingEvents(week = false) {
     let projects = {};
     let projectDontProccess = [];
     // console.log('gapi clien2', gapi.client);
-    console.log('gapi', gapi.client.calendar.events);
+//     console.log('gapi', gapi.client.calendar.events);
 
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
@@ -377,7 +377,7 @@ function listUpcomingEvents(week = false) {
     }).then(function (response) {
         var events = response.result.items;
         // appendPre('Upcoming events:');
-        console.log('events', events);
+//         console.log('events', events);
         if (events.length > 0) {
 
             let acronymeInput = document.getElementById('acronyme');
@@ -473,7 +473,7 @@ function getWeekNumber(d) {
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
     // Get first day of year
     var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    console.log('year start', yearStart);
+//     console.log('year start', yearStart);
     // Calculate full weeks to nearest Thursday
     var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     // Return array of year and week number

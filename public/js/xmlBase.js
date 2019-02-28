@@ -25,7 +25,7 @@ class XmlBase {
      * @returns {string}
      */
     static get cellIndent() {
-        console.log('cml cel indent', this.xmlCellIndent.length);
+//         console.log('cml cel indent', this.xmlCellIndent.length);
         return XmlBase.xmlCellIndent;
     }
 

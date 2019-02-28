@@ -304,7 +304,7 @@ class XmlBuilder extends XmlBase {
             '+R' + this.maintenance.rows.total + 'C' + this.maintenance.cols.duration +
             '+R' + this.avantVente.rows.total + 'C' + this.avantVente.cols.duration +
             '+R' + this.interne.rows.total + 'C' + this.interne.cols.duration;
-        console.log('vendu cols', this.vendu.cols);
+//         console.log('vendu cols', this.vendu.cols);
         let formulaVendu = 'R' + this.vendu.rows.total + 'C' + this.vendu.cols.duration + '+' +
             'R' + this.maintenance.rows.total + 'C' + this.maintenance.cols.duration;
         return this.row(48,
@@ -335,7 +335,7 @@ class XmlBuilder extends XmlBase {
             maintenance: 'R' + firstLineMaintenance + 'C' + this.maintenance.cols.family + ':' +
                 'R' + lastLineMaintenance + 'C' + this.maintenance.cols.family,
         };
-        console.log('list ranges', listRanges);
+//         console.log('list ranges', listRanges);
         
 
         return '  </Table>\n' +

@@ -4,7 +4,7 @@ class EventFilter {
     }
 
     set error(value) {
-        console.log('_error : "', this._error , '"value : "', value + "\"");
+//         console.log('_error : "', this._error , '"value : "', value + "\"");
         if (this._error.length > 0) {
             this._error += ', ';
             if (this._error.length >= 50) {
@@ -19,10 +19,10 @@ class EventFilter {
 
 
     constructor(event, defaultFamily, dhaBuilder) {
-        console.log('call event filter', event);
+//         console.log('call event filter', event);
         this.event = event;
         this.dha = dhaBuilder;
-        console.log('dha', this.dha);
+//         console.log('dha', this.dha);
         this.defaultFamily = defaultFamily;
         this.startTime = EventFilter.getStartTime(this.event);
         this.endTime = EventFilter.getEndTime(this.event);
@@ -75,7 +75,7 @@ class EventFilter {
             let link = event.htmlLink;
 
             let eventID = link.match(/event\?eid=(\w*)/)[1];
-
+//
             console.log('event id ', eventID);
 
             let err = {
@@ -215,7 +215,7 @@ class EventFilter {
      * @returns {string|boolean}
      */
     static saveTache(tache) {
-        console.log('save tache', (tache !== undefined) ? EventFilter.stripTags(tache.trim()) : 'SANS');
+//         console.log('save tache', (tache !== undefined) ? EventFilter.stripTags(tache.trim()) : 'SANS');
         return (tache !== undefined) ? EventFilter.stripTags(tache.trim()) : 'SANS';
     }
 
@@ -283,7 +283,7 @@ class EventFilter {
         } else {
             return false;
         }
-        console.log('save cookie ', 'defaultFamily=' + family + '; expires=Fri, 31 Dec 2030 23:59:59 GMT');
+//         console.log('save cookie ', 'defaultFamily=' + family + '; expires=Fri, 31 Dec 2030 23:59:59 GMT');
         document.cookie = 'defaultFamily=' + family + '; expires=Fri, 31 Dec 2030 23:59:59 GMT';
     }
 
@@ -367,7 +367,7 @@ class EventFilter {
 
     checkInterne(datas) {
         if (this.category === DhaBuilder.categorys.interne) {
-            console.log('it\'s interne', 'category', this.category, 'client', this.client, 'project', this.project);
+//             console.log('it\'s interne', 'category', this.category, 'client', this.client, 'project', this.project);
             /** in Really : Client is undefined */
             if (!this.project) {
                 this.project = this.client;
@@ -388,7 +388,7 @@ class EventFilter {
             /** FILTER tache */
             let tacheMatches = description.match(/(.*)t[a|â]ches?\s?:?\s?<?b?r?>?\s?<b>([^<]*)<\/b>(.*)/i);
             if (tacheMatches) {
-                console.log('tache match', tacheMatches);
+//                 console.log('tache match', tacheMatches);
                 this.tache = tacheMatches[2];
             }
 
@@ -413,7 +413,7 @@ class EventFilter {
             let matchFamily = description.match(/.*famil[l|y]{1}e?\s?:?\s?<b>([^<]*)<\/b>.*/i);
             if (matchFamily) {
                 this.family = matchFamily[1];
-                console.log('match family', this.family, description);
+//                 console.log('match family', this.family, description);
             }
         } else if (this.category === DhaBuilder.categorys.maintenance) {
 
@@ -443,8 +443,8 @@ class EventFilter {
 
                 /** SAME Project EXIST */
                 this.allProjects[objName].duration += this.duration;
-                console.log('proj duration', this.allProjects[objName].duration);
-                console.log(' duration', this.duration);
+//                 console.log('proj duration', this.allProjects[objName].duration);
+//                 console.log(' duration', this.duration);
             } else {
 
                 /** SAVE Project */
@@ -457,8 +457,8 @@ class EventFilter {
                     comment: this.comment,
                     duration: this.duration,
                 };
-                console.log('add proj', objName);
-                console.log('duration', this.duration);
+//                 console.log('add proj', objName);
+//                 console.log('duration', this.duration);
             }
             return true;
         } else {
