@@ -1,7 +1,8 @@
 
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+// var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+var DISCOVERY_DOCS = ["https://www.googleapis.com/calendar/v3/calendars/primary/events"];
 // var DISCOVERY_DOCS = ["https://www.googleapis.com/calendar/v3/users/me/calendarList"];
 
 // Authorization scopes required by the API; multiple scopes can be
@@ -13,12 +14,65 @@ var SCOPES = [
     "https://www.googleapis.com/auth/calendar.events",
     // "https://www.googleapis.com/auth/calendar.events.readonly",
 ];
-autoDl = false;
+SCOPES = "https://www.googleapis.com/auth/calendar.events";
+    autoDl = false;
 defaultFamily = 'MEP';
+
+
+
+
+
+function authenticate() {
+    // SEPARATOR -> SPACE ->  + " " +
+    return gapi.auth2.getAuthInstance()
+        .signIn({
+            scope: "https://www.googleapis.com/auth/calendar" + " " +
+                "https://www.googleapis.com/auth/calendar.events" + " " +
+                "https://www.googleapis.com/auth/calendar.events.readonly" + " " +
+                "https://www.googleapis.com/auth/calendar.readonly"
+        }).then(function(response) {
+            console.log("Sign-in successful"); 
+            console.log('response auth', response);
+            if (response.w3 !== undefined) {
+                let user = response.w3;
+                if (user.ofa && user.wea) {
+                    document.getElementById('acronyme').value = (user.ofa.substr(0, 1) + user.wea.substr(0, 2)).toUpperCase();
+                }
+                console.log('response.w3', user.ofa.substr(0, 1), user.wea.substr(0, 2));
+            }
+            isLogged = true;
+            let connectBtn = document.getElementById('Gauth');
+            connectBtn.addEventListener('click', function (click) {
+                click.preventDefault();
+            });
+            connectBtn.classList.add('disabled');
+            connectBtn.setAttribute('disabled', true);
+            connectBtn.innerText = 'Connecté'
+            },
+            function(err) { console.error("Error signing in", err); });
+}
+function loadClient() {
+    // handleClientLoad();
+    // isLogged = true;
+    return gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
+        .then(function() {
+            console.log("GAPI client loaded for API", gapi.client);
+                handleClientLoad()
+            },
+            function(err) { console.error("Error loading GAPI client for API", err); });
+}
+
+
+
+
+
 
 // var authorizeButton = document.getElementById('authorize_button');
 // var signoutButton = document.getElementById('signout_button');
 document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('generate').addEventListener('click', function (click) {
+        click.preventDefault();
+    });
     let acroCookie = getCookie('acronyme');
     if (acroCookie !== undefined && acroCookie.length === 3) {
         document.getElementById('acronyme').value = acroCookie;
@@ -54,6 +108,32 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log('cookie', getCookie('autoDl'));
         // this.classList.remove('btn-danger');
     }
+
+
+
+
+
+    gapi.load("client:auth2", function() {
+        gapi.auth2.init({client_id: "889910005804-tq4btqe01v6sapk7fk65telp3kcdle3p.apps.googleusercontent.com"});
+        //gapi.client.calendar.events.list({
+        //             "calendarId": "primary",
+        //             "alwaysIncludeEmail": true
+        //         })
+        //             .then(function(response) {
+        //                     // Handle the results here (response.result has the parsed body).
+        //                     console.log("Response", response);
+        //                 },
+        //                 function(err) { console.error("Execute error", err); });
+        // onSignIn(gapi.client)
+        console.log('gapi', gapi);
+        // authenticate().then(loadClient);
+    });
+    document.getElementById('Gauth').addEventListener('click', function () {
+        authenticate().then(loadClient)
+
+    });
+
+
 
 
     autoDlBtn.addEventListener('click', function () {
@@ -125,18 +205,18 @@ function signOut() {
  *  On load, called to load the auth2 library and API client library.
  */
 function handleClientLoad() {
-    gapi.load('client:auth2', initClient);
+
+    // gapi.load('client:auth2', initClient);
+    // console.log('client init ??????', gapi.load());
     let weekInput = document.getElementById('week');
-    let generateBtn = document.getElementById('generate');
+    // let generateBtn = document.getElementById('generate');
     let current_week = getWeekNumber((new Date()))[1];
     weekInput.value = current_week;
-    let div_full = document.getElementById('full');
-    // let div_V = document.getElementById('V');
-    // let div_AV = document.getElementById('AV');
-    // let div_M = document.getElementById('M');
-    // let div_I = document.getElementById('I');
-    // let text_err = document.getElementById('err');
-    // let acronyme = document.getElementById('acronyme').value;
+
+
+
+
+    let generateBtn = document.getElementById('generate');
 
     generateBtn.addEventListener('click', function (event) {
         event.preventDefault();
@@ -154,46 +234,49 @@ function handleClientLoad() {
         }
         listUpcomingEvents(isoDate);
     });
+
+
+
     console.log('test btn', document.getElementById('test'));
-    document.getElementById('test').click(function () {
-        console.log('tessttt');
-        var event = {
-            'summary': 'Google I/O 2015',
-            'location': '800 Howard St., San Francisco, CA 94103',
-            'description': 'A chance to hear more about Google\'s developer products.',
-            'start': {
-                'dateTime': '2019-02-28T09:00:00-07:00',
-                'timeZone': 'America/Los_Angeles'
-            },
-            'end': {
-                'dateTime': '2019-02-28T17:00:00-07:00',
-                'timeZone': 'America/Los_Angeles'
-            },
-            'recurrence': [
-                'RRULE:FREQ=DAILY;COUNT=2'
-            ],
-            'attendees': [
-                {'email': 'lpage@example.com'},
-                {'email': 'sbrin@example.com'}
-            ],
-            'reminders': {
-                'useDefault': false,
-                'overrides': [
-                    {'method': 'email', 'minutes': 24 * 60},
-                    {'method': 'popup', 'minutes': 10}
-                ]
-            }
-        };
-
-        var request = gapi.client.calendar.events.insert({
-            'calendarId': 'primary',
-            'resource': event
-        });
-
-        request.execute(function(event) {
-            appendPre('Event created: ' + event.htmlLink);
-        });
-    })
+    // document.getElementById('test').click(function () {
+    //     console.log('tessttt');
+    //     var event = {
+    //         'summary': 'Google I/O 2015',
+    //         'location': '800 Howard St., San Francisco, CA 94103',
+    //         'description': 'A chance to hear more about Google\'s developer products.',
+    //         'start': {
+    //             'dateTime': '2019-02-28T09:00:00-07:00',
+    //             'timeZone': 'America/Los_Angeles'
+    //         },
+    //         'end': {
+    //             'dateTime': '2019-02-28T17:00:00-07:00',
+    //             'timeZone': 'America/Los_Angeles'
+    //         },
+    //         'recurrence': [
+    //             'RRULE:FREQ=DAILY;COUNT=2'
+    //         ],
+    //         'attendees': [
+    //             {'email': 'lpage@example.com'},
+    //             {'email': 'sbrin@example.com'}
+    //         ],
+    //         'reminders': {
+    //             'useDefault': false,
+    //             'overrides': [
+    //                 {'method': 'email', 'minutes': 24 * 60},
+    //                 {'method': 'popup', 'minutes': 10}
+    //             ]
+    //         }
+    //     };
+    //
+    //     var request = gapi.client.calendar.events.insert({
+    //         'calendarId': 'primary',
+    //         'resource': event
+    //     });
+    //
+    //     request.execute(function(event) {
+    //         appendPre('Event created: ' + event.htmlLink);
+    //     });
+    // })
 }
 
 /**
@@ -206,8 +289,8 @@ function initClient() {
         clientId: CLIENT_ID,
         discoveryDocs: DISCOVERY_DOCS,
         scope: SCOPES
-    }).then(function () {
-
+    }).then(function (response) {
+        console.log('client init', response);
     }, function (error) {
         console.log(JSON.stringify(error, null, 2));
     });
@@ -281,6 +364,8 @@ function listUpcomingEvents(week = false) {
     let projects = {};
     let projectDontProccess = [];
     // console.log('gapi clien2', gapi.client);
+    console.log('gapi', gapi.client.calendar.events);
+
     gapi.client.calendar.events.list({
         'calendarId': 'primary',
         'timeMin': first,
