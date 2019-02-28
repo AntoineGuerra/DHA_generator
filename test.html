@@ -37,7 +37,7 @@
                 function(err) { console.error("Execute error", err); });
     }
     gapi.load("client:auth2", function() {
-        gapi.auth2.init({client_id: "889910005804-tq4btqe01v6sapk7fk65telp3kcdle3p.apps.googleusercontent.com"});
+        gapi.auth2.init({client_id: CLIENT_ID});
     });
 </script>
 <button onclick="authenticate().then(loadClient)">authorize and load</button>
