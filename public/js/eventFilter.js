@@ -313,7 +313,7 @@ class EventFilter {
                     switch (attendees[j].responseStatus) {
                         case 'needsAction':
                             /** Ask User IF save OR not */
-                            let accept = confirm('La tâche : ' + event.summary + ' (durée : ' + duration + ') n\'a pas été accepté\nSouhaitez-vous l\'enregistrer ?');
+                            let accept = confirm('La tâche : ' + event.summary + ' (durée : ' + this.duration + ') n\'a pas été accepté\nSouhaitez-vous l\'enregistrer ?');
                             if (!accept) {
                                 this.valid = false;
                                 this.declined = true;
