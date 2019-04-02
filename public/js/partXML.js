@@ -68,7 +68,8 @@ class PartXML extends XmlBase {
         let familyCell = (this.haveFamily) ? this.familyHeader('FAMILLE ACTIVITÉ') : false;
         let tacheCell =  this.tacheHeader('DETAIL DE LA TÂCHE');
         let durationCell =  this.durationHeader('Temps passé');
-        let commentCell =  this.commentHeader('Commentaire', (!this.haveFamily));
+        let commentCell = (this.title === 'maintenance') ? this.commentHeader('Tâche programmée ? (si urgence mettre NON)', (!this.haveFamily)) : this.commentHeader('Commentaire', (!this.haveFamily));
+
 
         let headerRowContent = acronymeCell.xml +
             weekCell.xml +

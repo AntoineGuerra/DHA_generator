@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link rel="stylesheet" href="public/css/custom.css">
     <script src="https://apis.google.com/js/api.js"></script>
-
+    <script src="https://unpkg.com/popper.js@1/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@4"></script>
 </head>
 <body>
 
@@ -45,6 +46,10 @@
                 <option id="defaultFamilyContenus" value="Contenus">Contenus et CM</option>
                 <option id="defaultFamilyMaintenance" value="Maintenance">Maintenance et interventions post-projet</option>
             </select>
+            <span class="text-muted" >Exception (insensible à la casse)
+                <br>
+                <textarea id="exceptions" data-tippy-content="Séparé de virgule">e-commerce</textarea>
+            </span>
         </div>
     </div>
     <div class="row" >

@@ -17,7 +17,7 @@ class DhaBuilder {
 
             var event = events[i];
             new EventFilter(event, defaultFamily, dha);
-//             console.log('new this.projects', this.projects);
+
 
         }
         for (let key in this.projects) {
@@ -27,20 +27,20 @@ class DhaBuilder {
             let project = this.projects[key];
             switch (project.category) {
                 case DhaBuilder.categorys.vendu:
-//                     console.log('add v');
+
                     this.parts.vendu.push(project);
                     break;
                 case DhaBuilder.categorys.maintenance:
-//                     console.log('add m');
+
                     this.parts.maintenance.push(project);
                     break;
                 case DhaBuilder.categorys.avantVente:
                     this.parts.avantVente.push(project);
-//                     console.log('add av');
+
                     break;
                 case DhaBuilder.categorys.interne:
                     this.parts.interne.push(project);
-//                     console.log('add i');
+
                     break;
             }
         }
@@ -191,7 +191,7 @@ class DhaBuilder {
 
                 // text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
             }
-//             console.log('text content', text_content);
+
             div_err.innerHTML = text_content;
         } else {
             document.getElementById('div_err').classList.add('d-none');
