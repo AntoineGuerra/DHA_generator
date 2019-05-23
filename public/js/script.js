@@ -346,17 +346,17 @@ function checkError(error) {
         case 402:
             return 'Ce code n\'est pas encore mis en oeuvre dans le protocole HTTP.';
         case 403:
-            return 'Le serveur HTTP a compris la requête, mais refuse de la traiter.';
+            return 'Google API a compris la requête, mais refuse de la traiter.\nLe document semble inaccessible';
         case 404:
-            return 'Le serveur n\'a rien trouvé qui corresponde à l\'adresse (URI) demandée ( non trouvé ).';
+            return 'Google API n\'a rien trouvé qui corresponde à l\'adresse (URI) demandée ( non trouvé ).';
         case 405:
             return 'Ce code indique que la méthode utilisée par le client n\'est pas supportée pour cet URI.';
         case 500:
-            return 'Le serveur HTTP a rencontré une condition inattendue qui l\'a empêché de traiter la requête.';
+            return 'Google API a rencontré une condition inattendue qui l\'a empêché de traiter la requête.';
         case 501:
-            return 'Le serveur HTTP ne supporte pas la fonctionnalité nécessaire pour traiter la requête.';
+            return 'Google API ne supporte pas la fonctionnalité nécessaire pour traiter la requête.';
         case 503:
-            return 'Le serveur HTTP est actuellement incapable de traiter la requête en raison d\'une surcharge temporaire ou d\'une opération de maintenance.';
+            return 'Google API est actuellement incapable de traiter la requête en raison d\'une surcharge temporaire ou d\'une opération de maintenance.';
         case 505:
             return 'La version du protocole HTTP utilisée dans cette requête n\'est pas (ou plus) supportée par le serveur.';
     }

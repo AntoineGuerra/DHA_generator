@@ -308,6 +308,23 @@ class AgendaGenerator {
                             duration: taches[i].trim().match(/^\s?([0-9]+\.?\,?[0-9]*)h\s+/i),
                         };
 
+
+
+                        if (this.isSpecificExceptions(name.project)) {
+                            console.log('parseInt(duration / 7)', parseInt(duration / 7));
+                            console.log('(duration % 7)', (duration % 7));
+                            splitted_tache.duration = [];
+                            // splitted_tache.duration = AgendaGenerator.renderDay(duration);
+                            // splitted_tache.duration[1] = (parseInt(duration / 7) + (duration % 7)).toString();
+                            // console.log('name project _', name.project.substr(1, name.project.length));
+                            splitted_tache.duration[1] = duration.toString();
+                            /**
+                             * Added Because Acronyme is removed after for all case where project name unmatch _ as first letter
+                             * @type {string}
+                             */
+                            name.project = name.project.substr(1) + 'AGU';
+                            console.log('name project _after', name.project);
+                        }
                         console.log('splitted tache', splitted_tache);
                         if (splitted_tache.duration !== null) {
                             name.tache = name.tache.replace(splitted_tache.name, '');
@@ -388,7 +405,9 @@ class AgendaGenerator {
 
     }
 
-
+    isSpecificExceptions(name) {
+        return (name === '_Congés et absences' || name === '_Imprévus')
+    }
 
     createTableRow(ids, data) {
         let button = '';
@@ -439,38 +458,6 @@ class AgendaGenerator {
         let api_datas = this.checkIfExist(result_name);
         let agenda_duration = api_datas.duration;
         let link = api_datas.link;
-
-        // console.log('agenda_events', this.agenda_api_events);
-        //
-        // let exist_api_agenda = this.agenda_api_events.find(function (element) {
-        //     return element.summary === result_name;
-        // });
-        //
-        // let agenda_duration = 0;
-        // let link = '';
-        // while (exist_api_agenda !== undefined) {
-        //
-        //     // remove value
-        //     this.agenda_api_events.splice(this.agenda_api_events.indexOf(exist_api_agenda), 1);
-        //     console.log('agenda_events after splice', this.agenda_api_events);
-        //     console.log('agenda_events val', exist_api_agenda);
-        //     let converted_duration = EventFilter.convert_duration(exist_api_agenda.start.dateTime, exist_api_agenda.end.dateTime);
-        //     console.log('duration event ', converted_duration);
-        //     agenda_duration += converted_duration;
-        //     link = exist_api_agenda.htmlLink;
-        //     // cells.status = '<td id="' + ids.status + '" class="text-success" ' + '>' + // Status
-        //     //                 '<i data-tippy-content="Existe dans l\'agenda" class="agenda_status far fa-calendar-check fa-2x"></i>' +
-        //     //                 '</td>';
-        //     // cells.action = '<td id="' + ids.actions + '">' + '<button class="btn btn-outline-secondary white-hover">' +
-        //     //         '<a target="_blank" href="' + exist_api_agenda.htmlLink + '">' +
-        //     //             '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
-        //     //         '</a>' +
-        //     //     '</button>' +
-        //     // '</td>';
-        //     exist_api_agenda = this.agenda_api_events.find(function (element) {
-        //         return element.summary === result_name;
-        //     });
-        // }
 
         console.log('result name', data.name);
         console.log('result duration', agenda_duration);
@@ -738,6 +725,17 @@ class AgendaGenerator {
             duration: agenda_duration,
             link: link,
         };
+    }
+
+    static renderDay(duration) {
+        if (parseInt(duration / 7) > 1) {
+            return (7).toString();
+            console.log('seven H');
+        } else {
+            return duration.toString();
+            console.log('duration H', duration);
+        }
+        // return undefined;
     }
 }
 
