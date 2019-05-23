@@ -50,35 +50,36 @@ class EventFilter {
 
         let eventSummary = this.event.summary;
 
-        let exceptionsText = document.getElementById('exceptions').value.replace(/-/gi, '\\-');
-
-        let except = [
-            'e\\-commerce',
-        ]; // Regex Format !
-
-        except = exceptionsText.split(',');
-
-        for (let i = 0; i < except.length; i++) {
-            let exception = except[i];
-            let regex = new RegExp(exception, 'i')
-            if (eventSummary.match(regex)) {
-                let search = new RegExp(exception.replace(/\\-/gi, '-'), 'gi');
-                let replacement = exception.replace(/\\-/gi, ' ');
-                eventSummary = eventSummary.replace(search, replacement);
-            }
-        }
-
+        // let exceptionsText = document.getElementById('exceptions').value.replace(/-/gi, '\\-');
+        //
+        // // let except = [
+        // //     'e\\-commerce',
+        // // ]; // Regex Format
+        //
+        // let except = exceptionsText.split(',');
+        //
+        // for (let i = 0; i < except.length; i++) {
+        //     let exception = except[i];
+        //     let regex = new RegExp(exception, 'i')
+        //     if (eventSummary.match(regex)) {
+        //         let search = new RegExp(exception.replace(/\\-/gi, '-'), 'gi');
+        //         let replacement = exception.replace(/\\-/gi, ' ');
+        //         eventSummary = eventSummary.replace(search, replacement);
+        //     }
+        // }
+        eventSummary = EventFilter.parseExceptions(eventSummary);
 
         let datas = eventSummary.split('-');
+        let parsed_data = this.parseData(datas);
+        
+        this.category = parsed_data.category;
+        this.client = parsed_data.client;
+        this.project = parsed_data.project;
+        this.tache = parsed_data.tache;
+        this.family = parsed_data.family;
 
-        this.category = datas[0];
-        this.client = datas[1];
-        this.project = datas[2];
-        this.tache = datas[3];
-        this.family = this.defaultFamily;
-
-        /** Check IF it's interne */
-        this.checkInterne(datas);
+        // /** Check IF it's interne */
+        // this.checkInterne(datas);
 
         this.filterDescription(this.event.description);
 
@@ -116,6 +117,40 @@ class EventFilter {
 
     }
 
+    static parseExceptions(summary) {
+        let exceptionsText = document.getElementById('exceptions').value.replace(/-/gi, '\\-');
+
+        // let except = [
+        //     'e\\-commerce',
+        // ]; // Regex Format
+
+        let except = exceptionsText.split(',');
+
+        for (let i = 0; i < except.length; i++) {
+            let exception = except[i];
+            let regex = new RegExp(exception, 'i');
+            if (summary.match(regex)) {
+                let search = new RegExp(exception.replace(/\\-/gi, '-'), 'gi');
+                let replacement = exception.replace(/\\-/gi, ' ');
+                summary = summary.replace(search, replacement);
+            }
+        }
+        return summary
+    }
+    parseData(datas) {
+        let that = this;
+        let parsed = {
+            category: datas[0],
+            client: datas[1],
+            project: datas[2],
+            tache: datas[3],
+            family: that.defaultFamily,
+        };
+
+        /** Check IF it's interne */
+        this.checkInterne(datas, parsed);
+        return parsed;
+    }
     get tache() {
         return this._tache;
     }
@@ -256,7 +291,6 @@ class EventFilter {
      * @returns {string|boolean}
      */
     static saveFamily(family) {
-        // return (family !== undefined) ? this.stripTags(family.trim()) : false;
         if (!family) {
             return false;
         }
@@ -381,22 +415,26 @@ class EventFilter {
      * Set duration of current event
      */
     getDuration() {
-        this.duration = (((new Date(this.endTime)).getTime() - (new Date(this.startTime)).getTime()) / 3600000)
+        this.duration = (((new Date(this.endTime)).getTime() - (new Date(this.startTime)).getTime()) / 3600000);
+    }
+    /**
+     * Set duration of current event
+     */
+    static convert_duration(start, end) {
+        return (((new Date(end)).getTime() - (new Date(start)).getTime()) / 3600000);
     }
 
-    checkInterne(datas) {
-        if (this.category === DhaBuilder.categorys.interne) {
+
+
+    checkInterne(datas, parsed) {
+        if (parsed.category === DhaBuilder.categorys.interne) {
 
             /** in Really : Client is undefined */
-            if (!this.project) {
-                this.project = this.client;
-                this.client = 'Mayflower';
-                this.tache = datas[2];
+            if (!parsed.project) {
+                parsed.project = parsed.client;
+                parsed.client = 'Mayflower';
+                parsed.tache = datas[2];
             }
-            // else if (this.client !== 'MAYFLOWER') {
-            //     console.log('put in vendu case');
-            //     this.category = DhaBuilder.categorys.vendu;
-            // }
         }
     }
 
@@ -420,15 +458,15 @@ class EventFilter {
                 } else {
                     this.comment = 'OUI';
                 }
+            // let macro_array = this.getMacroArray();
+            // console.log('parseeee', this.parseData(macro_array));
             } else if (commentMatches) {
                 this.comment = commentMatches[2];
             } else {
                 this.comment = 'Sans Commentaire';
             }
 
-            /** FILTER family */
-
-                /** FILTER FAMILY */
+            /** FILTER FAMILY */
             let matchFamily = description.match(/.*famil[l|y]{1}e?\s?:?\s?<b>([^<]*)<\/b>.*/i);
             if (matchFamily) {
                 this.family = matchFamily[1];
@@ -436,7 +474,7 @@ class EventFilter {
             }
         } else if (this.category === DhaBuilder.categorys.maintenance) {
 
-            /** IF MAINT === URGENT ? */
+            /** IF MAINT === URGENT */
             this.comment = 'OUI';
         } else {
             this.comment = 'SANS';
@@ -504,4 +542,16 @@ class EventFilter {
         return data.replace(/(<([^>]+)>)/ig,"");
     }
 
+    getMacroArray() {
+        let agenda_generator = new AgendaGenerator();
+        agenda_generator.createArray();
+        console.log('yeahhhhh', agenda_generator.result_array);
+        var interval = setInterval(function () {
+            if (agenda_generator.wait.array === true) {
+                clearInterval(interval);
+                return agenda_generator.result_array;
+                console.log('macro_array', macro_array);
+            }
+        }, 200);
+    }
 }

@@ -39,3 +39,27 @@
 .clickable {
     cursor: pointer!important;
 }
+.white-hover:hover * {
+    color: #ffffff;
+}
+.white-hover * {
+    color: #6c757d;
+}
+.white-hover a {
+    text-decoration: none;
+}
+.agenda_status {
+    cursor: pointer;
+}
+textarea.btn, input.btn {
+    cursor: text!important;
+}
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+ul {
+    list-style: none;
+}
+ul li {
+    margin-bottom: 1em;
+}

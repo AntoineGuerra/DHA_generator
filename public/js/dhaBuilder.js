@@ -12,7 +12,6 @@ class DhaBuilder {
             avantVente: [],
             interne: [],
         };
-        // this.parsedEvents = [];
         for (let i = 0; i < events.length; i++) {
 
             var event = events[i];
@@ -58,88 +57,6 @@ class DhaBuilder {
 
     }
 
-    // get testParts() {
-    //     return {
-    //         vendu : [
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 2,
-    //                 comment: 'test com',
-    //             },
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 23,
-    //                 comment: 'test com',
-    //             },
-    //
-    //         ],
-    //         maintenance: [
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 2,
-    //                 comment: 'test com',
-    //             },
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 23,
-    //                 comment: 'test com',
-    //             },
-    //
-    //         ],
-    //         avantVente: [
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 // family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 2,
-    //                 comment: 'test com',
-    //             },
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 // family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 23,
-    //                 comment: 'test com',
-    //             },
-    //
-    //         ],
-    //         interne: [
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 // family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 2,
-    //                 comment: 'test com',
-    //             },
-    //             {
-    //                 client: 'test cli',
-    //                 project: 'test proj',
-    //                 // family: 'test fam',
-    //                 tache: 'test tach',
-    //                 duration: 23,
-    //                 comment: 'test com',
-    //             },
-    //
-    //         ],
-    //
-    //     };
-    // }
-
     /**
      * Really it's CONSTANT
      * @returns {{avantVente: string, interne: string, maintenance: string, vendu: string}}
@@ -160,26 +77,24 @@ class DhaBuilder {
         // element.style.display = 'block';
         element.setAttribute('download', filename);
         // element.innerText = filename;
-        element.querySelector('#full').innerHTML = filename;
+        // element.querySelector('#full').innerHTML = filename;
         if (autoDl) {
             element.click();
         }
     }
 
     displayErrors() {
-        let div_err = document.getElementById('table-error-content');
+        let div_err = document.getElementById('table-DHA-content');
 
         if (this.errorProjects.length > 0) {
-            document.getElementById('table-error').classList.remove('d-none');
+            document.getElementById('table-DHA').classList.remove('d-none');
             document.getElementById('syntax-error').classList.remove('d-none');
             document.getElementById('title-error').classList.remove('d-none');
             let text_content = '';
             for (let i = 0; i < this.errorProjects.length; i++) {
                 let obj = this.errorProjects[i];
-                // let declined = (obj.declined) ? 'Refusé !' : '';
 
                 text_content +=  '<tr>' +
-                // text_content +=  '<tr onclick="window.open(\'' + obj.link + '\', \'_blank\');"' + ' class="clickable">' +
                         '<th scope="row">' + i + '</th>' +
                         '<td>' + obj.name + '</td>' +
                         '<td>' + obj.date + '</td>' +
@@ -187,9 +102,6 @@ class DhaBuilder {
                         '<td>' + obj.error + '</td>' +
                         '<td>' + obj.actions.edit + obj.actions.show + '</td>' +
                     '</tr>';
-
-
-                // text_content += '<div class="col-12 text-danger ">Tâche : <a href="' + obj.link + '" target="_blank">' + obj.name + '</a> ' + declined + ' Durée : ' + obj.duration + 'H</div>';
             }
 
             div_err.innerHTML = text_content;

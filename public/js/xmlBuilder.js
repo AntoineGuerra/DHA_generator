@@ -12,22 +12,6 @@ class XmlBuilder extends XmlBase {
         this.endWorkBook = endXmlWorkBook;
         this.content = this.workBook + this.styleSheet + xmlWorkBookFirst;
         this.content += this.header();
-        //
-        // this.vendu = new VenduXML(week, acronyme, parts);
-        // this.content += this.vendu.header();
-        // this.content += this.vendu.content();
-        //
-        // this.maintenance = new MaintenanceXML(week, acronyme, parts);
-        // this.content += this.maintenance.header();
-        // this.content += this.maintenance.content();
-        //
-        // this.avantVente = new AvantVenteXML(week, acronyme, parts);
-        // this.content += this.avantVente.header();
-        // this.content += this.avantVente.content();
-        //
-        // this.interne = new AvantVenteXML(week, acronyme, parts);
-        // this.content += this.avantVente.header();
-        // this.content += this.avantVente.content();
 
         this.vendu = new PartXML(week, acronyme, parts, 'vendu');
         this.content += this.vendu.header();
@@ -45,11 +29,6 @@ class XmlBuilder extends XmlBase {
         this.content += this.interne.header();
         this.content += this.interne.content();
 
-
-
-        // this.content += this.maintenance();
-        // this.content += this.avantVente();
-        // this.content += this.interne();
         this.content += this.total();
         this.content += this.footer();
     }
@@ -82,224 +61,7 @@ class XmlBuilder extends XmlBase {
             ).xml;
     }
 
-    // venduHeader() {
-    //     let venduHeader = '';
-    //     venduHeader += this.row(25.5).xml +
-    //         this.row(48,
-    //             this.cell('s73', this.dataTypes.string, 'Temps passé sur des projets (temps vendu)').xml +
-    //             this.emptyCell(73, 7)
-    //         ).xml;
-    //     venduHeader += this.row(18,
-    //         this.acronymeHeader('QUI ?') +
-    //         this.weekHeader('N° SEM') +
-    //         this.clientHeader('CLIENT') +
-    //         this.projectHeader('PROJET') +
-    //         this.familyHeader('FAMILLE ACTIVITÉ') +
-    //         this.tacheHeader('DETAIL DE LA TÂCHE') +
-    //         this.durationHeader('Heures réellement réalisées') +
-    //         this.commentHeader('Commentaire sur l\'écart')
-    //     ).xml;
-    //     venduHeader += this.row(36.75,
-    //         this.cellIndent + '<Cell ss:Index="9" ss:StyleID="s18"/>\n'
-    //     ).xml;
-    //     return venduHeader;
-    // }
-    // vendu() {
-    //     let venduContent = '';
-    //
-    //     venduContent += this.venduHeader();
-    //
-    //     for (let i = 0; i < this.parts.vendu.length; i++) {
-    //         let element = this.parts.vendu[i];
-    //         venduContent += this.row(15.75,
-    //             this.acronymeCell(this.acronyme) +
-    //             this.weekCell(this.week) +
-    //             this.clientCell(element.client) +
-    //             this.projectCell(element.project) +
-    //             this.familyCell(element.family) +
-    //             this.tacheCell(element.tache) +
-    //             this.durationCell(element.duration) +
-    //             this.commentCell(element.comment)
-    //             ).xml;
-    //     }
-    //     let formula = (this.parts.vendu.length > 0) ? '=SUM(R[-' + this.parts.vendu.length + ']C:R[-1]C)' : '';
-    //
-    //     venduContent += this.row(27,
-    //         this.emptyCell(41, 4) +
-    //         this.emptyCell(42, 1) +
-    //         this.cell('s42', this.dataTypes.string, 'Total (heures)').xml +
-    //         this.cell('s42', this.dataTypes.number, '', ['ss:Formula="' + formula + '"']).xml +
-    //         this.emptyCell(43, 1)
-    //         ).xml;
-    //     return venduContent;
-    // }
-
-    // maintenance() {
-    //     let maintenanceContent = '';
-    //     maintenanceContent += this.row(25.5) +
-    //         this.row(48,
-    //             this.cell('s73', this.dataTypes.string, 'Temps passé en maintenance (temps vendu)').xml +
-    //             this.emptyCell(73, 7)
-    //         ).xml;
-    //     maintenanceContent += this.row(18,
-    //         this.acronymeHeader('QUI ?') +
-    //         this.weekHeader('N° SEM') +
-    //         this.clientHeader('CLIENT') +
-    //         this.projectHeader('PROJET') +
-    //         this.familyHeader('FAMILLE ACTIVITÉ') +
-    //         this.tacheHeader('DETAIL DE LA TÂCHE  (facultatif)') +
-    //         this.durationHeader('Temps passés en maintenance') +
-    //         this.commentHeader('Tâche programmée ? (non = urgence)')
-    //         // this.emptyCell(18, 1) +
-    //         // this.emptyCell(33, 21)
-    //         ).xml;
-    //     maintenanceContent += this.row(36.75,
-    //         this.cellIndent + '<Cell ss:Index="9" ss:StyleID="s18"/>\n'
-    //         // this.emptyCell(33, 18) +
-    //         // this.emptyCell(18, 3)
-    //         ).xml;
-    //
-    //     for (let i = 0; i < this.parts.maintenance.length; i++) {
-    //         let element = this.parts.maintenance[i];
-    //         maintenanceContent += this.row(15.75,
-    //             this.acronymeCell(this.acronyme) +
-    //             this.weekCell(this.week) +
-    //             this.clientCell(element.client) +
-    //             this.projectCell(element.project) +
-    //             this.familyCell(element.family) +
-    //             this.tacheCell(element.tache) +
-    //             this.durationCell(element.duration) +
-    //             this.commentCell(element.comment)
-    //             // this.emptyCell(23, 1)
-    //             // this.emptyCell(33, 21)
-    //             ).xml;
-    //     }
-    //     let formula = (this.parts.maintenance.length > 0) ? '=SUM(R[-' + this.parts.maintenance.length + ']C:R[-1]C)' : '';
-    //
-    //     maintenanceContent += this.row(27,
-    //         this.emptyCell(41, 4) +
-    //         this.emptyCell(42, 1) +
-    //         this.cell('s42', this.dataTypes.string, 'Total (heures)').xml +
-    //         this.cell('s42', this.dataTypes.number, '', ['ss:Formula="' + formula + '"']).xml +
-    //         this.emptyCell(43, 1)
-    //         // this.emptyCell(23, 1)
-    //         ).xml;
-    //     return maintenanceContent;
-    // }
-
-
-    // avantVente() {
-    //     let avContent = '';
-    //     avContent += this.row(25.5).xml +
-    //         this.row(48,
-    //             this.cell('s74', this.dataTypes.string, 'Temps passé en avant-vente').xml +
-    //             this.emptyCell(74, 7)
-    //         ).xml;
-    //     avContent += this.row(18,
-    //         this.acronymeHeader('QUI ?') +
-    //         this.weekHeader('N° SEM') +
-    //         this.clientHeader('CLIENT') +
-    //         this.projectHeader('PROJET') +
-    //         // this.familyHeader('FAMILLE ACTIVITÉ') +
-    //         this.tacheHeader('DETAIL DE LA TÂCHE') +
-    //         this.durationHeader('Temps passé') +
-    //         this.commentHeader('Commentaire', true)
-    //         // this.emptyCell(18, 1) +
-    //         // this.emptyCell(33, 21)
-    //         ).xml;
-    //     avContent += this.row(36.75,
-    //         this.cellIndent + '<Cell ss:Index="9" ss:StyleID="s18"/>\n'
-    //         // this.emptyCell(33, 18) +
-    //         // this.emptyCell(18, 3)
-    //         ).xml;
-    //
-    //     for (let i = 0; i < this.parts.avantVente.length; i++) {
-    //         let element = this.parts.avantVente[i];
-    //         avContent += this.row(15.75,
-    //             this.acronymeCell(this.acronyme) +
-    //             this.weekCell(this.week) +
-    //             this.clientCell(element.client) +
-    //             this.projectCell(element.project) +
-    //             // this.familyCell(element.family) +
-    //             this.tacheCell(element.tache) +
-    //             this.durationCell(element.duration) +
-    //             this.commentCell(element.comment, true)
-    //             // this.emptyCell(23, 1)
-    //             // this.emptyCell(33, 21)
-    //             ).xml;
-    //     }
-    //     let formula = (this.parts.avantVente.length > 0) ? '=SUM(R[-' + this.parts.avantVente.length + ']C:R[-1]C)' : '';
-    //
-    //     avContent += this.row(27,
-    //         this.emptyCell(41, 3) +
-    //         this.emptyCell(42, 1) +
-    //         this.cell('s42', this.dataTypes.string, 'Total (heures)').xml +
-    //         this.cell('s42', this.dataTypes.number, '', ['ss:Formula="' + formula + '"']).xml +
-    //         '<Cell ss:MergeAcross="1" ss:StyleID="m140462106055348"/>\n'
-    //         // this.emptyCell(43, 1)
-    //         // this.emptyCell(23, 1)
-    //         ).xml;
-    //     return avContent;
-    // }
-
-    // interne() {
-    //     let interneContent = '';
-    //     interneContent += this.row(25.5).xml +
-    //         this.row(48,
-    //             this.cell('s75', this.dataTypes.string, 'Temps passé sur des projets Mayflower (site internet, marque…)').xml +
-    //             this.emptyCell(75, 7)
-    //         ).xml;
-    //     interneContent += this.row(18,
-    //         this.acronymeHeader('QUI ?') +
-    //         this.weekHeader('N° SEM') +
-    //         this.clientHeader('CLIENT') +
-    //         this.projectHeader('PROJET') +
-    //         // this.familyHeader('FAMILLE ACTIVITÉ') +
-    //         this.tacheHeader('DETAIL DE LA TÂCHE') +
-    //         this.durationHeader('Temps passé') +
-    //         this.commentHeader('Commentaire', true)
-    //         // this.emptyCell(18, 1) +
-    //         // this.emptyCell(33, 21)
-    //         ).xml;
-    //     interneContent += this.row(36.75,
-    //         this.cellIndent + '<Cell ss:Index="9" ss:StyleID="s18"/>\n'
-    //         // this.emptyCell(33, 18) +
-    //         // this.emptyCell(18, 3)
-    //         ).xml;
-    //
-    //     for (let i = 0; i < this.parts.interne.length; i++) {
-    //         let element = this.parts.interne[i];
-    //         interneContent += this.row(15.75,
-    //             this.acronymeCell(this.acronyme) +
-    //             this.weekCell(this.week) +
-    //             this.clientCell(element.client) +
-    //             this.projectCell(element.project) +
-    //             // this.familyCell(element.family) +
-    //             this.tacheCell(element.tache) +
-    //             this.durationCell(element.duration) +
-    //             this.commentCell(element.comment, true)
-    //             // this.emptyCell(23, 1)
-    //             // this.emptyCell(33, 21)
-    //             ).xml;
-    //     }
-    //     let formula = (this.parts.interne.length > 0) ? '=SUM(R[-' + this.parts.interne.length + ']C:R[-1]C)' : '';
-    //     interneContent += this.row(27,
-    //         this.emptyCell(41, 3) +
-    //         this.emptyCell(42, 1) +
-    //         this.cell('s42', this.dataTypes.string, 'Total (heures)').xml +
-    //         this.cell('s42', this.dataTypes.number, '', ['ss:Formula="' + formula + '"']).xml +
-    //         '<Cell ss:MergeAcross="1" ss:StyleID="m140462106055348"/>\n'
-    //         // this.emptyCell(43, 2)
-    //         // this.emptyCell(23, 1)
-    //         ).xml;
-    //     return interneContent;
-    // }
-
     total() {
-        // let formulaTotal = 'R' + (8 + this.parts.vendu.length) + 'C7' +
-        //     '+R' + (13 + this.parts.vendu.length + this.parts.maintenance.length) + 'C7' +
-        //     '+R' + (18 + this.parts.vendu.length + this.parts.maintenance.length + this.parts.avantVente.length) + 'C6' +
-        //     '+R' + (23 + this.parts.vendu.length + this.parts.maintenance.length + this.parts.avantVente.length + this.parts.interne.length) + 'C6';
         let formulaTotal = 'R' + this.vendu.rows.total + 'C' + this.vendu.cols.duration +
             '+R' + this.maintenance.rows.total + 'C' + this.maintenance.cols.duration +
             '+R' + this.avantVente.rows.total + 'C' + this.avantVente.cols.duration +
@@ -308,14 +70,12 @@ class XmlBuilder extends XmlBase {
         let formulaVendu = 'R' + this.vendu.rows.total + 'C' + this.vendu.cols.duration + '+' +
             'R' + this.maintenance.rows.total + 'C' + this.maintenance.cols.duration;
         return this.row(48,
-            // this.emptyCell(41, 4) +
             this.cell('s56', this.dataTypes.string, 'TOTAL HEURES VENDUES').xml +
             this.emptyCell(56, 2) +
             this.cell('s57', this.dataTypes.number, '',
                 ['ss:Formula="=SUM(' + formulaVendu + ')"']).xml
             ).xml +
             this.row(30,
-            // this.emptyCell(41, 4) +
             this.cell('s56', this.dataTypes.string, 'TOTAL SEMAINE').xml +
                 this.emptyCell(56, 2) +
                 this.cell('s57', this.dataTypes.number, '', ['ss:Formula="=SUM(' + formulaTotal + ')"']).xml

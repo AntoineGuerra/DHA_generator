@@ -87,7 +87,6 @@ class PartXML extends XmlBase {
             headerRowContent
         );
         this.cols.duration = durationCell.number;
-        // alert(this.title + durationCell.number)
         if (this.haveFamily && familyCell) {
             this.cols.family = familyCell.number
         }
@@ -104,7 +103,21 @@ class PartXML extends XmlBase {
 
     content() {
         let content = '';
-
+        this.part.sort(function (a, b) {
+            if (a.client < b.client) {
+                return -1;
+            }
+            if (a.client > b.client) {
+                return 1;
+            }
+            if (a.project < b.project) {
+                return -1;
+            }
+            if (a.project > b.project) {
+                return 1;
+            }
+            return 0;
+        });
         for (let i = 0; i < this.part.length; i++) {
             let element = this.part[i];
             let rowContent = this.acronymeCell(this.acronyme) +

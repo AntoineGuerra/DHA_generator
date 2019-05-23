@@ -2,7 +2,7 @@ class XmlBase {
 
     static currentRow = 0;
     static currentCol = 0;
-    static  maxCol = 0
+    static  maxCol = 0;
 
     static xmlCellIndent = '';
     static xmlColIndent = '';

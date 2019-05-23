@@ -166,7 +166,7 @@ class AgendaGenerator {
             return alert('l\'acronyme ne peut pas être vide !');
         }
         this.acronyme = this.acronyme.toUpperCase();
-        this.events = [];
+        this.events = {};
         this.agenda_api_events = [];
         
     }
@@ -252,6 +252,7 @@ class AgendaGenerator {
                 '<i class="far fa-file-excel fa-3x"></i>' +
                 '</a></button>';
         }
+        // let i = 0;
         for (let row_number = data.infos.range.start; row_number < data.infos.range.end; row_number++) {
             let row = data.values[row_number];
             console.log('row_number', row[data.infos.week_column]);
@@ -283,16 +284,84 @@ class AgendaGenerator {
                     tache: row[2].trim(),
                 };
                 if (output === OUTPUTS.html) {
-                    html += this.createTableRow(ids, {
-                        duration: duration,
-                        name: name,
-                        count: count,
-                        row_number: row_number,
-                        btn_count: btn_count,
-                        range: data.infos.range,
-                        // agenda_api_events_name: agenda_api_events_name,
-                        // button: button,
-                    });
+                    /**
+                     * PARSE TACHES
+                     */
+
+                    name.tache = EventFilter.parseExceptions(name.tache);
+                    let taches = name.tache.split('-');
+
+                    for (let i = 0; i < taches.length; i++) {
+                        // for (var key in ids) {
+                        //     if (ids.hasOwnProperty(key)) {
+                        //         ids[key] *= 2;
+                        //     }
+                        console.log('ids before', ids);
+                        // }
+                        let tache_ids = JSON.parse(JSON.stringify(ids));
+                        Object.keys(tache_ids).map(function(key, index) {
+                            tache_ids[key] += '_' + i;
+                        });
+                        console.log('ids after', ids);
+                        let splitted_tache = {
+                            name: taches[i].trim(),
+                            duration: taches[i].trim().match(/^\s?([0-9]+\.?\,?[0-9]*)h\s+/i),
+                        };
+
+                        console.log('splitted tache', splitted_tache);
+                        if (splitted_tache.duration !== null) {
+                            name.tache = name.tache.replace(splitted_tache.name, '');
+                            splitted_tache.name = splitted_tache.name.replace(/^\s?([0-9]+\.?\,?[0-9]*)h\s+/i, '');
+                            if (i < taches.length - 1 && !taches[i + 1].match(/^\s?([0-9]+\.?\,?[0-9]*)h\s+/i)) {
+                                console.log('yeahhhoo', splitted_tache.name, taches[i + 1]);
+                                console.log('taches', taches, taches.length);
+                                console.log('tach i', i);
+                                taches.splice(0, i + 1);
+                                console.log('new taches', taches);
+                                splitted_tache.name += ' ' + taches.join(' ');
+                            }
+                            let parsed_name = {
+                                project: name.project,
+                                tache: splitted_tache.name,
+                            };
+                            btn_count++;
+                            console.log('duration unique tache', splitted_tache.duration[1]);
+                            let splitted_duration = parseFloat(splitted_tache.duration[1].replace(',', '.'));
+                            duration -= splitted_duration;
+                            console.log('create table', parsed_name);
+                            html += this.createTableRow(tache_ids, {
+                                duration: splitted_duration,
+                                name: parsed_name,
+                                count: count,
+                                row_number: row_number,
+                                btn_count: btn_count,
+                                range: data.infos.range,
+                                target: row_number + '_' + i,
+                            });
+                            if (duration > 0) {
+                                count++;
+                            }
+                        }
+                    }
+
+
+                    console.log('taches', taches);
+                    // let result_name = data.name.project.substr(0, data.name.project.trim().length - 3).trim() + ' ' ;
+                    console.log('duration ', duration);
+                    if (duration > 0) {
+                        console.log('create table 2', name);
+
+                        html += this.createTableRow(ids, {
+                            duration: duration,
+                            name: name,
+                            count: count,
+                            row_number: row_number,
+                            btn_count: btn_count,
+                            range: data.infos.range,
+                            // agenda_api_events_name: agenda_api_events_name,
+                            // button: button,
+                        });
+                    }
                 } else if (output === OUTPUTS.array) {
                     result_arr.push({
                         duration: duration,
@@ -302,6 +371,10 @@ class AgendaGenerator {
                 } else if (output === OUTPUTS.event) {
 
                 }
+            } else {
+                // document.getElementById('table-error-AGENDA-content').innerHTML += '<tr>' +
+                // '<td>' +  + '</td>' +
+                // '';
             }
         }
         if (output === OUTPUTS.html) {
@@ -320,6 +393,10 @@ class AgendaGenerator {
     createTableRow(ids, data) {
         let button = '';
         let result_name = '';
+        console.log('datttta target', data.target);
+        if (data.target === undefined) {
+            data.target = data.row_number;
+        }
         let cells = {
             tache: '',
             duration: '',
@@ -336,89 +413,122 @@ class AgendaGenerator {
         };
         if (data.name.project[0] !== '_') {
             cells.action = '<td id="' + ids.actions + '">' +
-                '<button data-target="' + data.row_number + '" ' +
+                '<button data-target="' + data.target + '" ' +
                 'class="btn btn-outline-secondary white-hover agenda_generate_btn" ' +
                 'data-tippy-content="Ajouter à l\'agenda" id="generate_btn_' + data.btn_count++  + '">' +
                     '<i class="far fa-calendar-plus fa-2x"></i>' +
                 '</button>' + '</td>';
 
-            // result_name = data.name.project.substr(0, data.name.project.trim().length - 3).trim() + ' ' + data.name.tache.replace(/\-/g, ' ').trim();
-
-
-
             result_name = data.name.project.substr(0, data.name.project.trim().length - 3).trim() + ' ' + data.name.tache.replace(/\-/g, ' ').trim();
-
-
 
             cells.tache = '<td><textarea id="' + ids.name + '" class="w-100 btn btn-light">' + result_name + '</textarea></td>';
             cells.duration = '<td>' + // Durée
                     '<input id="' + ids.duration + '" type="number" step="0.25" min="0" value="' + data.duration + '" class="text-center btn btn-light">' +
                 '</td>';
             // cells.action =
-            this.events[data.row_number] = {
-                data_ids: ids,
-                event: new Event(result_name, data.duration),
-            };
+
+
         } else {
             result_name = data.name.project + ' ' + data.name.tache.replace(/\-/g, ' ').trim();
             cells.tache = '<td>' + result_name + '</td>';
+            console.log('data duration 2', data.duration);
             cells.duration = '<td>' + data.duration + '</td>';
             cells.action = '<td></td>';
         }
-        
-        console.log('agenda_events', this.agenda_api_events);
-        
-        let exist_api_agenda = this.agenda_api_events.find(function (element) {
-            return element.summary === result_name;
-        });
 
-        let agenda_duration = 0;
-        let link = '';
-        while (exist_api_agenda !== undefined) {
+        let api_datas = this.checkIfExist(result_name);
+        let agenda_duration = api_datas.duration;
+        let link = api_datas.link;
 
-            // remove value
-            this.agenda_api_events.splice(this.agenda_api_events.indexOf(exist_api_agenda), 1);
-            console.log('agenda_events after splice', this.agenda_api_events);
-            console.log('agenda_events val', exist_api_agenda);
-            let converted_duration = EventFilter.convert_duration(exist_api_agenda.start.dateTime, exist_api_agenda.end.dateTime);
-            console.log('duration event ', converted_duration);
-            agenda_duration += converted_duration;
-            link = exist_api_agenda.htmlLink;
-            // cells.status = '<td id="' + ids.status + '" class="text-success" ' + '>' + // Status
-            //                 '<i data-tippy-content="Existe dans l\'agenda" class="agenda_status far fa-calendar-check fa-2x"></i>' +
-            //                 '</td>';
-            // cells.action = '<td id="' + ids.actions + '">' + '<button class="btn btn-outline-secondary white-hover">' +
-            //         '<a target="_blank" href="' + exist_api_agenda.htmlLink + '">' +
-            //             '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
-            //         '</a>' +
-            //     '</button>' +
-            // '</td>';
-            exist_api_agenda = this.agenda_api_events.find(function (element) {
-                return element.summary === result_name;
-            });
-        } 
+        // console.log('agenda_events', this.agenda_api_events);
+        //
+        // let exist_api_agenda = this.agenda_api_events.find(function (element) {
+        //     return element.summary === result_name;
+        // });
+        //
+        // let agenda_duration = 0;
+        // let link = '';
+        // while (exist_api_agenda !== undefined) {
+        //
+        //     // remove value
+        //     this.agenda_api_events.splice(this.agenda_api_events.indexOf(exist_api_agenda), 1);
+        //     console.log('agenda_events after splice', this.agenda_api_events);
+        //     console.log('agenda_events val', exist_api_agenda);
+        //     let converted_duration = EventFilter.convert_duration(exist_api_agenda.start.dateTime, exist_api_agenda.end.dateTime);
+        //     console.log('duration event ', converted_duration);
+        //     agenda_duration += converted_duration;
+        //     link = exist_api_agenda.htmlLink;
+        //     // cells.status = '<td id="' + ids.status + '" class="text-success" ' + '>' + // Status
+        //     //                 '<i data-tippy-content="Existe dans l\'agenda" class="agenda_status far fa-calendar-check fa-2x"></i>' +
+        //     //                 '</td>';
+        //     // cells.action = '<td id="' + ids.actions + '">' + '<button class="btn btn-outline-secondary white-hover">' +
+        //     //         '<a target="_blank" href="' + exist_api_agenda.htmlLink + '">' +
+        //     //             '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
+        //     //         '</a>' +
+        //     //     '</button>' +
+        //     // '</td>';
+        //     exist_api_agenda = this.agenda_api_events.find(function (element) {
+        //         return element.summary === result_name;
+        //     });
+        // }
+
         console.log('result name', data.name);
         console.log('result duration', agenda_duration);
-        console.log('data duration', data.duration);
-        if (data.duration <= agenda_duration) {
-            cells.status = '<td id="' + ids.status + '" class="text-success" ' + '>' + // Status
-                    '<i data-tippy-content="' + data.duration + 'H Demandées (' + agenda_duration + 'H dans l\'agenda)" class="agenda_status far fa-calendar-check fa-2x"></i>' +
-                '</td>';
+        console.log('macro duration', data.duration);
+        let status_cell = {
+            tippy_content: '',
+            class_icon: '',
+            class_text: '',
+        };
+        if (data.duration === agenda_duration) {
+            status_cell.class_icon = 'far fa-calendar-check';
+            status_cell.tippy_content = data.duration + 'H Demandées (' + agenda_duration + 'H dans l\'agenda)';
+            status_cell.class_text = 'text-success';
+
             cells.action = '<td id="' + ids.actions + '">' + '<button class="btn btn-outline-secondary white-hover">' +
-                        '<a target="_blank" href="' + link + '">' +
-                            '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
-                        '</a>' +
-                    '</button>' +
+                '<a target="_blank" href="' + link + '">' +
+                '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
+                '</a>' +
+                '</button>' +
+                '</td>';
+        } else if (data.duration < agenda_duration) {
+            status_cell.class_icon = 'far fa-calendar-check';
+            status_cell.tippy_content = data.duration + 'H Demandées (' + agenda_duration + 'H dans l\'agenda)';
+            status_cell.class_text = 'text-warning';
+
+            cells.action = '<td id="' + ids.actions + '">' + '<button class="btn btn-outline-secondary white-hover">' +
+                '<a target="_blank" href="' + link + '">' +
+                '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
+                '</a>' +
+                '</button>' +
                 '</td>';
         } else if (agenda_duration === 0) {
-            cells.status = '<td id="' + ids.status + '" class="text-danger" ' + '>' + // Status
-                '<i data-tippy-content="N\'existe pas dans l\'agenda" class=" agenda_status far fa-calendar-times fa-2x"></i>' +
-                '</td>';
+            status_cell.class_icon = 'far fa-calendar-times';
+            status_cell.tippy_content = 'N\'existe pas dans l\'agenda';
+            status_cell.class_text = 'text-danger';
+
+            // cells.status = '<td id="' + ids.status + '" class="text-danger" ' + '>' + // Status
+            //     '<i data-tippy-content="N\'existe pas dans l\'agenda" class=" agenda_status far fa-calendar-times fa-2x"></i>' +
+            //     '</td>';
         } else {
+            status_cell.class_icon = 'far fa-calendar-times';
+            status_cell.tippy_content = data.duration + 'H Demandées dans le macro (' + agenda_duration + 'H dans l\'agenda)';
+            status_cell.class_text = 'text-danger';
+            data.duration -= agenda_duration;
+
             console.log('yeahhh inferieur');
-            cells.status = '<td id="' + ids.status + '" class="text-danger" ' + '>' + // Status
-                '<i data-tippy-content="' + data.duration + 'H Demandées dans le macro (' + agenda_duration + 'H dans l\'agenda)" class=" agenda_status far fa-calendar-times fa-2x"></i>' +
-                '</td>';
+            // cells.status = '<td id="' + ids.status + '" class="text-danger" ' + '>' + // Status
+            //     '<i data-tippy-content="' + '" class=" agenda_status far fa-calendar-times fa-2x"></i>' +
+            //     '</td>';
+        }
+        cells.status = '<td id="' + ids.status + '" class="' + status_cell.class_text + '" ' + '>' + // Status
+            '<i data-tippy-content="' + status_cell.tippy_content + '" class="agenda_status ' + status_cell.class_icon + ' fa-2x"></i>' +
+            '</td>';
+        if (data.name[0] !== '_') {
+            this.events[data.target] = {
+                data_ids: ids,
+                event: new Event(result_name, data.duration),
+            };
         }
         // if (data.duration > agenda_duration) {
         //     console.log('yeahhh inferieur');
@@ -523,10 +633,14 @@ class AgendaGenerator {
             let agenda_generate_btns = document.getElementsByClassName('agenda_generate_btn');
             tippy('.agenda_status');
             removeLoader();
+            console.log('agenda_generate_btns', agenda_generate_btns);
             for (let i = 0; i < agenda_generate_btns.length; i++) {
                 let btn = agenda_generate_btns[i];
                 let target = btn.dataset.target;
                 let current_event = that.events[target];
+                console.log('events', that.events);
+                console.log('current evennt', current_event);
+                console.log('target', target);
                 that.tippys['generate_btn_' + i] = tippy('#generate_btn_' + i);
                 btn.addEventListener('click', function () {
                     that.generateAgendaEvent(current_event)
@@ -537,6 +651,7 @@ class AgendaGenerator {
                 document.getElementById(current_event.data_ids.duration).addEventListener('change', function () {
                     current_event.event.duration = this.value;
                 });
+                // if ()
             }
             document.getElementById('generate_agenda_all').addEventListener('click', function () {
                 that.generateAllEvent();
@@ -587,5 +702,42 @@ class AgendaGenerator {
         });
     }
 
+    checkIfExist(name) {
+        console.log('agenda_events', this.agenda_api_events);
+
+        let exist_api_agenda = this.agenda_api_events.find(function (element) {
+            return element.summary === name;
+        });
+
+        let agenda_duration = 0;
+        let link = '';
+        while (exist_api_agenda !== undefined) {
+
+            // remove value
+            this.agenda_api_events.splice(this.agenda_api_events.indexOf(exist_api_agenda), 1);
+            console.log('agenda_events after splice', this.agenda_api_events);
+            console.log('agenda_events val', exist_api_agenda);
+            let converted_duration = EventFilter.convert_duration(exist_api_agenda.start.dateTime, exist_api_agenda.end.dateTime);
+            console.log('duration event ', converted_duration);
+            agenda_duration += converted_duration;
+            link = exist_api_agenda.htmlLink;
+            // cells.status = '<td id="' + ids.status + '" class="text-success" ' + '>' + // Status
+            //                 '<i data-tippy-content="Existe dans l\'agenda" class="agenda_status far fa-calendar-check fa-2x"></i>' +
+            //                 '</td>';
+            // cells.action = '<td id="' + ids.actions + '">' + '<button class="btn btn-outline-secondary white-hover">' +
+            //         '<a target="_blank" href="' + exist_api_agenda.htmlLink + '">' +
+            //             '<i data-tippy-content="Ouvrir dans l\'agenda" class="tippy far fa-eye fa-2x"></i>' +
+            //         '</a>' +
+            //     '</button>' +
+            // '</td>';
+            exist_api_agenda = this.agenda_api_events.find(function (element) {
+                return element.summary === name;
+            });
+        }
+        return {
+            duration: agenda_duration,
+            link: link,
+        };
+    }
 }
 

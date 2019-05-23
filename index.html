@@ -1,160 +1,211 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>
-        DHA GENERATOR</title>
+    <title>DHA Generator</title>
     <meta charset="utf-8"/>
     <link type="text/css" rel="stylesheet" href="public/css/bootstrap_4.css">
-    <meta name="google-signin-scope" content="profile email">
-    <meta name="google-signin-client_id" content="889910005804-tq4btqe01v6sapk7fk65telp3kcdle3p.apps.googleusercontent.com">
-    <!--<script src="https://apis.google.com/js/platform.js" async defer></script>-->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <link rel="stylesheet" href="public/css/custom.css">
-    <script src="https://apis.google.com/js/api.js"></script>
+    <!--<script src="https://apis.google.com/js/api.js"></script>-->
     <script src="https://unpkg.com/popper.js@1/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/tippy.js@4"></script>
 </head>
 <body>
 
 
-<!--Add buttons to initiate auth sequence and sign out-->
-<div class="container">
+<div class="container-fluid">
     <h1 class="text-center">DHA GENERATOR</h1>
-    <div class="row">
-        <!--<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark" id="connectGoogle"></div>-->
 
-        <!--<button class="btn btn-outline-danger rounded d-none mr-3" id="signOut">Sign Out</button>-->
-        <button id="Gauth" class="btn btn-outline-success">connect google</button>
-        <button id="settings"><i class="fas fa-cog"></i></button>
+    <div class="row d-flex justify-content-center">
 
-        <script>
+        <!--Add buttons to initiate auth sequence and sign out-->
+        <div class="col-3  d-flex justify-content-between">
+            <div class="authorize">
+                <i data-tippy-content="En cours de connexion" id="connexion_status" class=" fas fa-spinner fa-spin fa-2x"></i>
+                <button id="authorize_button" class="btn btn-outline-secondary white-hover" style="display: none;">Connexion</button>
+                <button id="signout_button" class="btn btn-outline-secondary white-hover" style="display: none;">Sign Out</button>
+            </div>
 
-        </script>
+
+            <button id="settings" class="btn btn-outline-secondary white-hover"
+                    data-tippy-content="Réglage"><i class="fas fa-cog fa-2x"></i></button>
+        </div>
+
+
     </div>
     <div id="settings-content" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
             <span class="close">&times;</span>
-            <button class="btn" id="autoDl">Disable auto Download</button><br>
-            <span class="text-muted">Famille d'activité par défault</span>
-            <select class="btn btn-light" id="defaultFamily">
-                <option id="defaultFamilyMEP" value="Mise En Production">Mise En Production</option>
-                <option id="defaultFamilyGraphisme" value="Graphisme">Graphisme</option>
-                <option id="defaultFamilyConception" value="Conception">Conception</option>
-                <option id="defaultFamilyPDP" value="Pilotage de projet">Pilotage de projet</option>
-                <option id="defaultFamilyDirection" value="Direction">Direction conseil, technique et éditoriale</option>
-                <option id="defaultFamilyContenus" value="Contenus">Contenus et CM</option>
-                <option id="defaultFamilyMaintenance" value="Maintenance">Maintenance et interventions post-projet</option>
-            </select>
-            <span class="text-muted" >Exception (insensible à la casse)
-                <br>
-                <textarea id="exceptions" data-tippy-content="Séparé de virgule">e-commerce</textarea>
-            </span>
+            <div class="row">
+
+                <div class="col-6">
+                    <h2>DHA</h2>
+                    <hr>
+                    <ul>
+                        <li>
+                            <button data-tippy-content="Télécharger la DHA lors de sa création" class="btn" id="autoDl">Disable auto Download</button>
+                        </li>
+                        <li>
+                            <!--<span class="text-muted">Famille d'activité par défault</span>-->
+                            <select data-tippy-content="Famille d'activité par défault" class="btn btn-light tippy" id="defaultFamily">
+                                <option id="defaultFamilyMEP" value="Mise En Production">Mise En Production</option>
+                                <option id="defaultFamilyGraphisme" value="Graphisme">Graphisme</option>
+                                <option id="defaultFamilyConception" value="Conception">Conception</option>
+                                <option id="defaultFamilyPDP" value="Pilotage de projet">Pilotage de projet</option>
+                                <option id="defaultFamilyDirection" value="Direction">Direction conseil, technique et éditoriale
+                                </option>
+                                <option id="defaultFamilyContenus" value="Contenus">Contenus et CM</option>
+                                <option id="defaultFamilyMaintenance" value="Maintenance">Maintenance et interventions post-projet
+                                </option>
+                            </select>
+                        </li>
+                        <li>
+                            <label for="exceptions" class="text-muted">
+                                Exception (insensible à la casse)
+                                <!--<br>-->
+                            </label>
+                            <textarea class="btn btn-light tippy" id="exceptions" data-tippy-content="Séparé de virgule">e-commerce</textarea>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-6">
+                    <h2>Agenda</h2>
+                    <hr>
+                    <ul>
+                        <li>
+                            <label for="agenda_settings_sheet_id">
+                                ID du Macro à parser
+                            </label>
+                        </li>
+                        <li>
+                            <input class="btn btn-light tippy" data-tippy-content="Example : https://docs.google.com/spreadsheets/d/<MON_ID>/edit" type="text" id="agenda_settings_sheet_id" value="1w2DE5KYJQyP4hNsS-7-Shxk9FS3fIeFHqZwzUKEAhPs">
+                        </li>
+                        <li>
+                            <label for="agenda_settings_day">Quand Générer l'agenda</label>
+                            <select class="custom-select" id="agenda_settings_day">
+                                <option class="" value="NEXT_WEEK">Le Lundi de la semaine suivante</option>
+                                <option class="" value="SELECTED_WEEK" selected>Le Lundi de la semaine sélectionnée</option>
+                                <option class="" value="CURRENT_WEEK" >Le Lundi de la semaine courante</option>
+                            </select>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row" >
-        <!--<button id="test">yeah</button>-->
-
-    </div>
-    <div class="row d-none m-3" id="UserDiv">
+    <div class="row d-none m-3 d-flex justify-content-center" id="UserDiv">
         <img id="user-image" class="rounded-circle">
         <h3 id="user-name" style="line-height: 50px" class="pl-2"></h3>
     </div>
-    <div class="row">
+    <div class="row d-flex justify-content-center">
+        <div class="col-3  d-flex justify-content-center">
+
+        <button id="change_mode" class="btn btn-outline-secondary white-hover"
+                data-tippy-content="Changer de mode"><i class="fas fa-sync fa-2x"></i></button>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center text-center">
         <form>
-            <label class="col-12">Acronyme :</label>
+            <label class="col-6">Acronyme :</label>
             <input id="acronyme" type="text" placeholder="AGU" class="btn btn-light col-6">
 
             <label class="col-6">Semaine N° :</label>
             <input id="week" type="number" placeholder="4" class="btn btn-light col-6">
-
-            <button id="generate" class="btn btn-outline-primary col-12">Générer</button>
+            <hr class="w-50">
+            <button id="generate" class="btn btn-outline-secondary white-hover col-6 p-3 mb-3" disabled>Générer ma DHA</button>
+            <i data-tippy-content="Travail activement 💪" id="loader" class="tippy d-none fas fa-spinner fa-spin fa-3x"></i>
         </form>
     </div>
-    <div class="row d-none m-2" id="div_DHA">
+
+    <div class="row d-none m-2 " id="div_DHA">
+        <hr>
+
         <div class="col-12 m-2">
             <span class="col-6 col-md-4 ">DHA :</span>
         </div>
         <div class="col-12">
-
             <a class="col-6" id="DHA">
-                <button id="full" class="btn-outline-primary"></button>
+                <button id="full" class="btn btn-outline-secondary white-hover w-50 h-100"><i class="far fa-file-excel fa-3x"></i></button>
             </a>
         </div>
     </div>
 
+    <div class="error-DHA">
 
-    <h3 class="col-12 d-none" id="syntax-error">Veuillez respecter cette <a href="https://github.com/AntoineGuerra/DHA_generator#remplir-sous-cette-forme-" target="_blank">syntaxe</a></h3>
-    <h3 class="col-12 d-none text-danger" id="title-error" >Tâche Non traités : </h3>
-    <table class="table table-hover d-none" id="table-error">
-        <thead>
+        <h3 class="col-12 d-none" id="syntax-error">Veuillez respecter cette <a
+                href="https://github.com/AntoineGuerra/DHA_generator#remplir-sous-cette-forme-" target="_blank">syntaxe</a>
+        </h3>
+        <h3 class="col-12 d-none text-danger" id="title-error">Tâche Non traités : </h3>
+        <table class="table table-hover d-none" id="table-DHA">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Tâche</th>
+                <th scope="col">Date</th>
+                <th scope="col">Durée</th>
+                <th scope="col">Raison</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="table-DHA-content">
+            </tbody>
+        </table>
+    </div>
+    <div id="macro_file" class="text-center mb-2"></div>
+    <div class="error-AGENDA">
+    </div>
+    <table class="table table-hover d-none" id="table-AGENDA">
+        <thead class="thead-light text-center">
         <tr>
             <th scope="col">#</th>
+            <th scope="col">Ligne</th>
             <th scope="col">Tâche</th>
-            <th scope="col">Date</th>
             <th scope="col">Durée</th>
-            <th scope="col">Raison</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Status</th>
+            <th scope="col">Action</th>
         </tr>
         </thead>
-        <tbody id="table-error-content">
-<!--        <tr>-->
-<!--            <th scope="row">2</th>-->
-<!--            <td>Jacob</td>-->
-<!--            <td>Thornton</td>-->
-<!--            <td>@fat</td>-->
-<!--        </tr>-->
-<!--        <tr>-->
-<!--            <th scope="row">3</th>-->
-<!--            <td colspan="2">Larry the Bird</td>-->
-<!--            <td>@twitter</td>-->
-<!--        </tr>-->
+        <tbody id="table-AGENDA-content">
         </tbody>
     </table>
     <div class="row d-none" id="div_err">
         <hr>
 
-        <span class="col-12">Veuillez respecter cette <a href="https://github.com/AntoineGuerra/DHA_generator#remplir-sous-cette-forme-" target="_blank">syntaxe</a></span>
-<!--        <span class="col-12">Votre Projet doit être sous cette forme :</span>-->
-<!--        <span class="text-success col-12">V (categorie) - Client - Projet - MEP (famille : optionnel Pour AV et INT)</span>-->
+        <span class="col-12">Veuillez respecter cette <a
+                href="https://github.com/AntoineGuerra/DHA_generator#remplir-sous-cette-forme-"
+                target="_blank">syntaxe</a></span>
         <hr>
         <span class="col-12">
-            Impossible à traiter
-        <div class="col-12" id="err">
+Impossible à traiter
+<div class="col-12" id="err">
 
-        </div>
-    </span>
+</div>
+</span>
     </div>
 </div>
-
-<!--<pre id="content"-->
-<!--     style="white-space: pre-wrap;"></pre>-->
 <div>
-
-
 </div>
-<!--<link href="http://cdn.grapecity.com/spreadjs/hosted/css/gc.spread.sheets.excel2013white.11.0.1.css" rel="stylesheet" type="text/css" />-->
-<!--<script type="text/javascript" src="http://cdn.grapecity.com/spreadjs/hosted/scripts/gc.spread.sheets.all.11.0.1.min.js"></script>-->
-<!--<script type="text/javascript" src="http://cdn.grapecity.com/spreadjs/hosted/scripts/interop/gc.spread.excelio.11.0.1.min.js"></script>-->
+<!--<pre id="content" style="white-space: pre-wrap;"></pre>-->
+
 <script type="text/javascript" src="settings.js"></script>
 <script type="text/javascript" src="public/js/modal-settings.js"></script>
 <script type="text/javascript" src="public/js/xmlContainer.js"></script>
 <script type="text/javascript" src="public/js/script.js"></script>
 
 <script type="text/javascript" src="public/js/xmlBase.js"></script>
-<!--<script type="text/javascript" src="public/js/venduXML.js"></script>-->
-<!--<script type="text/javascript" src="public/js/maintenanceXML.js"></script>-->
-<!--<script type="text/javascript" src="public/js/avantVenteXML.js"></script>-->
 <script type="text/javascript" src="public/js/xmlBuilder.js"></script>
 <script type="text/javascript" src="public/js/partXML.js"></script>
 <script type="text/javascript" src="public/js/eventFilter.js"></script>
 <script type="text/javascript" src="public/js/dhaBuilder.js"></script>
-<script type="text/javascript">
-    // let dha = new DhaBuilder(7, 'AGU')
+
+<script type="text/javascript" src="public/js/agendaGenerator.js"></script>
+<script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
 </script>
-
-
-<!--<script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>-->
-
 </body>
 </html>
